@@ -40,10 +40,9 @@ namespace PhotoPrintWXSmall.Controllers
 
                 if (accountCard == null)
                 {
-                    int gender = wXAccount.Gender == 1 ? 1 : wXAccount.Gender == 2 ? 2 : 3;
                     //string avatarUrl = DownloadAvatar(wXAccount.AvatarUrl, wXAccount.OpenId);
                     string avatarUrl = wXAccount.AvatarUrl;
-                    accountCard = new AccountModel() { OpenID = wXAccount.OpenId, AccountName = wXAccount.NickName, Gender = gender, AccountAvatar = avatarUrl, CreateTime = DateTime.Now, LastChangeTime = DateTime.Now };
+                    accountCard = new AccountModel() { OpenID = wXAccount.OpenId, AccountName = wXAccount.NickName, Gender = wXAccount.GetGender, AccountAvatar = avatarUrl, CreateTime = DateTime.Now, LastChangeTime = DateTime.Now };
                     collection.InsertOne(accountCard);
                 }
             }
@@ -56,7 +55,7 @@ namespace PhotoPrintWXSmall.Controllers
             responseModel.StatusCode = stautsCode;
             JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings();
 
-            string[] param = new string[] { "StatusCode", "JsonData", "AccountID"};
+            string[] param = new string[] { "StatusCode", "JsonData", "AccountID" };
 
 
             jsonSerializerSettings.ContractResolver = new LimitPropsContractResolver(param);

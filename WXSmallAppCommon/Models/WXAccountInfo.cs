@@ -2,10 +2,11 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Tools.Models;
 
 namespace WXSmallAppCommon.Models
 {
-  public  class WXAccountInfo
+    public class WXAccountInfo
     {
         [JsonProperty("openId")]
         public string OpenId { get; set; }
@@ -13,6 +14,20 @@ namespace WXSmallAppCommon.Models
         public string NickName { get; set; }
         [JsonProperty("gender")]
         public Int16 Gender { get; set; }
+        public Gender GetGender
+        {
+            get
+            {
+                switch (Gender)
+                {
+                    case 1:
+                        return Tools.Models.Gender.male;
+                    case 2: return Tools.Models.Gender.female;
+                    default:
+                        return Tools.Models.Gender.none;
+                }
+            }
+        }
         [JsonProperty("city")]
         public string City { get; set; }
         [JsonProperty("province")]
@@ -26,4 +41,5 @@ namespace WXSmallAppCommon.Models
         [JsonProperty("watermark")]
         public WXWatermark Watermark { get; set; }
     }
+   
 }

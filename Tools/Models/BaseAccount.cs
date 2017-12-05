@@ -14,7 +14,7 @@ namespace Tools.Models
         public ObjectId AccountID { get; set; }
         public string AccountName { get; set; }
         public string AccountPhoneNumber { get; set; }
-        public int Gender { get; set; }
+        public Tools.Models.Gender Gender { get; set; }
         public string AccountAvatar { get; set; }
         [JsonConverter(typeof(Tools.Json.DateConverterEndMinute))]
         [BsonDateTimeOptions(Kind =DateTimeKind.Local)]
@@ -22,5 +22,9 @@ namespace Tools.Models
         [JsonConverter(typeof(Tools.Json.DateConverterEndMinute))]
         [BsonDateTimeOptions(Kind =DateTimeKind.Local)]
         public DateTime LastChangeTime { get; set; }
+    }
+    public enum Gender
+    {
+        none = 0, male = 1, female = 2
     }
 }
