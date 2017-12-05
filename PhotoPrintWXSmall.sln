@@ -5,6 +5,10 @@ VisualStudioVersion = 15.0.27004.2010
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhotoPrintWXSmall", "PhotoPrintWXSmall\PhotoPrintWXSmall.csproj", "{D39198AA-FC64-412D-9212-E9BF7BE63DC2}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tools", "Tools\Tools.csproj", "{700A1EB9-E4DE-4F77-B14E-A641810DC869}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WXSmallAppCommon", "WXSmallAppCommon\WXSmallAppCommon.csproj", "{E4352AA0-0DAA-4B14-A881-7A3CE9C69051}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,14 @@ Global
 		{D39198AA-FC64-412D-9212-E9BF7BE63DC2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D39198AA-FC64-412D-9212-E9BF7BE63DC2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D39198AA-FC64-412D-9212-E9BF7BE63DC2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{700A1EB9-E4DE-4F77-B14E-A641810DC869}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{700A1EB9-E4DE-4F77-B14E-A641810DC869}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{700A1EB9-E4DE-4F77-B14E-A641810DC869}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{700A1EB9-E4DE-4F77-B14E-A641810DC869}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E4352AA0-0DAA-4B14-A881-7A3CE9C69051}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E4352AA0-0DAA-4B14-A881-7A3CE9C69051}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E4352AA0-0DAA-4B14-A881-7A3CE9C69051}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E4352AA0-0DAA-4B14-A881-7A3CE9C69051}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
