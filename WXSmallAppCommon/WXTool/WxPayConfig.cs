@@ -13,15 +13,15 @@ namespace WXSmallAppCommon.WXTool
         * KEY：商户支付密钥，参考开户邮件设置（必须配置）
         * APPSECRET：公众帐号secert（仅JSAPI支付的时候需要配置）
         */
-        public const string APPID = "wxafc09c66a22ed778";
-        public const string MCHID = "1491932202";
-        public const string KEY = "ocadbb3tpt1fpibxdat2udllhem4nhni";
-        public const string APPSECRET = "759e8856dd6adaa19d6ee07fa12715c4";
+        public const string APPID = "wx8d54b2fde12d6406";
+        public const string MCHID = "1486147632";
+        public const string KEY = "Lizidan1984100734082219841007247";
+        public const string APPSECRET = "0da76a252acff15bdc5b69db54c59764";
         //=======【证书路径设置】===================================== 
         /* 证书路径,注意应该填写绝对路径（仅退款、撤销订单时需要）
         */
         public const string SSLCERT_PATH = @"C:\home\project_data\psqxcx\cert\apiclient_cert.p12";
-        public const string SSLCERT_PASSWORD = "1491932202";
+        public const string SSLCERT_PASSWORD = "1486147632";
 
 
 
