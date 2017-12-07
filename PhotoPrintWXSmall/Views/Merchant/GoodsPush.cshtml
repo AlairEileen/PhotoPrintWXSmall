@@ -1,0 +1,48 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    PhotoPrintWXSmall.Views.ViewConst.SetRoutType(ViewData, PhotoPrintWXSmall.Views.RoutType.商品添加);
+}
+<div class="jumbotron">
+    <h1>商品添加</h1>
+</div>
+<div class="row">
+    <div class="col-xs-6 col-sm-3">
+        <label>选择商品类型</label>
+        <select class="form-control">
+            <option>单张商品</option>
+            <option>套餐商品</option>
+        </select>
+    </div>
+</div>
+<div class="row" id="oneGoods">
+    <div class="col-xs-6 col-sm-3">
+        <label>选择或新增商品冲印类型</label>
+        <select class="form-control">
+            <option>冷裱</option>
+            <option>普通冲印</option>
+            <option>塑封</option>
+        </select>
+        <a class="btn">新增</a>
+    </div>
+    <div class="col-xs-6 col-sm-3">
+        <label>选择或新增商品相纸</label>
+        <select class="form-control">
+            <option>冷裱</option>
+            <option>普通冲印</option>
+            <option>塑封</option>
+        </select>
+        <a class="btn">新增</a>
+
+    </div>
+    <div class="col-xs-6 col-sm-3">
+        <label>选择或新增商品尺寸</label>
+        <select class="form-control">
+            <option>冷裱</option>
+            <option>普通冲印</option>
+            <option>塑封</option>
+        </select>
+        <a class="btn">新增</a>
+    </div>
+</div>

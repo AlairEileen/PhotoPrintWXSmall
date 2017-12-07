@@ -8,7 +8,7 @@ namespace Tools.ResponseModels
 {
     public class BaseResponseModel<T>
     {
-        public int StatusCode { get; set; }
+        public ActionParams StatusCode { get; set; }
         public T JsonData { get; set; }
         public string ToJson()
         {
