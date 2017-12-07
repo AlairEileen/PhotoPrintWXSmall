@@ -13,12 +13,13 @@ using Tools.Json;
 using MongoDB.Bson;
 using System.IO;
 using Tools.Response;
+using PhotoPrintWXSmall.App_Data;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace PhotoPrintWXSmall.Controllers
 {
-    public class AccountController : Controller
+    public class AccountController: BaseController<AccountData,AccountModel>
     {
         /// <summary>
         /// 请求登录
@@ -30,41 +31,29 @@ namespace PhotoPrintWXSmall.Controllers
         [HttpGet]
         public string GetAccountID(string code, string iv, string encryptedData)
         {
-            BaseResponseModel<AccountModel> responseModel = new BaseResponseModel<AccountModel>();
-
-            AccountModel accountCard = null;
-            WXSmallAppCommon.Models.WXAccountInfo wXAccount = WXSmallAppCommon.WXInteractions.WXLoginAction.ProcessRequest(code, iv, encryptedData);
-            if (wXAccount.OpenId != null)
+            try
             {
-                var filter = Builders<AccountModel>.Filter.And(Builders<AccountModel>.Filter.Eq(x => x.OpenID, wXAccount.OpenId));
-                var collection = new MongoDBTool().GetMongoCollection<AccountModel>();
-                var update = Builders<AccountModel>.Update.Set(x => x.LastChangeTime, DateTime.Now);
-                accountCard = collection.FindOneAndUpdate<AccountModel>(filter, update);
-
-                if (accountCard == null)
+                BaseResponseModel<AccountModel> responseModel = new BaseResponseModel<AccountModel>();
+                WXSmallAppCommon.Models.WXAccountInfo wXAccount = WXSmallAppCommon.WXInteractions.WXLoginAction.ProcessRequest(code, iv, encryptedData);
+                var accountCard = thisData.SaveOrdUpdateAccount(wXAccount);
+                ActionParams stautsCode = ActionParams.code_error;
+                if (accountCard != null)
                 {
-                    //string avatarUrl = DownloadAvatar(wXAccount.AvatarUrl, wXAccount.OpenId);
-                    string avatarUrl = wXAccount.AvatarUrl;
-                    accountCard = new AccountModel() { OpenID = wXAccount.OpenId, AccountName = wXAccount.NickName, Gender = wXAccount.GetGender, AccountAvatar = avatarUrl, CreateTime = DateTime.Now, LastChangeTime = DateTime.Now };
-                    collection.InsertOne(accountCard);
+                    responseModel.JsonData = accountCard;
+                    stautsCode = ActionParams.code_ok;
                 }
+                responseModel.StatusCode = stautsCode;
+                JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings();
+                string[] param = new string[] { "StatusCode", "JsonData", "AccountID" };
+                jsonSerializerSettings.ContractResolver = new LimitPropsContractResolver(param);
+                string jsonString = JsonConvert.SerializeObject(responseModel, jsonSerializerSettings);
+                return jsonString;
             }
-            ActionParams stautsCode = ActionParams.code_error;
-            if (accountCard != null)
+            catch (Exception)
             {
-                responseModel.JsonData = accountCard;
-                stautsCode = ActionParams.code_ok;
+                return JsonResponseModel.ErrorJson;
+                throw;
             }
-            responseModel.StatusCode = stautsCode;
-            JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings();
-
-            string[] param = new string[] { "StatusCode", "JsonData", "AccountID" };
-
-
-            jsonSerializerSettings.ContractResolver = new LimitPropsContractResolver(param);
-            string jsonString = JsonConvert.SerializeObject(responseModel, jsonSerializerSettings);
-            Console.WriteLine("json#####UserInfo:" + jsonString);
-            return jsonString;
         }
 
         /// <summary>
@@ -76,7 +65,7 @@ namespace PhotoPrintWXSmall.Controllers
         {
             try
             {
-                var account = new MongoDBTool().GetMongoCollection<AccountModel>().Find(x => x.AccountID.Equals(new ObjectId(accountID))).FirstOrDefault();
+                var account = thisData.GetAccount(accountID);
                 if (account.OrderLocations == null || account.OrderLocations.Count == 0)
                 {
                     return new BaseResponseModel<string>() { StatusCode = ActionParams.code_null }.ToJson();
@@ -85,16 +74,12 @@ namespace PhotoPrintWXSmall.Controllers
             }
             catch (Exception)
             {
-                return JsonResponseModel.ErrorJson();
+                return JsonResponseModel.ErrorJson;
 
                 throw;
             }
         }
 
-        //public string SaveOrderLocation(string orderLocationID,string Province,string City,string Area,string ContactPhone,string AdressDetail,string ContactName,bool IsDefault)
-        //{
-
-        //}
         /// <summary>
         /// 添加或者修改地址
         /// </summary>
@@ -106,50 +91,13 @@ namespace PhotoPrintWXSmall.Controllers
             {
                 string json = new StreamReader(Request.Body).ReadToEnd();
                 OrderLocation orderLocation = JsonConvert.DeserializeObject<OrderLocation>(json);
-                var collection = new MongoDBTool().GetMongoCollection<AccountModel>();
-                UpdateDefinition<AccountModel> update = null;
-                FilterDefinition<AccountModel> filter = null;
-                ///数据库空收件地址列表处理
-                if (collection.Find(x => x.AccountID.Equals(new ObjectId(accountID))).FirstOrDefault().OrderLocations == null)
-                {
-                    collection.UpdateOne(x => x.AccountID.Equals(new ObjectId(accountID)), Builders<AccountModel>.Update.Set(x => x.OrderLocations, new List<OrderLocation>()));
-                }
-                ///清空默认收件地址
-                if (orderLocation.IsDefault)
-                {
-                    filter = Builders<AccountModel>.Filter.Eq(x => x.AccountID, new ObjectId(accountID))&
-                        Builders<AccountModel>.Filter.Eq("OrderLocations.IsDefault", true);
-                    update = Builders<AccountModel>.Update.Set("OrderLocations.$.IsDefault", false);
-                    collection.UpdateOne(filter, update);
-                }
-                ///增加收件地址
-                if (orderLocation.OrderLocationID.Equals(ObjectId.Empty))
-                {
-                    orderLocation.OrderLocationID = ObjectId.GenerateNewId();
-                    update = Builders<AccountModel>.Update.Push(x => x.OrderLocations, orderLocation);
-                    filter = Builders<AccountModel>.Filter.Eq(x => x.AccountID, new ObjectId(accountID));
-                }
-                ///修改收件地址
-                else
-                {
-                    filter = Builders<AccountModel>.Filter.Eq(x => x.AccountID, new ObjectId(accountID))
-                        & Builders<AccountModel>.Filter
-                        .Eq("OrderLocations.OrderLocationID", orderLocation.OrderLocationID);
-                    update = Builders<AccountModel>.Update.Set("OrderLocations.$", orderLocation);
-                }
-                ///统一提交
-                collection.UpdateOne(filter, update);
-                return JsonResponseModel.SuccessJson();
-
+                thisData.SaveOrderLocation(accountID,orderLocation);
+                return JsonResponseModel.SuccessJson;
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                
-                    
-                return JsonResponseModel.ErrorJson();
-
-
+                return JsonResponseModel.ErrorJson;
                 throw;
             }
         }
@@ -164,16 +112,17 @@ namespace PhotoPrintWXSmall.Controllers
         {
             try
             {
-                var filter = Builders<AccountModel>.Filter.Eq(x => x.AccountID, new ObjectId(accountID));
-                var update = Builders<AccountModel>.Update.Pull("OrderLocations.$.OrderLocationID", new ObjectId(orderLocationID));
-                new MongoDBTool().GetMongoCollection<AccountModel>().UpdateOne(filter, update);
-                return JsonResponseModel.SuccessJson();
+                thisData.DelOrderLocation(accountID,orderLocationID);
+                return JsonResponseModel.SuccessJson;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return JsonResponseModel.ErrorJson();
+                Console.WriteLine(ex.Message);
+                return JsonResponseModel.ErrorJson;
                 throw;
             }
         }
+
+
     }
 }

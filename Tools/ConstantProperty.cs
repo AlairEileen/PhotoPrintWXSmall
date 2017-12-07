@@ -3,7 +3,7 @@ namespace Tools
 {
     public class ConstantProperty
     {
-        public const string BaseDir = "/home/project_data/psqxcx/";
+        public const string BaseDir = "/home/project_data/xpcyxcx/";
         public const string AvatarDir = "avatar/";
         public const string TempDir = "temp/";
         public const string AlbumDir = "album/";

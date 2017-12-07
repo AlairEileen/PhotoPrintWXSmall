@@ -5,10 +5,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using PhotoPrintWXSmall.Models;
+using PhotoPrintWXSmall.App_Data;
 
 namespace PhotoPrintWXSmall.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : BaseController<HomeData,CompanyModel>
     {
         public IActionResult Index()
         {

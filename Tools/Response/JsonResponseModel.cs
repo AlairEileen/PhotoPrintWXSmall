@@ -17,15 +17,41 @@ namespace Tools.Response
             string[] param = new string[] { "StatusCode" };
             jsonSerializerSettings.ContractResolver = new LimitPropsContractResolver(param);
         }
-
-        public static string SuccessJson()
+        private static string successJson;
+        public static string SuccessJson
         {
-            return JsonConvert.SerializeObject(new BaseResponseModel<string>() { StatusCode = ActionParams.code_ok }, jsonSerializerSettings);
+            get
+            {
+                if (string.IsNullOrEmpty(successJson))
+                {
+                    successJson = JsonConvert.SerializeObject(new BaseResponseModel<string>() { StatusCode = ActionParams.code_ok }, jsonSerializerSettings);
+                }
+                return successJson;
+            }
         }
-        public static string ErrorJson()
+        private static string errorJson;
+        public static string ErrorJson
         {
-            return JsonConvert.SerializeObject(new BaseResponseModel<string>() { StatusCode = ActionParams.code_error }, jsonSerializerSettings);
-
+            get
+            {
+                if (string.IsNullOrEmpty(errorJson))
+                {
+                    errorJson = JsonConvert.SerializeObject(new BaseResponseModel<string>() { StatusCode = ActionParams.code_error }, jsonSerializerSettings);
+                }
+                return errorJson;
+            }
+        }
+        private static string nullJson;
+        public static string NullJson
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(nullJson))
+                {
+                    nullJson = JsonConvert.SerializeObject(new BaseResponseModel<string>() { StatusCode = ActionParams.code_null }, jsonSerializerSettings);
+                }
+                return nullJson;
+            }
         }
     }
 }

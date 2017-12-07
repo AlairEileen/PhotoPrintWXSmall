@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using PhotoPrintWXSmall.App_Data;
+using PhotoPrintWXSmall.Models;
 
 namespace PhotoPrintWXSmall.Controllers
 {
-    public class MerchantController : Controller
+    public class MerchantController : BaseController<MerchantData,GoodsModel>
     {
         public IActionResult Index()
         {
