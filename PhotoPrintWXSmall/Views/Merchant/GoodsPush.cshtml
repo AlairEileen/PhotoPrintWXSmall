@@ -4,9 +4,30 @@
 @{
     PhotoPrintWXSmall.Views.ViewConst.SetRoutType(ViewData, PhotoPrintWXSmall.Views.RoutType.商品添加);
 }
+
 <div class="jumbotron">
-    <h1>商品添加</h1>
+    <h1>商品类型添加与商品添加</h1>
 </div>
+<h2>单张商品添加类型</h2>
+<div class="row" id="oneGoods">
+    <div class="col-xs-6 col-sm-3">
+
+        <p><label>已有冲印类型列表</label><a class="btn" data-toggle="modal" data-target="#pushPrintTypeModal">新增</a></p>
+        <ul class="list-unstyled" id="printList"></ul>
+
+    </div>
+    <div class="col-xs-6 col-sm-3">
+        <p><label>已有纸张类型列表</label><a class="btn" data-toggle="modal" data-target="#pushPaperTypeModal">新增</a></p>
+        <ul class="list-unstyled" id="paperList"></ul>
+
+    </div>
+    <div class="col-xs-6 col-sm-3">
+        <p><label>已有尺寸类型列表</label><a class="btn" data-toggle="modal" data-target="#pushSizeTypeModal">新增</a></p>
+        <ul class="list-unstyled" id="sizeList"></ul>
+    </div>
+</div>
+<br />
+<h2>商品添加</h2>
 <div class="row">
     <div class="col-xs-6 col-sm-3">
         <label>选择商品类型</label>
@@ -16,33 +37,241 @@
         </select>
     </div>
 </div>
-<div class="row" id="oneGoods">
+<div class="row">
     <div class="col-xs-6 col-sm-3">
-        <label>选择或新增商品冲印类型</label>
-        <select class="form-control">
-            <option>冷裱</option>
-            <option>普通冲印</option>
-            <option>塑封</option>
-        </select>
-        <a class="btn">新增</a>
+        <label>选择冲印类型</label>
+        <select class="form-control" id="printSelect"></select>
     </div>
     <div class="col-xs-6 col-sm-3">
-        <label>选择或新增商品相纸</label>
-        <select class="form-control">
-            <option>冷裱</option>
-            <option>普通冲印</option>
-            <option>塑封</option>
-        </select>
-        <a class="btn">新增</a>
-
+        <label>选择纸张</label>
+        <select class="form-control" id="paperSelect"></select>
     </div>
     <div class="col-xs-6 col-sm-3">
-        <label>选择或新增商品尺寸</label>
-        <select class="form-control">
-            <option>冷裱</option>
-            <option>普通冲印</option>
-            <option>塑封</option>
-        </select>
-        <a class="btn">新增</a>
+        <label>选择尺寸</label>
+        <select class="form-control" id="sizeSelect"></select>
+    </div>
+    <div class="col-xs-6 col-sm-3">
+        <label id="pushGoodsPreMessage" class="label-danger"></label>
     </div>
 </div>
+<div class="row">
+   
+    <div class="col-xs-6 col-sm-3">
+        <label>填写价格</label>
+        <input type="number" class="form-control" id="goodsPricePush" />
+    </div>
+   
+</div>
+<div class="row">
+    <div class="col-xs-6 col-sm-3"></div>
+    <div class="col-xs-6 col-sm-3"></div>
+    <div class="col-xs-6 col-sm-3"></div>
+        <div class="col-xs-6 col-sm-3" style="vertical-align:middle">
+            <button class="btn btn-primary" onclick="pushGoodsOne()">新增或者修改商品</button>
+        </div>
+    </div>
+
+<div class="modal fade" id="pushPrintTypeModal" tabindex="-1" role="dialog" aria-labelledby="pushPrintTypeTitle" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="pushPrintTypeTitle">新增冲印类型</h4>
+            </div>
+            <div class="modal-body">
+                <input class="form-control" type="text" id="pushPrintTypeName" />
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="pushPrintTypeClose" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" onclick="doPushType(0)" class="btn btn-primary">提交</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="pushPaperTypeModal" tabindex="-1" role="dialog" aria-labelledby="pushPaperTypeTitle" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="pushPaperTypeTitle">新增纸张</h4>
+            </div>
+            <div class="modal-body">
+                <input class="form-control" type="text" id="pushPaperTypeName" />
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="pushPaperTypeClose" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" onclick="doPushType(1)" class="btn btn-primary">提交</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="pushSizeTypeModal" tabindex="-1" role="dialog" aria-labelledby="pushSizeTypeTitle" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="pushSizeTypeTitle">新增尺寸</h4>
+            </div>
+            <div class="modal-body">
+                <input class="form-control" type="text" id="pushSizeTypeName" />
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="pushSizeTypeClose" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" onclick="doPushType(2)" class="btn btn-primary">提交</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    //$(function () {
+    //    alert("fdsf");
+    //    loadPrint();
+    //    loadPaper();
+    //    loadSize();
+    //});
+    //$(document).ready(function () {
+    //    alert("fdsf");
+    //    loadPrint();
+    //    loadPaper();
+    //    loadSize();
+    //});
+
+    window.onload = function () {
+        loadPrint();
+        loadPaper();
+        loadSize();
+
+    };
+
+
+    function loadPrint() {
+        var printSelect = $("#printSelect");
+        var printCon = $("#printList");
+        printCon.html("");
+        printSelect.html("");
+        $.getJSON("/Merchant/GetGoodsType", { typeClass: 0 }, function (data, status) {
+
+            if (data.StatusCode == 1000) {
+                $.each(data.JsonData, function (i, item) {
+                    printCon.append("<li>" + item.TypeName + "<li>");
+                    printSelect.append("<option value='" + item.GoodsTypeID + "'>" + item.TypeName + "</option>");
+                });
+            }
+        });
+
+    }
+
+    function loadPaper() {
+        var paperSelect = $("#paperSelect");
+        var printCon = $("#paperList");
+        printCon.html("");
+        paperSelect.html("");
+        $.getJSON("/Merchant/GetGoodsType", { typeClass: 1 }, function (data, status) {
+
+            if (data.StatusCode == 1000) {
+                $.each(data.JsonData, function (i, item) {
+                    printCon.append("<li>" + item.TypeName + "<li>");
+                    paperSelect.append("<option value='" + item.GoodsTypeID + "'>" + item.TypeName + "</option>");
+                });
+            }
+        });
+
+    }
+    function loadSize() {
+
+        var sizeSelect = $("#sizeSelect");
+        var printCon = $("#sizeList");
+        printCon.html("");
+        sizeSelect.html("");
+        $.getJSON("/Merchant/GetGoodsType", { typeClass: 2 }, function (data, status) {
+
+            if (data.StatusCode == 1000) {
+                $.each(data.JsonData, function (i, item) {
+                    printCon.append("<li>" + item.TypeName + "<li>");
+                    sizeSelect.append("<option value='" + item.GoodsTypeID + "'>" + item.TypeName + "</option>");
+                });
+            }
+        });
+    }
+    function doPushType(cla) {
+        var name = "";
+        switch (cla) {
+            case 0:
+                name = $.trim($("#pushPrintTypeName").val());
+                break;
+            case 1:
+                name = $.trim($("#pushPaperTypeName").val());
+                break;
+            case 2:
+                name = $.trim($("#pushSizeTypeName").val());
+                break;
+        }
+        var json = { "TypeName": name, "TypeClass": cla };
+        if (name.length > 0) {
+            $.ajax({
+                type: "post",
+                url: "/Merchant/PushGoodsType",
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify(json),
+                dataType: "json",
+                success: function (message) {
+                    switch (cla) {
+                        case 0:
+                            loadPrint();
+                            break;
+                        case 1:
+                            loadPaper();
+                            break;
+                        case 2:
+                            loadSize();
+                            break;
+                    }
+
+                },
+                error: function (message) {
+                    alert(message);
+
+
+                }
+            });
+
+            //$.getJSON("/Merchant/PushGoodsType", JSON.stringify(json), function (data, status) {
+
+            //    alert(data.StatusCode);
+            //});
+        }
+
+    }
+
+    function pushGoodsOne() {
+        var printSelect = $.trim($("#printSelect").val());
+        var paperSelect = $.trim($("#paperSelect").val());
+        var sizeSelect = $.trim($("#sizeSelect").val());
+        var goodsPricePush = $.trim($("#goodsPricePush").val());
+        if (printSelect.length == 0 || paperSelect.length == 0 || sizeSelect.length == 0 || goodsPricePush.length == 0) {
+            return;
+        }
+        var json = { "SelectedPaperTypeID": paperSelect, "SelectedPrintTypeID": printSelect, "SelectedSizeTypeID": sizeSelect, "GoodsPrice": goodsPricePush };
+
+            $.ajax({
+                type: "post",
+                url: "/Merchant/PushGoodsMenu",
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify(json),
+                dataType: "json",
+                success: function (message) {
+
+                    if (message.StatusCode == 1000) {
+                        alert("添加成功");
+                    } else {
+                        alert("添加失败");
+                    }
+                },
+                error: function (message) {
+                    alert(message);
+
+
+                }
+            });
+    }
+</script>

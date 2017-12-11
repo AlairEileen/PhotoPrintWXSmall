@@ -12,37 +12,88 @@ namespace PhotoPrintWXSmall.Models
 {
     public class GoodsModel
     {
-
         [BsonId]
         [JsonConverter(typeof(ObjectIdConverter))]
         public ObjectId GoodsID { get; set; }
         public GoodsPic Images { get; set; }
+        public GoodsType PaperType { get; set; }
+        public GoodsType PrintType { get; set; }
+        public GoodsType SizeType { get; set; }
+        public decimal GoodsPrice { get; set; }
+        public int PicsNum { get; set; }
+        public GoodsClass GoodsClass { get; set; }
+
     }
+
+
+
     public class GoodsPic
     {
-        public List<FileModel<string>> HeaderPics { get; set; }
-        public List<FileModel<string>> BodyPics { get; set; }
-    }
-    public class GoodsModelType
-    {
-        public string PrintType { get; set; }
-        public List<PrintType> PrintTypeList { get; set; }
-    }
+        [BsonId]
+        [JsonConverter(typeof(ObjectIdConverter))]
+        public ObjectId GoodsPicID { get; set; }
+        public GoodsClass GoodsClass { get; set; }
 
-    public class PrintType
-    {
-        public string PaperType { get; set; }
-        public List<PaperType> PaperTypeList { get; set; }
+        public List<FileModel<string[]>> HeaderPics { get; set; }
+        public List<FileModel<string[]>> BodyPics { get; set; }
     }
 
-    public class PaperType
+    public enum GoodsClass
     {
-        public string SizeType { get; set; }
-        public List<SizeType> SizeTypeList { get; set; }
+        /// <summary>
+        /// 单张照片商品套餐
+        /// </summary>
+        OneGoods=0,
+        /// <summary>
+        /// 套餐商品
+        /// </summary>
+        PlanGoods=1
     }
 
-    public class SizeType
+    public class OneGoodsMenu
     {
+        [BsonId]
+        [JsonConverter(typeof(ObjectIdConverter))]
+        public ObjectId OneGoodsMenuID { get; set; }
+        [JsonConverter(typeof(ObjectIdConverter))]
+        public ObjectId SelectedPaperTypeID { get; set; }
+        [JsonConverter(typeof(ObjectIdConverter))]
+        public ObjectId SelectedPrintTypeID { get; set; }
+        [JsonConverter(typeof(ObjectIdConverter))]
+        public ObjectId SelectedSizeTypeID { get; set; }
+        public List<GoodsType> PaperTypes { get; set; }
+        public List<GoodsType> PrintTypes { get; set; }
+        public List<GoodsType> SizeTypes { get; set; }
+        public decimal GoodsPrice { get; set; }
+    }
 
+    public class GoodsType
+    {
+        [BsonId]
+        [JsonConverter(typeof(ObjectIdConverter))]
+        public ObjectId GoodsTypeID { get; set; }
+        public string TypeName { get; set; }
+        public TypeClass TypeClass { get; set; }
+        /// <summary>
+        /// 存在该商品
+        /// </summary>
+        public bool HasGoods { get; set; }
+        public decimal GoodsPrice { get; set; }
+    }
+
+    public enum TypeClass
+    {
+        /// <summary>
+        /// 冲印
+        /// </summary>
+        Print=0,
+        /// <summary>
+        /// 纸张
+        /// </summary>
+        Paper =1,
+        /// <summary>
+        /// 尺寸
+        /// </summary>
+        Size =2
     }
 }
