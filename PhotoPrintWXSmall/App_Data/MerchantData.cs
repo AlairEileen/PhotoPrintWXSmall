@@ -97,18 +97,19 @@ namespace PhotoPrintWXSmall.App_Data
                     fs.Flush();
                     string[] fileUrls = new string[] { $@"{dbSaveDir}{saveName}{exString}" };
                 }
+              
+                var goodsPicCollection = mongo.GetMongoCollection<GoodsPic>();
+                var goodsPic = goodsPicCollection.Find(x => x.GoodsClass == (GoodsClass)goodsType).FirstOrDefault();
+                if (goodsPic == null)
+                {
+                    goodsPic = new GoodsPic() { GoodsClass = (GoodsClass)goodsType };
+
+                    goodsPicCollection.InsertOne(goodsPic);
+                }
                 ParamsCreate3Img params3Img = new ParamsCreate3Img() { FileName = filename, FileDir = ConstantProperty.GoodsImagesDir };
                 params3Img.OnFinish += fileModel =>
                 {
                     fileModel.FileID = ObjectId.GenerateNewId();
-                    var goodsPicCollection = mongo.GetMongoCollection<GoodsPic>();
-                    var goodsPic = goodsPicCollection.Find(x => x.GoodsClass == (GoodsClass)goodsType).FirstOrDefault();
-                    if (goodsPic == null)
-                    {
-                        goodsPic = new GoodsPic() {GoodsClass= (GoodsClass)goodsType };
-
-                        goodsPicCollection.InsertOne(goodsPic);
-                    }
                     if (picType == 0)
                     {
                         if (goodsPic.HeaderPics == null)
