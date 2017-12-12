@@ -56,7 +56,7 @@ namespace PhotoPrintWXSmall.Models
     {
         [BsonId]
         [JsonConverter(typeof(ObjectIdConverter))]
-        public ObjectId OneGoodsMenuID { get; set; }
+        public ObjectId GoodsID { get; set; }
         [JsonConverter(typeof(ObjectIdConverter))]
         public ObjectId SelectedPaperTypeID { get; set; }
         [JsonConverter(typeof(ObjectIdConverter))]

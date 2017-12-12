@@ -68,6 +68,7 @@ namespace PhotoPrintWXSmall.App_Data
 
             OneGoodsMenu goodsMenu = new OneGoodsMenu()
             {
+                GoodsID = goods != null ? goods.GoodsID : ObjectId.Empty,
                 PaperTypes = paperTypes,
                 PrintTypes = printTypes,
                 SizeTypes = sizeTypes,
@@ -77,6 +78,26 @@ namespace PhotoPrintWXSmall.App_Data
                 GoodsPrice = goods != null ? goods.GoodsPrice : 0
             };
             return goodsMenu;
+        }
+
+        internal GoodsModel GetPlanGoodsInfo(ObjectId goodsID)
+        {
+            return collection.Find(x=>x.GoodsID.Equals(goodsID)).FirstOrDefault();
+        }
+
+        internal List<GoodsModel> GetPlanGoodsList(string planTypeID)
+        {
+            if (string.IsNullOrEmpty(planTypeID))
+            {
+                return collection.Find(x => x.GoodsClass == GoodsClass.PlanGoods).ToList();
+
+            }
+            return collection.Find(x => x.PlanType.GoodsTypeID.Equals(new ObjectId(planTypeID))).ToList();
+        }
+
+        internal List<GoodsType> GetAllPlanType()
+        {
+            return mongo.GetMongoCollection<GoodsType>().Find(x => x.TypeClass == TypeClass.Plan).ToList();
         }
 
         internal GoodsPic GetGoodsPics(GoodsClass goodsClass)
@@ -175,7 +196,6 @@ namespace PhotoPrintWXSmall.App_Data
             f.Eq(x => x.SizeType.GoodsTypeID, sizeTypes[g].GoodsTypeID));
         }
 
-
         private void FilteringType(List<GoodsType> goodsType, Func<FilterDefinitionBuilder<GoodsModel>, int, FilterDefinition<GoodsModel>> func)
         {
             for (int i = 0; i < goodsType.Count; i++)
@@ -225,7 +245,7 @@ namespace PhotoPrintWXSmall.App_Data
         }
 
 
-        private FilterDefinition<GoodsModel> GetFilter(List<GoodsType> goodsTypes,GoodsType goodstype,FilterDefinitionBuilder<GoodsModel> f, int g,GoodsModelFilterType gmft)
+        private FilterDefinition<GoodsModel> GetFilter(List<GoodsType> goodsTypes, GoodsType goodstype, FilterDefinitionBuilder<GoodsModel> f, int g, GoodsModelFilterType gmft)
         {
             switch (gmft)
             {
@@ -255,11 +275,11 @@ namespace PhotoPrintWXSmall.App_Data
     }
     enum GoodsModelFilterType
     {
-        printList=0,
-        print=1,
-        paperList=2,
-        paper=3,
-        sizeList=4,
-        size=5
+        printList = 0,
+        print = 1,
+        paperList = 2,
+        paper = 3,
+        sizeList = 4,
+        size = 5
     }
 }

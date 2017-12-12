@@ -14,6 +14,28 @@ namespace PhotoPrintWXSmall.Models
     {
         public string OpenID { get; set; }
         public List<OrderLocation> OrderLocations { get; set; }
+        /// <summary>
+        /// 购物车
+        /// </summary>
+        public List<Shop> ShoppingCart { get; set; }
+
+        public List<Order> Orders { get; set; }
+    }
+
+    public class Order
+    {
+    }
+
+    public class Shop
+    {
+        [BsonId]
+        [JsonConverter(typeof(ObjectIdConverter))]
+        public ObjectId ShopID { get; set; }
+        public GoodsModel Goods { get; set; }
+        public List<FileModel<string[]>> ShopImages { get; set; }
+        [JsonConverter(typeof(Tools.Json.DateConverterEndMinute))]
+        [BsonDateTimeOptions(Kind =DateTimeKind.Local)]
+        public DateTime CreateTime { get; set; }
     }
 
     public class OrderLocation
@@ -27,4 +49,6 @@ namespace PhotoPrintWXSmall.Models
         public string ContactName { get; set; }
         public bool IsDefault { get; set; }
     }
+
+
 }

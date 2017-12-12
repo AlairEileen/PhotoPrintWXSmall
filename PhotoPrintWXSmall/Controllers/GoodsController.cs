@@ -36,6 +36,7 @@ namespace PhotoPrintWXSmall.Controllers
                 throw;
             }
         }
+
         /// <summary>
         /// 获取商品相关图片（HeaderPics：轮播图，BodyPics：详情图片；图片数组0、1、2：大、中、小图）
         /// </summary>
@@ -47,6 +48,62 @@ namespace PhotoPrintWXSmall.Controllers
             {
                 GoodsPic goodsPic = thisData.GetGoodsPics(goodsClass);
                 return new BaseResponseModel<GoodsPic>() { StatusCode = Tools.ActionParams.code_ok, JsonData = goodsPic }.ToJson();
+            }
+            catch (Exception)
+            {
+                return JsonResponseModel.ErrorJson;
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// 获取套餐商品列表
+        /// </summary>
+        /// <param name="planTypeID">套餐类型ID</param>
+        /// <returns></returns>
+        public string GetPlanGoodsList(string planTypeID)
+        {
+            try
+            {
+                List<GoodsModel> goodsList = thisData.GetPlanGoodsList(planTypeID);
+                return new BaseResponseModel<List<GoodsModel>>() { StatusCode = Tools.ActionParams.code_ok, JsonData = goodsList }.ToJson();
+            }
+            catch (Exception)
+            {
+                return JsonResponseModel.ErrorJson;
+                throw;
+            }
+        }
+       
+        /// <summary>
+        /// 获取套餐商品详情
+        /// </summary>
+        /// <param name="goodsID"></param>
+        /// <returns></returns>
+        public string GetPlanGoodsInfo(string goodsID)
+        {
+            try
+            {
+                var goods = thisData.GetPlanGoodsInfo(new ObjectId(goodsID));
+                return new BaseResponseModel<GoodsModel>() { StatusCode = Tools.ActionParams.code_ok, JsonData = goods }.ToJson();
+            }
+            catch (Exception)
+            {
+                return JsonResponseModel.ErrorJson;
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// 获取所有套餐类型
+        /// </summary>
+        /// <returns></returns>
+        public string GetAllPlanType()
+        {
+            try
+            {
+                List<GoodsType> list = thisData.GetAllPlanType();
+                return new BaseResponseModel<List<GoodsType>>() { StatusCode = Tools.ActionParams.code_ok, JsonData = list }.ToJson();
             }
             catch (Exception)
             {

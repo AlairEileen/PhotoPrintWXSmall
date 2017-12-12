@@ -130,7 +130,11 @@ namespace PhotoPrintWXSmall.Controllers
                 throw;
             }
         }
-
+       
+        /// <summary>
+        /// 添加套餐商品
+        /// </summary>
+        /// <returns></returns>
         public string PushPlanGoods()
         {
             try
@@ -145,7 +149,13 @@ namespace PhotoPrintWXSmall.Controllers
                 throw;
             }
         }
-
+      
+        /// <summary>
+        /// 保存商品文件
+        /// </summary>
+        /// <param name="goodsType"></param>
+        /// <param name="picType"></param>
+        /// <returns></returns>
         public string SaveGoodsFiles(int goodsType, int picType)
         {
             try
