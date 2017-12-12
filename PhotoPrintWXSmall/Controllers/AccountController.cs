@@ -14,12 +14,13 @@ using MongoDB.Bson;
 using System.IO;
 using Tools.Response;
 using PhotoPrintWXSmall.App_Data;
+using Tools.Models;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace PhotoPrintWXSmall.Controllers
 {
-    public class AccountController: BaseController<AccountData,AccountModel>
+    public class AccountController : BaseController<AccountData, AccountModel>
     {
         /// <summary>
         /// 请求登录
@@ -91,7 +92,7 @@ namespace PhotoPrintWXSmall.Controllers
             {
                 string json = new StreamReader(Request.Body).ReadToEnd();
                 OrderLocation orderLocation = JsonConvert.DeserializeObject<OrderLocation>(json);
-                thisData.SaveOrderLocation(accountID,orderLocation);
+                thisData.SaveOrderLocation(accountID, orderLocation);
                 return JsonResponseModel.SuccessJson;
             }
             catch (Exception ex)
@@ -112,7 +113,7 @@ namespace PhotoPrintWXSmall.Controllers
         {
             try
             {
-                thisData.DelOrderLocation(accountID,orderLocationID);
+                thisData.DelOrderLocation(accountID, orderLocationID);
                 return JsonResponseModel.SuccessJson;
             }
             catch (Exception ex)
@@ -123,6 +124,43 @@ namespace PhotoPrintWXSmall.Controllers
             }
         }
 
+        /// <summary>
+        /// 删除文件
+        /// </summary>
+        /// <param name="accountID">账户ID</param>
+        /// <param name="fileID">文件ID</param>
+        /// <returns></returns>
+        public string DelFile(string accountID, string fileID)
+        {
+            try
+            {
+                thisData.DelFile(new ObjectId(accountID), new ObjectId(fileID));
+                return JsonResponseModel.SuccessJson;
+            }
+            catch (Exception)
+            {
+                return JsonResponseModel.ErrorJson;
+                throw;
+            }
+        }
 
+        /// <summary>
+        /// 获取用户所有文件
+        /// </summary>
+        /// <param name="accountID"></param>
+        /// <returns></returns>
+        public string GetAllFile(string accountID)
+        {
+            try
+            {
+                List<FileModel<string[]>> list = thisData.GetAllFile(new ObjectId(accountID));
+                return new BaseResponseModel<List<FileModel<string[]>>>() { StatusCode = ActionParams.code_ok, JsonData = list }.ToJson();
+            }
+            catch (Exception)
+            {
+                return JsonResponseModel.ErrorJson;
+                throw;
+            }
+        }
     }
 }

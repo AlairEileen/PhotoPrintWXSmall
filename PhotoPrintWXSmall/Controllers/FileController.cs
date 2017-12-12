@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using MongoDB.Bson;
 using PhotoPrintWXSmall.App_Data;
 using System;
 using System.Collections.Generic;
@@ -39,18 +40,19 @@ namespace PhotoPrintWXSmall.Controllers
         }
 
 
-      /// <summary>
-      /// 上传单张图片
-      /// </summary>
-      /// <returns></returns>
-        public string UploadImage()
+        /// <summary>
+        /// 上传单张图片
+        /// </summary>
+        /// <param name="accountID">账户ID</param>
+        /// <returns></returns>
+        public string UploadImage(string accountID)
         {
             var files = Request.Form.Files;
             string resultFileId = null;
             BaseResponseModel<string> responseModel = new BaseResponseModel<string>();
             try
             {
-                resultFileId = thisData.SaveOneFile(files[0]);
+                resultFileId = thisData.SaveOneFile(new ObjectId(accountID),files[0]);
                 if (string.IsNullOrEmpty(resultFileId))
                 {
                     return JsonResponseModel.ErrorJson;

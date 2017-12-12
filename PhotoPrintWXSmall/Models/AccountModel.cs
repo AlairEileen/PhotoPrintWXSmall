@@ -20,6 +20,8 @@ namespace PhotoPrintWXSmall.Models
         public List<Shop> ShoppingCart { get; set; }
 
         public List<Order> Orders { get; set; }
+        public List<FileModel<string[]>> UploadImages { get; set; }
+
     }
 
     public class Order
@@ -32,6 +34,7 @@ namespace PhotoPrintWXSmall.Models
         [JsonConverter(typeof(ObjectIdConverter))]
         public ObjectId ShopID { get; set; }
         public GoodsModel Goods { get; set; }
+        public int GoodsCount { get; set; }
         public List<FileModel<string[]>> ShopImages { get; set; }
         [JsonConverter(typeof(Tools.Json.DateConverterEndMinute))]
         [BsonDateTimeOptions(Kind =DateTimeKind.Local)]

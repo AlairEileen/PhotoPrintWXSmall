@@ -8,17 +8,25 @@ using System.Net.Http.Headers;
 using Tools;
 using System.IO;
 using System.Threading;
+using MongoDB.Bson;
+using PhotoPrintWXSmall.Models;
+using MongoDB.Driver;
 
 namespace PhotoPrintWXSmall.App_Data
 {
     public class FileData : BaseData<FileModel<string[]>>
     {
-
-        internal string SaveOneFile(IFormFile file)
+        /// <summary>
+        /// 用户上传照片
+        /// </summary>
+        /// <param name="accountID">账户ID</param>
+        /// <param name="file"></param>
+        /// <returns></returns>
+        internal string SaveOneFile(ObjectId accountID, IFormFile file)
         {
-        string resultFileId="";
+            string resultFileId = "";
 
-        long size = 0;
+            long size = 0;
 
             var filename = ContentDispositionHeaderValue
                                   .Parse(file.ContentDisposition)
@@ -42,9 +50,18 @@ namespace PhotoPrintWXSmall.App_Data
                 fs.Flush();
                 string[] fileUrls = new string[] { $@"{dbSaveDir}{saveName}{exString}" };
             }
+            var accountCollection = mongo.GetMongoCollection<AccountModel>();
+            var account = accountCollection.Find(x=>x.AccountID.Equals(accountID)).FirstOrDefault();
+            if (account.UploadImages==null)
+            {
+                accountCollection.UpdateOne(x=>x.AccountID.Equals(accountID),Builders<AccountModel>.Update.Set(x=>x.UploadImages,new List<FileModel<string[]>>()));
+            }
             ParamsCreate3Img params3Img = new ParamsCreate3Img() { FileName = filename, FileDir = ConstantProperty.AlbumDir };
-            params3Img.OnFinish += fileModel => {
-              mongo.GetMongoCollection<FileModel<string[]>>("FileModel").InsertOne(fileModel);
+            params3Img.OnFinish += fileModel =>
+            {
+                accountCollection.UpdateOne(x=>x.AccountID.Equals(accountID),
+                    Builders<AccountModel>.Update.Push(x=>x.UploadImages,fileModel));
+                //mongo.GetMongoCollection<FileModel<string[]>>("FileModel").InsertOne(fileModel);
                 resultFileId = fileModel.FileID.ToString();
             };
             //ThreadPool.QueueUserWorkItem(new WaitCallback(ImageTool.Create3Img), params3Img);

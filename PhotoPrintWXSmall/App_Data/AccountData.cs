@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WXSmallAppCommon.Models;
+using Tools.Models;
 
 namespace PhotoPrintWXSmall.App_Data
 {
@@ -101,6 +102,17 @@ namespace PhotoPrintWXSmall.App_Data
             var account = collection.Find(filter).FirstOrDefault();
             var update = Builders<AccountModel>.Update.Pull(x => x.OrderLocations, account.OrderLocations.Find(x => x.OrderLocationID.Equals(new ObjectId(orderLocationID))));
             collection.UpdateOne(filter, update);
+        }
+
+        internal void DelFile(ObjectId accountID, ObjectId fileID)
+        {
+            collection.UpdateOne(x => x.AccountID.Equals(accountID),
+                Builders<AccountModel>.Update.Pull("UploadImages.$.FileID", fileID));
+        }
+
+        internal List<FileModel<string[]>> GetAllFile(ObjectId accountID)
+        {
+            return collection.Find(x => x.AccountID.Equals(accountID)).FirstOrDefault().UploadImages;
         }
     }
 }

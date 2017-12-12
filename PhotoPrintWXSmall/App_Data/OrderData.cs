@@ -11,9 +11,6 @@ namespace PhotoPrintWXSmall.App_Data
 {
     public class OrderData : BaseData<AccountModel>
     {
-
-
-
         internal void PushShoppingCart(ObjectId accountID, Shop shop)
         {
             var account = collection.Find(x => x.AccountID.Equals(accountID)).FirstOrDefault();
@@ -29,14 +26,40 @@ namespace PhotoPrintWXSmall.App_Data
                 throw new Exception("图片数量与套餐不符合");
             }
             shop.Goods = goods;
-            var filesCollection = mongo.GetMongoCollection<FileModel<string[]>>();
+            shop.GoodsCount = 1;
+            var filesCollection = mongo.GetMongoCollection<FileModel<string[]>>("FileModel");
             for (int i = 0; i < shop.ShopImages.Count; i++)
             {
-                shop.ShopImages[i] = filesCollection.Find(x => x.FileID.Equals(shop.ShopImages[i].FileID)).FirstOrDefault();
+                var file = filesCollection.Find(x => x.FileID.Equals(shop.ShopImages[i].FileID)).FirstOrDefault();
+                shop.ShopImages[i] = file;
             }
             shop.CreateTime = DateTime.Now;
+            shop.ShopID = ObjectId.GenerateNewId();
             collection.UpdateOne(x => x.AccountID.Equals(accountID),
                 Builders<AccountModel>.Update.Push(x => x.ShoppingCart, shop));
+        }
+
+        internal void ChangeShoppingCartGoodsNum(ObjectId accountID, ObjectId shopID, int num)
+        {
+            var filter = Builders<AccountModel>.Filter;
+            var filterSum = filter.Eq(x => x.AccountID, accountID) & filter.Eq("ShoppingCart.ShopID", shopID);
+            var update = Builders<AccountModel>.Update.Set("ShoppingCart.$.GoodsCount", num);
+            collection.UpdateOne(filterSum, update);
+        }
+
+        internal void DelShopInCart(ObjectId accountID, ObjectId shopID)
+        {
+            var filter = Builders<AccountModel>.Filter;
+            var filterSum = filter.Eq(x => x.AccountID, accountID);
+            var update = Builders<AccountModel>.Update.Pull("ShoppingCart.$.ShopID",shopID);
+            collection.UpdateOne(filterSum, update);
+        }
+
+        internal List<Shop> GetShoppingCart(ObjectId accountID)
+        {
+            var list= collection.Find(x => x.AccountID.Equals(accountID)).FirstOrDefault().ShoppingCart;
+            list.Sort((x,y)=> -x.CreateTime.CompareTo(y.CreateTime));
+            return list;
         }
     }
 }

@@ -78,7 +78,7 @@ namespace PhotoPrintWXSmall.Controllers
         /// <summary>
         /// 获取套餐商品详情
         /// </summary>
-        /// <param name="goodsID"></param>
+        /// <param name="goodsID">商品ID</param>
         /// <returns></returns>
         public string GetPlanGoodsInfo(string goodsID)
         {
