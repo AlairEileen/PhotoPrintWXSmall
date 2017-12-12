@@ -67,12 +67,12 @@
 </div>
 <div class="row">
     <div class="col-xs-6 col-sm-4">
-        <button class="btn btn-primary" onclick="pushGoodsOne()">提交 商品轮播图片</button>
+        <button class="btn btn-primary" onclick="uploadFiles(0)">提交 商品轮播图片</button>
     </div>
     <div class="col-xs-6 col-sm-4"></div>
 
     <div class="col-xs-6 col-sm-4">
-        <button class="btn btn-primary" onclick="pushGoodsOne()">提交 商品详情图片</button>
+        <button class="btn btn-primary" onclick="uploadFiles(1)">提交 商品详情图片</button>
     </div>
 </div>
 <br />
@@ -229,7 +229,7 @@
 </div>
 
 <script>
-    function uploadFiles(goodsType, fileType) {
+    function uploadFiles(fileType) {
 
         var goodsType = $.trim($("#fileUploadGoodsType").val());
         var fileUpload = $("#goodsHeadPics");
@@ -242,6 +242,9 @@
             data.append(files[i].name, files[i]);
         }
         data.append("goodsType", goodsType);
+        data.append("picType", fileType);
+
+
         $.ajax({
             type: "POST",
             url: "/home/UploadFilesAjax",
