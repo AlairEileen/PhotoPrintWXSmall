@@ -11,13 +11,14 @@ using Tools.Response;
 using Tools.ResponseModels;
 using System.Net.Http.Headers;
 using Microsoft.AspNetCore.Hosting.Internal;
+using Microsoft.AspNetCore.Hosting;
 
 namespace PhotoPrintWXSmall.Controllers
 {
     public class MerchantController : BaseController<MerchantData, GoodsModel>
     {
-        HostingEnvironment hostingEnvironment;
-        public MerchantController(HostingEnvironment hostingEnvironment)
+        IHostingEnvironment hostingEnvironment;
+        public MerchantController(IHostingEnvironment hostingEnvironment)
         {
             this.hostingEnvironment = hostingEnvironment;
         }

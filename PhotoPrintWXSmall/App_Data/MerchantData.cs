@@ -12,6 +12,7 @@ using System.IO;
 using Tools.Models;
 using System.Threading;
 using MongoDB.Bson;
+using Microsoft.AspNetCore.Hosting;
 
 namespace PhotoPrintWXSmall.App_Data
 {
@@ -69,7 +70,7 @@ namespace PhotoPrintWXSmall.App_Data
             collection.InsertOne(goodsModel);
         }
 
-        internal void SaveGoodsFiles(int goodsType, int picType, IFormFileCollection files, HostingEnvironment hostingEnvironment)
+        internal void SaveGoodsFiles(int goodsType, int picType, IFormFileCollection files, IHostingEnvironment hostingEnvironment)
         {
             long size = 0;
             foreach (var file in files)
