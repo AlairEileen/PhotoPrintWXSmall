@@ -106,27 +106,27 @@ namespace PhotoPrintWXSmall.App_Data
 
                     goodsPicCollection.InsertOne(goodsPic);
                 }
+                if (goodsPic.HeaderPics == null)
+                {
+                    goodsPicCollection.UpdateOne(x => x.GoodsPicID.Equals(goodsPic.GoodsPicID),
+                        Builders<GoodsPic>.Update.Set(x => x.HeaderPics, new List<FileModel<string[]>>()));
+                }
+                if (goodsPic.BodyPics == null)
+                {
+                    goodsPicCollection.UpdateOne(x => x.GoodsPicID.Equals(goodsPic.GoodsPicID),
+                        Builders<GoodsPic>.Update.Set(x => x.BodyPics, new List<FileModel<string[]>>()));
+                }
                 ParamsCreate3Img params3Img = new ParamsCreate3Img() { FileName = filename, FileDir = ConstantProperty.GoodsImagesDir };
                 params3Img.OnFinish += fileModel =>
                 {
                     fileModel.FileID = ObjectId.GenerateNewId();
                     if (picType == 0)
                     {
-                        if (goodsPic.HeaderPics == null)
-                        {
-                            goodsPicCollection.UpdateOne(x=>x.GoodsPicID.Equals(goodsPic.GoodsPicID),
-                                Builders<GoodsPic>.Update.Set(x=>x.HeaderPics,new List<FileModel<string[]>>()));
-                        }
                         var update = Builders<GoodsPic>.Update.Push(x=>x.HeaderPics,fileModel);
                         goodsPicCollection.UpdateOne(x=>x.GoodsPicID.Equals(goodsPic.GoodsPicID),update);
                     }
                     else
                     {
-                        if (goodsPic.BodyPics == null)
-                        {
-                            goodsPicCollection.UpdateOne(x => x.GoodsPicID.Equals(goodsPic.GoodsPicID),
-                                Builders<GoodsPic>.Update.Set(x => x.BodyPics, new List<FileModel<string[]>>()));
-                        }
                         var update = Builders<GoodsPic>.Update.Push(x => x.BodyPics, fileModel);
                         goodsPicCollection.UpdateOne(x => x.GoodsPicID.Equals(goodsPic.GoodsPicID), update);
                     }
