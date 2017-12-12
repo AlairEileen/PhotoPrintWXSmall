@@ -232,9 +232,9 @@
     function uploadFiles(fileType) {
 
         var goodsType = $.trim($("#fileUploadGoodsType").val());
-        var fileUpload = $("#goodsHeadPics");
+        var fileUpload = $("#goodsHeadPics").get(0);
         if (fileType == 1) {
-            fileUpload = $("#goodsInfoPic");
+            fileUpload = $("#goodsInfoPic").get(0);
         }
         var files = fileUpload.files;
         var data = new FormData();
@@ -247,7 +247,7 @@
 
         $.ajax({
             type: "POST",
-            url: "/home/UploadFilesAjax",
+            url: "/Merchant/SaveGoodsFiles",
             contentType: false,
             processData: false,
             data: data,
