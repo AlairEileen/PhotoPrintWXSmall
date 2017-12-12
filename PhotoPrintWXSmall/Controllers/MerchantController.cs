@@ -9,11 +9,18 @@ using System.IO;
 using Newtonsoft.Json;
 using Tools.Response;
 using Tools.ResponseModels;
+using System.Net.Http.Headers;
+using Microsoft.AspNetCore.Hosting.Internal;
 
 namespace PhotoPrintWXSmall.Controllers
 {
     public class MerchantController : BaseController<MerchantData, GoodsModel>
     {
+        HostingEnvironment hostingEnvironment;
+        public MerchantController(HostingEnvironment hostingEnvironment)
+        {
+            this.hostingEnvironment = hostingEnvironment;
+        }
         public IActionResult Index()
         {
             return View();
@@ -103,6 +110,54 @@ namespace PhotoPrintWXSmall.Controllers
                 return JsonResponseModel.ErrorJson;
                 throw;
             }
+        }
+        /// <summary>
+        /// 添加商品套餐类型
+        /// </summary>
+        /// <param name="planGoodsType"></param>
+        /// <returns></returns>
+        public string PushPlanGoodsType(string planGoodsType)
+        {
+            try
+            {
+                thisData.PushPlanGoodsType(planGoodsType);
+                return JsonResponseModel.SuccessJson;
+            }
+            catch (Exception)
+            {
+                return JsonResponseModel.ErrorJson;
+                throw;
+            }
+        }
+
+        public string PushPlanGoods()
+        {
+            try
+            {
+                string json = new StreamReader(Request.Body).ReadToEnd();
+                var goodsModel = JsonConvert.DeserializeObject<GoodsModel>(json);
+                thisData.PushPlanGoods(goodsModel); return JsonResponseModel.SuccessJson;
+            }
+            catch (Exception)
+            {
+                return JsonResponseModel.ErrorJson;
+                throw;
+            }
+        }
+
+        public string SaveGoodsFiles(int goodsType, int picType)
+        {
+            try
+            {
+                var files = Request.Form.Files;
+                thisData.SaveGoodsFiles(goodsType, picType, files, hostingEnvironment);
+            }
+            catch (Exception)
+            {
+                return JsonResponseModel.ErrorJson;
+                throw;
+            }
+            return JsonResponseModel.SuccessJson;
         }
     }
 }

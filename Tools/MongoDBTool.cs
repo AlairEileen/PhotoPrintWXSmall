@@ -13,7 +13,7 @@ namespace Tools.DB
         private const string lineConn = "mongodb://119.27.179.81:27027";
 
 
-        private const string debugConn = "mongodb://192.168.1.222:27027";
+        private const string debugConn = "mongodb://192.168.2.80:27027";
         /// <summary>
         /// 指定的数据库
         /// </summary>

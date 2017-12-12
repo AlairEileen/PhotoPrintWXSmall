@@ -26,18 +26,70 @@
         <ul class="list-unstyled" id="sizeList"></ul>
     </div>
 </div>
+
 <br />
-<h2>商品添加</h2>
+<h2>套餐商品添加类型</h2>
+<div class="row">
+    <div class="col-xs-6 col-sm-3">
+        <p><label>已有套餐筛选类型列表</label><a class="btn" data-toggle="modal" data-target="#pushPlanTypeModal">新增</a></p>
+        <ul class="list-unstyled" id="planList"></ul>
+    </div>
+</div>
+
+<br />
+<h2>商品图片设置</h2>
 <div class="row">
     <div class="col-xs-6 col-sm-3">
         <label>选择商品类型</label>
-        <select class="form-control">
-            <option>单张商品</option>
-            <option>套餐商品</option>
+        <select class="form-control" id="fileUploadGoodsType">
+            <option value="0">单张商品</option>
+            <option value="1">套餐商品</option>
         </select>
     </div>
 </div>
+<br />
 <div class="row">
+    <div class="col-xs-6 col-sm-4">
+        <input type="file" onchange="loadFile(this,5)" class="hidden" id="goodsHeadPics" multiple />
+        <div class="input-append">
+            <a class="btn btn-default" onclick="$('input[id=goodsHeadPics]').click();">选择 商品轮播图片</a>
+            <span>未选择（必须选择）</span>
+        </div>
+    </div>
+    <div class="col-xs-6 col-sm-4"></div>
+    <div class="col-xs-6 col-sm-4">
+        <input type="file" onchange="loadFile(this,5)" class="hidden" id="goodsInfoPic" multiple />
+        <div class="input-append">
+            <a class="btn btn-default" onclick="$('input[id=goodsInfoPic]').click();">选择 商品详情图片</a>
+            <span>未选择（必须选择）</span>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-xs-6 col-sm-4">
+        <button class="btn btn-primary" onclick="pushGoodsOne()">提交 商品轮播图片</button>
+    </div>
+    <div class="col-xs-6 col-sm-4"></div>
+
+    <div class="col-xs-6 col-sm-4">
+        <button class="btn btn-primary" onclick="pushGoodsOne()">提交 商品详情图片</button>
+    </div>
+</div>
+<br />
+<h2>商品添加</h2>
+
+<div class="row">
+    <div class="col-xs-6 col-sm-3">
+        <label>选择商品类型</label>
+        <select class="form-control" onchange="changePushGoodsType(this)">
+            <option value="0">单张商品</option>
+            <option value="1">套餐商品</option>
+        </select>
+    </div>
+
+</div>
+<div class="row oneGoods">
+    <br />
     <div class="col-xs-6 col-sm-3">
         <label>选择冲印类型</label>
         <select class="form-control" id="printSelect"></select>
@@ -54,23 +106,25 @@
         <label id="pushGoodsPreMessage" class="label-danger"></label>
     </div>
 </div>
-<div class="row">
-   
+
+<div class="row oneGoods">
     <div class="col-xs-6 col-sm-3">
         <label>填写价格</label>
         <input type="number" class="form-control" id="goodsPricePush" />
     </div>
-   
 </div>
-<div class="row">
-    <div class="col-xs-6 col-sm-3"></div>
-    <div class="col-xs-6 col-sm-3"></div>
-    <div class="col-xs-6 col-sm-3"></div>
-        <div class="col-xs-6 col-sm-3" style="vertical-align:middle">
-            <button class="btn btn-primary" onclick="pushGoodsOne()">新增或者修改商品</button>
-        </div>
-    </div>
 
+<div class="row oneGoods">
+    <div class="col-xs-6 col-sm-3"></div>
+    <div class="col-xs-6 col-sm-3"></div>
+    <div class="col-xs-6 col-sm-3"></div>
+    <div class="col-xs-6 col-sm-3" style="vertical-align:middle">
+        <button class="btn btn-primary" onclick="pushGoodsOne()">新增或者修改商品</button>
+    </div>
+</div>
+
+
+<!-- #region 单张商品套餐添加 -->
 <div class="modal fade" id="pushPrintTypeModal" tabindex="-1" role="dialog" aria-labelledby="pushPrintTypeTitle" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -122,27 +176,156 @@
         </div>
     </div>
 </div>
-<script>
-    //$(function () {
-    //    alert("fdsf");
-    //    loadPrint();
-    //    loadPaper();
-    //    loadSize();
-    //});
-    //$(document).ready(function () {
-    //    alert("fdsf");
-    //    loadPrint();
-    //    loadPaper();
-    //    loadSize();
-    //});
+<!-- #endregion 单张商品套餐添加-->
+<!-- #region 套餐类型添加 -->
+<div class="modal fade" id="pushPlanTypeModal" tabindex="-1" role="dialog" aria-labelledby="pushPlanTypeTitle" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="pushPlanTypeTitle">新增套餐筛选类型</h4>
+            </div>
+            <div class="modal-body">
+                <input class="form-control" type="text" id="pushPlanTypeName" />
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="pushPlanTypeClose" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" onclick="doPushPlanType()" class="btn btn-primary">提交</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- #endregion 套餐类型添加-->
 
+
+<div class="row planGoods">
+    <br />
+    <div class="col-xs-6 col-sm-3">
+        <label>填写套餐标题</label>
+        <input type="text" class="form-control" id="planGoodsTitle" />
+    </div>
+    <div class="col-xs-6 col-sm-3">
+        <label>选择套餐筛选类型</label>
+        <select class="form-control" id="planSelect"></select>
+    </div>
+    <div class="col-xs-6 col-sm-3">
+        <label>填写价格套餐照片数量</label>
+        <input type="number" class="form-control" id="planGoodsPicsNum" />
+    </div>
+    <div class="col-xs-6 col-sm-3">
+        <label>填写价格</label>
+        <input type="number" class="form-control" id="planGoodsPricePush" />
+    </div>
+</div>
+
+<div class="row planGoods">
+    <br />
+    <div class="col-xs-6 col-sm-3"></div>
+    <div class="col-xs-6 col-sm-3"></div>
+    <div class="col-xs-6 col-sm-3"></div>
+    <div class="col-xs-6 col-sm-3" style="vertical-align:middle">
+        <button class="btn btn-primary" onclick="pushPlanGoods()">新增套餐</button>
+    </div>
+</div>
+
+<script>
+    function uploadFiles(goodsType, fileType) {
+
+        var goodsType = $.trim($("#fileUploadGoodsType").val());
+        var fileUpload = $("#goodsHeadPics");
+        if (fileType == 1) {
+            fileUpload = $("#goodsInfoPic");
+        }
+        var files = fileUpload.files;
+        var data = new FormData();
+        for (var i = 0; i < files.length; i++) {
+            data.append(files[i].name, files[i]);
+        }
+        data.append("goodsType", goodsType);
+        $.ajax({
+            type: "POST",
+            url: "/home/UploadFilesAjax",
+            contentType: false,
+            processData: false,
+            data: data,
+            success: function (message) {
+                alert(message);
+            },
+            error: function () {
+                alert("There was error uploading files!");
+            }
+        });
+
+    }
+    function loadFile(o, maxLength) {
+        if (maxLength != undefined && o.files.length > maxLength) {
+            alert("最多可以选择" + maxLength + "张");
+            return;
+        }
+        var text = o.files.length == 1 ? o.files[0].name : o.files.length + "张图片";
+        $(o).next().find("span").html(text);
+    }
     window.onload = function () {
         loadPrint();
         loadPaper();
         loadSize();
-
+        loadPlan();
+        $(".planGoods").hide();
     };
 
+    function pushPlanGoods() {
+        var title = $("#planGoodsTitle").val();
+        var planGoodsTitle = $.trim(title);
+        var planSelect = $.trim($("#planSelect").val());
+        var planGoodsPricePush = $.trim($("#planGoodsPricePush").val());
+        var planGoodsPicsNum = $.trim($("#planGoodsPicsNum").val());
+        var json = {
+            "PicsNum": planGoodsPicsNum,
+            "Title": title,
+            "GoodsPrice": planGoodsPricePush,
+            "PlanType": {
+                "GoodsTypeID": planSelect
+            }
+        };
+        if (planGoodsTitle.length > 0 && planGoodsPricePush.length > 0 && planSelect.length > 0 && planGoodsPicsNum.length > 0) {
+            $.ajax({
+                type: "post",
+                url: "/Merchant/PushPlanGoods",
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify(json),
+                dataType: "json",
+                success: function (message) {
+                    alert("添加成功");
+                },
+                error: function (message) {
+                    alert("添加失败");
+                }
+            });
+        }
+    }
+
+    function changePushGoodsType(sel) {
+        var oneGoodsItems = $(".oneGoods");
+        var planGoodsItems = $(".planGoods");
+        if ($(sel).val() == 0) {
+            oneGoodsItems.show();
+            planGoodsItems.hide();
+        } else {
+            oneGoodsItems.hide();
+            planGoodsItems.show();
+        }
+    }
+
+    function doPushPlanType() {
+        var pushPlanTypeName = $.trim($("#pushPlanTypeName").val());
+        if (pushPlanTypeName.length > 0) {
+            $.getJSON("/Merchant/PushPlanGoodsType?planGoodsType=" + pushPlanTypeName, function (data, status) {
+                if (data.StatusCode == 1000) {
+                    loadPlan();
+                }
+            });
+        }
+    }
 
     function loadPrint() {
         var printSelect = $("#printSelect");
@@ -175,7 +358,6 @@
                 });
             }
         });
-
     }
     function loadSize() {
 
@@ -189,6 +371,21 @@
                 $.each(data.JsonData, function (i, item) {
                     printCon.append("<li>" + item.TypeName + "<li>");
                     sizeSelect.append("<option value='" + item.GoodsTypeID + "'>" + item.TypeName + "</option>");
+                });
+            }
+        });
+    }
+    function loadPlan() {
+        var paperSelect = $("#planSelect");
+        var printCon = $("#planList");
+        printCon.html("");
+        paperSelect.html("");
+        $.getJSON("/Merchant/GetGoodsType", { typeClass: 3 }, function (data, status) {
+
+            if (data.StatusCode == 1000) {
+                $.each(data.JsonData, function (i, item) {
+                    printCon.append("<li>" + item.TypeName + "<li>");
+                    paperSelect.append("<option value='" + item.GoodsTypeID + "'>" + item.TypeName + "</option>");
                 });
             }
         });
@@ -253,25 +450,25 @@
         }
         var json = { "SelectedPaperTypeID": paperSelect, "SelectedPrintTypeID": printSelect, "SelectedSizeTypeID": sizeSelect, "GoodsPrice": goodsPricePush };
 
-            $.ajax({
-                type: "post",
-                url: "/Merchant/PushGoodsMenu",
-                contentType: "application/json; charset=utf-8",
-                data: JSON.stringify(json),
-                dataType: "json",
-                success: function (message) {
+        $.ajax({
+            type: "post",
+            url: "/Merchant/PushGoodsMenu",
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify(json),
+            dataType: "json",
+            success: function (message) {
 
-                    if (message.StatusCode == 1000) {
-                        alert("添加成功");
-                    } else {
-                        alert("添加失败");
-                    }
-                },
-                error: function (message) {
-                    alert(message);
-
-
+                if (message.StatusCode == 1000) {
+                    alert("添加成功");
+                } else {
+                    alert("添加失败");
                 }
-            });
+            },
+            error: function (message) {
+                alert(message);
+            }
+        });
     }
+
+
 </script>

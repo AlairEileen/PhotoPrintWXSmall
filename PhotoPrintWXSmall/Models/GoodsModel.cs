@@ -19,8 +19,10 @@ namespace PhotoPrintWXSmall.Models
         public GoodsType PaperType { get; set; }
         public GoodsType PrintType { get; set; }
         public GoodsType SizeType { get; set; }
+        public GoodsType PlanType { get; set; }
         public decimal GoodsPrice { get; set; }
         public int PicsNum { get; set; }
+        public string Title { get; set; }
         public GoodsClass GoodsClass { get; set; }
 
     }
@@ -94,6 +96,10 @@ namespace PhotoPrintWXSmall.Models
         /// <summary>
         /// 尺寸
         /// </summary>
-        Size =2
+        Size =2,
+        /// <summary>
+        /// 套餐类型
+        /// </summary>
+        Plan = 3
     }
 }
