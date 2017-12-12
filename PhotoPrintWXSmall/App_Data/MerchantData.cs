@@ -105,7 +105,9 @@ namespace PhotoPrintWXSmall.App_Data
                     var goodsPic = goodsPicCollection.Find(x => x.GoodsClass == (GoodsClass)goodsType).FirstOrDefault();
                     if (goodsPic == null)
                     {
-                        goodsPic = new GoodsPic() { };
+                        goodsPic = new GoodsPic() {GoodsClass= (GoodsClass)goodsType };
+
+                        goodsPicCollection.InsertOne(goodsPic);
                     }
                     if (picType == 0)
                     {
