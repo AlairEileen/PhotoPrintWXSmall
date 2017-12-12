@@ -79,6 +79,12 @@ namespace PhotoPrintWXSmall.App_Data
             return goodsMenu;
         }
 
+        internal GoodsPic GetGoodsPics(GoodsClass goodsClass)
+        {
+            var goodsPic = mongo.GetMongoCollection<GoodsPic>().Find(x => x.GoodsClass == goodsClass).FirstOrDefault();
+            return goodsPic;
+        }
+
         private void GetNoSizeType(List<GoodsType> printTypes, List<GoodsType> paperTypes, List<GoodsType> sizeTypes, GoodsType selectedPaperType, GoodsType selectedPrintType)
         {
             FilteringType(printTypes, (f, g) =>

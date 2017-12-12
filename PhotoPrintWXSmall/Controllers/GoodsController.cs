@@ -36,5 +36,23 @@ namespace PhotoPrintWXSmall.Controllers
                 throw;
             }
         }
+        /// <summary>
+        /// 获取商品相关图片（HeaderPics：轮播图，BodyPics：详情图片；图片数组0、1、2：大、中、小图）
+        /// </summary>
+        /// <param name="goodsClass">商品类别（0：单张，1：套餐）</param>
+        /// <returns></returns>
+        public string GetGoodsPics(GoodsClass goodsClass)
+        {
+            try
+            {
+                GoodsPic goodsPic = thisData.GetGoodsPics(goodsClass);
+                return new BaseResponseModel<GoodsPic>() { StatusCode = Tools.ActionParams.code_ok, JsonData = goodsPic }.ToJson();
+            }
+            catch (Exception)
+            {
+                return JsonResponseModel.ErrorJson;
+                throw;
+            }
+        }
     }
 }
