@@ -65,18 +65,35 @@ namespace PhotoPrintWXSmall.App_Data
 
         internal void PushOrder(ObjectId accountID, List<Shop> shopList)
         {
+          
+        }
+        /// <summary>
+        /// 创建订单
+        /// </summary>
+        /// <param name="accountID"></param>
+        /// <param name="orderLocationID"></param>
+        /// <param name="shopList"></param>
+        internal void PushOrder(ObjectId accountID, ObjectId orderLocationID, List<Shop> shopList)
+        {
             var account = collection.Find(x => x.AccountID.Equals(accountID)).FirstOrDefault();
+            var orderLocation = account.OrderLocations.Find(x=>x.OrderLocationID.Equals(orderLocationID));
+            if (orderLocation==null)
+            {
+                throw new Exception("订单收件地址错误");
+            }
             if (account.Orders == null)
             {
                 collection.UpdateOne(x => x.AccountID.Equals(accountID),
                     Builders<AccountModel>.Update.Set(x => x.Orders, new List<Order>()));
             }
+
             decimal orderPrice = 0;
             for (int i = 0; i < shopList.Count; i++)
             {
                 shopList[i] = account.ShoppingCart.Find(x => x.ShopID.Equals(shopList[i].ShopID));
                 orderPrice = shopList[i].Goods.GoodsPrice * shopList[i].GoodsCount;
             }
+
             var order = new Order()
             {
                 ShopList = shopList,
@@ -84,10 +101,23 @@ namespace PhotoPrintWXSmall.App_Data
                 CreateTime = DateTime.Now,
                 OrderNumber = new RandomNumber().GetRandom1(),
                 OrderPrice = orderPrice,
-                OrderStatus = OrderStatus.waitingPay
+                OrderStatus = OrderStatus.waitingPay,
+                OrderLocation = orderLocation
             };
             collection.UpdateOne(x => x.AccountID.Equals(accountID),
                 Builders<AccountModel>.Update.Push(x => x.Orders, order));
+        }
+
+        internal void ChangeOrderStatus(ObjectId orderID, OrderStatus orderStatus)
+        {
+            if (orderStatus==OrderStatus.waitingGet)
+            {
+                return;
+            }
+            var filter = Builders<AccountModel>.Filter;
+            var filterSum = filter.Eq("Orders.OrderID", orderID);
+            var update = Builders<AccountModel>.Update.Set("Orders.$.OrderStatus", orderStatus);
+            collection.UpdateOne(filterSum, update);
         }
     }
 }

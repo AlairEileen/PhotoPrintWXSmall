@@ -102,14 +102,35 @@ namespace PhotoPrintWXSmall.Controllers
         /// 创建订单
         /// </summary>
         /// <param name="accountID">账户ID</param>
+        /// <param name="orderLocationID">订单地址ID</param>
         /// <returns></returns>
-        public string PushOrder(string accountID)
+        public string PushOrder(string accountID,string orderLocationID)
         {
+           
             try
             {
                 string json = new StreamReader(Request.Body).ReadToEnd();
                 List<Shop> shopList = JsonConvert.DeserializeObject<List<Shop>>(json);
-                thisData.PushOrder(new ObjectId(accountID), shopList);
+                thisData.PushOrder(new ObjectId(accountID), new ObjectId(orderLocationID), shopList);
+                return JsonResponseModel.SuccessJson;
+            }
+            catch (Exception)
+            {
+                return JsonResponseModel.ErrorJson;
+                throw;
+            }
+        }
+        /// <summary>
+        /// 修改订单状态
+        /// </summary>
+        /// <param name="orderID">订单ID</param>
+        /// <param name="orderStatus">订单状态：（0：待付款，2：待收货，4：完成）</param>
+        /// <returns></returns>
+        public string ChangeOrderStatus(string orderID,OrderStatus orderStatus)
+        {
+            try
+            {
+                thisData.ChangeOrderStatus(new ObjectId(orderID), orderStatus);
                 return JsonResponseModel.SuccessJson;
             }
             catch (Exception)

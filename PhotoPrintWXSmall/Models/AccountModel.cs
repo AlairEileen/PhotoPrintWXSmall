@@ -34,6 +34,7 @@ namespace PhotoPrintWXSmall.Models
         public DateTime CreateTime { get; set; }
         public decimal OrderPrice { get; set; }
         public OrderStatus OrderStatus { get; set; }
+        public OrderLocation OrderLocation { get; set; }
     }
 
     public enum OrderStatus
