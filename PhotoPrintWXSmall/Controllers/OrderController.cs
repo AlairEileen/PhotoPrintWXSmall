@@ -77,7 +77,7 @@ namespace PhotoPrintWXSmall.Controllers
                 throw;
             }
         }
-       
+
         /// <summary>
         /// 获取购物车
         /// </summary>
@@ -90,6 +90,27 @@ namespace PhotoPrintWXSmall.Controllers
                 List<Shop> shoppingCart = thisData.GetShoppingCart(new ObjectId(accountID));
                 return new BaseResponseModel<List<Shop>>() { StatusCode = Tools.ActionParams.code_ok, JsonData = shoppingCart }.ToJson();
 
+            }
+            catch (Exception)
+            {
+                return JsonResponseModel.ErrorJson;
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// 创建订单
+        /// </summary>
+        /// <param name="accountID">账户ID</param>
+        /// <returns></returns>
+        public string PushOrder(string accountID)
+        {
+            try
+            {
+                string json = new StreamReader(Request.Body).ReadToEnd();
+                List<Shop> shopList = JsonConvert.DeserializeObject<List<Shop>>(json);
+                thisData.PushOrder(new ObjectId(accountID), shopList);
+                return JsonResponseModel.SuccessJson;
             }
             catch (Exception)
             {

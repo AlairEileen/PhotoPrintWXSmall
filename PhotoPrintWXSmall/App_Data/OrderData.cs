@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using Tools.Models;
+using Tools.Strings;
 
 namespace PhotoPrintWXSmall.App_Data
 {
@@ -60,6 +61,32 @@ namespace PhotoPrintWXSmall.App_Data
             var list= collection.Find(x => x.AccountID.Equals(accountID)).FirstOrDefault().ShoppingCart;
             list.Sort((x,y)=> -x.CreateTime.CompareTo(y.CreateTime));
             return list;
+        }
+
+        internal void PushOrder(ObjectId accountID, List<Shop> shopList)
+        {
+            var account = collection.Find(x => x.AccountID.Equals(accountID)).FirstOrDefault();
+            if (account.Orders==null)
+            {
+                collection.UpdateOne(x => x.AccountID.Equals(accountID),
+                    Builders<AccountModel>.Update.Set(x=>x.Orders,new List<Order>()));
+            }
+            decimal orderPrice = 0;
+            for (int i = 0; i < shopList.Count; i++)
+            {
+              shopList[i]=  account.ShoppingCart.Find(x=>x.ShopID.Equals(shopList[i].ShopID));
+             orderPrice=   shopList[i].Goods.GoodsPrice * shopList[i].GoodsCount;
+            }
+            var order = new Order()
+            {
+                ShopList = shopList,
+                OrderID = ObjectId.GenerateNewId(),
+                CreateTime = DateTime.Now,
+                OrderNumber = new RandomNumber().GetRandom1(),
+                OrderPrice = orderPrice
+            };
+            collection.UpdateOne(x => x.AccountID.Equals(accountID),
+                Builders<AccountModel>.Update.Push(x=>x.Orders,order));
         }
     }
 }

@@ -26,6 +26,13 @@ namespace PhotoPrintWXSmall.Models
 
     public class Order
     {
+        [BsonId]
+        [JsonConverter(typeof(ObjectIdConverter))]
+        public ObjectId OrderID { get; set; }
+        public string OrderNumber { get; set; }
+        public List<Shop> ShopList { get; set; }
+        public DateTime CreateTime { get; set; }
+        public decimal OrderPrice { get; set; }
     }
 
     public class Shop
