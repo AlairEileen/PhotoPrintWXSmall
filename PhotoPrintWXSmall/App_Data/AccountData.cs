@@ -12,6 +12,7 @@ namespace PhotoPrintWXSmall.App_Data
 {
     public class AccountData : BaseData<AccountModel>
     {
+
         /// <summary>
         /// 调取微信用户，更新或者保存本地用户
         /// </summary>
@@ -36,6 +37,7 @@ namespace PhotoPrintWXSmall.App_Data
             }
             return accountCard;
         }
+
         /// <summary>
         /// 获取账户
         /// </summary>
@@ -46,6 +48,7 @@ namespace PhotoPrintWXSmall.App_Data
             var account = collection.Find(x => x.AccountID.Equals(new ObjectId(accountID))).FirstOrDefault();
             return account;
         }
+
         /// <summary>
         /// 保存或者修改订单地址
         /// </summary>
@@ -91,6 +94,7 @@ namespace PhotoPrintWXSmall.App_Data
             ///统一提交
             collection.UpdateOne(filter, update);
         }
+
         /// <summary>
         /// 删除订单地址
         /// </summary>
@@ -104,12 +108,22 @@ namespace PhotoPrintWXSmall.App_Data
             collection.UpdateOne(filter, update);
         }
 
+        /// <summary>
+        /// 删除文件
+        /// </summary>
+        /// <param name="accountID"></param>
+        /// <param name="fileID"></param>
         internal void DelFile(ObjectId accountID, ObjectId fileID)
         {
             collection.UpdateOne(x => x.AccountID.Equals(accountID),
                 Builders<AccountModel>.Update.Pull("UploadImages.$.FileID", fileID));
         }
 
+        /// <summary>
+        /// 获取用户所有文件
+        /// </summary>
+        /// <param name="accountID"></param>
+        /// <returns></returns>
         internal List<FileModel<string[]>> GetAllFile(ObjectId accountID)
         {
             return collection.Find(x => x.AccountID.Equals(accountID)).FirstOrDefault().UploadImages;
