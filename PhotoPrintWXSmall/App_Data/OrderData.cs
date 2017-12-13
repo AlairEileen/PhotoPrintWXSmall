@@ -52,30 +52,30 @@ namespace PhotoPrintWXSmall.App_Data
         {
             var filter = Builders<AccountModel>.Filter;
             var filterSum = filter.Eq(x => x.AccountID, accountID);
-            var update = Builders<AccountModel>.Update.Pull("ShoppingCart.$.ShopID",shopID);
+            var update = Builders<AccountModel>.Update.Pull("ShoppingCart.$.ShopID", shopID);
             collection.UpdateOne(filterSum, update);
         }
 
         internal List<Shop> GetShoppingCart(ObjectId accountID)
         {
-            var list= collection.Find(x => x.AccountID.Equals(accountID)).FirstOrDefault().ShoppingCart;
-            list.Sort((x,y)=> -x.CreateTime.CompareTo(y.CreateTime));
+            var list = collection.Find(x => x.AccountID.Equals(accountID)).FirstOrDefault().ShoppingCart;
+            list.Sort((x, y) => -x.CreateTime.CompareTo(y.CreateTime));
             return list;
         }
 
         internal void PushOrder(ObjectId accountID, List<Shop> shopList)
         {
             var account = collection.Find(x => x.AccountID.Equals(accountID)).FirstOrDefault();
-            if (account.Orders==null)
+            if (account.Orders == null)
             {
                 collection.UpdateOne(x => x.AccountID.Equals(accountID),
-                    Builders<AccountModel>.Update.Set(x=>x.Orders,new List<Order>()));
+                    Builders<AccountModel>.Update.Set(x => x.Orders, new List<Order>()));
             }
             decimal orderPrice = 0;
             for (int i = 0; i < shopList.Count; i++)
             {
-              shopList[i]=  account.ShoppingCart.Find(x=>x.ShopID.Equals(shopList[i].ShopID));
-             orderPrice=   shopList[i].Goods.GoodsPrice * shopList[i].GoodsCount;
+                shopList[i] = account.ShoppingCart.Find(x => x.ShopID.Equals(shopList[i].ShopID));
+                orderPrice = shopList[i].Goods.GoodsPrice * shopList[i].GoodsCount;
             }
             var order = new Order()
             {
@@ -83,10 +83,11 @@ namespace PhotoPrintWXSmall.App_Data
                 OrderID = ObjectId.GenerateNewId(),
                 CreateTime = DateTime.Now,
                 OrderNumber = new RandomNumber().GetRandom1(),
-                OrderPrice = orderPrice
+                OrderPrice = orderPrice,
+                OrderStatus = OrderStatus.waitingPay
             };
             collection.UpdateOne(x => x.AccountID.Equals(accountID),
-                Builders<AccountModel>.Update.Push(x=>x.Orders,order));
+                Builders<AccountModel>.Update.Push(x => x.Orders, order));
         }
     }
 }

@@ -33,6 +33,35 @@ namespace PhotoPrintWXSmall.Models
         public List<Shop> ShopList { get; set; }
         public DateTime CreateTime { get; set; }
         public decimal OrderPrice { get; set; }
+        public OrderStatus OrderStatus { get; set; }
+    }
+
+    public enum OrderStatus
+    {
+        /// <summary>
+        /// 失效
+        /// </summary>
+        cancel=-1,
+        /// <summary>
+        /// 待付款
+        /// </summary>
+        waitingPay=0,
+        /// <summary>
+        /// 待发货
+        /// </summary>
+        waitingSend=1,
+        /// <summary>
+        /// 待收货
+        /// </summary>
+        waitingGet=2,
+        /// <summary>
+        /// 待评价
+        /// </summary>
+        waitAssess=3,
+        /// <summary>
+        /// 完成
+        /// </summary>
+        finish=4
     }
 
     public class Shop
