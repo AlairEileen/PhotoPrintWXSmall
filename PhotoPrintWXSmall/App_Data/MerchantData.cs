@@ -182,8 +182,10 @@ namespace PhotoPrintWXSmall.App_Data
 收件人：{order.OrderLocation.ContactName}
 收件人联系方式：{order.OrderLocation.ContactPhone}
 收件地址：{order.OrderLocation.ProvinceCityAreaArray[0]}{order.OrderLocation.ProvinceCityAreaArray[1]}{order.OrderLocation.ProvinceCityAreaArray[2]} {order.OrderLocation.AdressDetail}
+{Environment.NewLine}
 订单商品信息--------------
 {shopInfo}{Environment.NewLine}
+合计--------------
 商品数量总计：{goodsCount}
 商品金额总计：{order.OrderPrice}
 订单号码：{order.OrderNumber}";
