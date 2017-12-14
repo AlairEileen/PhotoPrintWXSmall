@@ -171,22 +171,22 @@ namespace PhotoPrintWXSmall.App_Data
                     File.Copy(ConstantProperty.BaseDir + image.FileUrlData[0],picPath+"/"+title+ext);
                 }
 
-            shopInfo += $@"商品标题：{title}{Environment.NewLine}
-商品类型：{type}{Environment.NewLine}
-商品数量：{x.GoodsCount}{Environment.NewLine}
-商品价格：{x.Goods.GoodsPrice}{Environment.NewLine}
-合计：{x.GoodsCount * x.Goods.GoodsPrice}{Environment.NewLine}";
+            shopInfo += $@"商品标题：{title}
+商品类型：{type}
+商品数量：{x.GoodsCount}
+商品价格：{x.Goods.GoodsPrice}
+合计：{x.GoodsCount * x.Goods.GoodsPrice}";
         });
 
-            var orderText = $@"订单收件信息--------------{Environment.NewLine}
-收件人：{order.OrderLocation.ContactName}{Environment.NewLine}
-收件人联系方式：{order.OrderLocation.ContactPhone}{Environment.NewLine}
-收件地址：{order.OrderLocation.ProvinceCityAreaArray[0]}{order.OrderLocation.ProvinceCityAreaArray[1]}{order.OrderLocation.ProvinceCityAreaArray[2]} {order.OrderLocation.AdressDetail}{Environment.NewLine}
-订单商品信息--------------{Environment.NewLine}
+            var orderText = $@"订单收件信息--------------
+收件人：{order.OrderLocation.ContactName}
+收件人联系方式：{order.OrderLocation.ContactPhone}
+收件地址：{order.OrderLocation.ProvinceCityAreaArray[0]}{order.OrderLocation.ProvinceCityAreaArray[1]}{order.OrderLocation.ProvinceCityAreaArray[2]} {order.OrderLocation.AdressDetail}
+订单商品信息--------------
 {shopInfo}{Environment.NewLine}
-商品数量总计：{goodsCount}{Environment.NewLine}
+商品数量总计：{goodsCount}
 商品金额总计：{order.OrderPrice}
-";
+订单号码：{order.OrderNumber}";
         orderInfoFile.Write(orderText);
             orderInfoFile.Flush();
             orderInfoFile.Close();
