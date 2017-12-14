@@ -168,7 +168,7 @@ namespace PhotoPrintWXSmall.App_Data
                 foreach (var image in x.ShopImages)
                 {
                     var ext=image.FileUrlData[0].Substring(image.FileUrlData[0].LastIndexOf("."));
-                    File.Copy(ConstantProperty.BaseDir + image.FileUrlData[0],picPath+"/"+title+ext);
+                    File.Copy(ConstantProperty.BaseDir + image.FileUrlData[0],picPath+"/"+title+ext,true);
                 }
 
             shopInfo += $@"商品标题：{title}
