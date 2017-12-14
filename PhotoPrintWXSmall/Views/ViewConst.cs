@@ -12,7 +12,7 @@ namespace PhotoPrintWXSmall.Views
         {
             return (RoutType)viewData["routType"] == routType;
         }
-        public static void SetRoutType(ViewDataDictionary<dynamic> viewData, RoutType routType)
+        public static void SetRoutType<T>(ViewDataDictionary<T> viewData, RoutType routType)
         {
             viewData["routType"] = routType;
             viewData["Title"] = routType.ToString();

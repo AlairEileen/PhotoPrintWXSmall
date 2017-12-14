@@ -2,6 +2,61 @@
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @{
-    PhotoPrintWXSmall.Views.ViewConst.SetRoutType(ViewData,PhotoPrintWXSmall.Views.RoutType.订单);
+    PhotoPrintWXSmall.Views.ViewConst.SetRoutType(ViewData, PhotoPrintWXSmall.Views.RoutType.订单);
 }
-<h1>Mechant</h1>
+<div class="jumbotron">
+    <h1>订单展示</h1>
+
+</div>
+<h2>筛选订单状态</h2>
+<div class="row">
+    <div class="col-xs-6 col-sm-4">
+        <select class="form-control">
+            <option>全部</option>
+            <option>待发货</option>
+            <option>完成</option>
+        </select>
+    </div>
+</div>
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <td>订单号</td>
+                <td>商品标题</td>
+                <td>订单金额</td>
+                <td>下单时间</td>
+                <td>操作</td>
+            </tr>
+        </thead>
+        <tbody id="orderList">
+            <tr>
+                <td>订单号</td>
+                <td>商品标题</td>
+                <td>订单金额</td>
+                <td>下单时间</td>
+                <td>操作</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<script>
+    $(function () {
+        var orderList=$("#orderList");
+        $.getJSON("/Merchant/GetAllOrders", function (data, status) {
+            if (data.StatusCode ==@Tools.ActionParams.code_ok) {
+                orderList.append("<tr>" +
+                    "<td>" + data.OrderNumber + "</td>" +
+                    "<td>" + data.ShopList[0].Goods.Title + "</td>" +
+                    "<td>" + data.OrderPrice + "</td>" +
+                    "<td>" + data.CreateTime + "</td>" +
+                    "<td>操作" + "</td>" +
+
+                    "</tr>");
+            }
+
+
+        });
+     });
+</script>

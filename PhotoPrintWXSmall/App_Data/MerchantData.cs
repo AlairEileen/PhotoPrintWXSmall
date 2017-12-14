@@ -97,7 +97,7 @@ namespace PhotoPrintWXSmall.App_Data
                     fs.Flush();
                     string[] fileUrls = new string[] { $@"{dbSaveDir}{saveName}{exString}" };
                 }
-              
+
                 var goodsPicCollection = mongo.GetMongoCollection<GoodsPic>();
                 var goodsPic = goodsPicCollection.Find(x => x.GoodsClass == (GoodsClass)goodsType).FirstOrDefault();
                 if (goodsPic == null)
@@ -122,8 +122,8 @@ namespace PhotoPrintWXSmall.App_Data
                     fileModel.FileID = ObjectId.GenerateNewId();
                     if (picType == 0)
                     {
-                        var update = Builders<GoodsPic>.Update.Push(x=>x.HeaderPics,fileModel);
-                        goodsPicCollection.UpdateOne(x=>x.GoodsPicID.Equals(goodsPic.GoodsPicID),update);
+                        var update = Builders<GoodsPic>.Update.Push(x => x.HeaderPics, fileModel);
+                        goodsPicCollection.UpdateOne(x => x.GoodsPicID.Equals(goodsPic.GoodsPicID), update);
                     }
                     else
                     {
@@ -135,6 +135,19 @@ namespace PhotoPrintWXSmall.App_Data
                 //ThreadPool.QueueUserWorkItem(new WaitCallback(ImageTool.Create3Img), params3Img);
                 new Thread(new ParameterizedThreadStart(ImageTool.Create3Img)).Start(params3Img);
             }
+        }
+
+        internal List<Order> GetAllOrders()
+        {
+            List<Order> orders = new List<Order>();
+            mongo.GetMongoCollection<AccountModel>().Find(Builders<AccountModel>.Filter.Empty).ToList().ForEach(x =>
+            {
+                if (x.Orders != null)
+                {
+                    orders.AddRange(orders);
+                }
+            });
+            return orders;
         }
     }
 }

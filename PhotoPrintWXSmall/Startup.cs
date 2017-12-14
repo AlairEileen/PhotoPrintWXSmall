@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using PhotoPrintWXSmall.Middleware;
 
 namespace PhotoPrintWXSmall
 {
@@ -22,6 +23,7 @@ namespace PhotoPrintWXSmall
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
+            services.AddSession();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -38,7 +40,18 @@ namespace PhotoPrintWXSmall
             }
 
             app.UseStaticFiles();
-
+            app.UseSession();
+            app.MapWhen(context =>
+          context.Request.Path.StartsWithSegments("/Merchant"), x =>
+          {
+              x.UseLoginMiddleware();
+              x.UseMvc(routes =>
+              {
+                  routes.MapRoute(
+                      name: "default",
+                      template: "{controller}/{action=Index}/{id?}");
+              });
+          });
             app.UseMvc(routes =>
             {
                 routes.MapRoute(

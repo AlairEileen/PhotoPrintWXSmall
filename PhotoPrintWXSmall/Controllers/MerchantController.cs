@@ -130,7 +130,7 @@ namespace PhotoPrintWXSmall.Controllers
                 throw;
             }
         }
-       
+
         /// <summary>
         /// 添加套餐商品
         /// </summary>
@@ -149,7 +149,7 @@ namespace PhotoPrintWXSmall.Controllers
                 throw;
             }
         }
-      
+
         /// <summary>
         /// 保存商品文件
         /// </summary>
@@ -169,6 +169,20 @@ namespace PhotoPrintWXSmall.Controllers
                 throw;
             }
             return JsonResponseModel.SuccessJson;
+        }
+
+        public string GetAllOrders()
+        {
+            try
+            {
+                List<Order> orders = thisData.GetAllOrders();
+                return new BaseResponseModel<List<Order>>() { StatusCode = Tools.ActionParams.code_ok, JsonData = orders }.ToJson();
+            }
+            catch (Exception)
+            {
+                return JsonResponseModel.ErrorJson;
+                throw;
+            }
         }
     }
 }

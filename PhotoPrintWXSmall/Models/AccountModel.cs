@@ -31,6 +31,8 @@ namespace PhotoPrintWXSmall.Models
         public ObjectId OrderID { get; set; }
         public string OrderNumber { get; set; }
         public List<Shop> ShopList { get; set; }
+        [JsonConverter(typeof(Tools.Json.DateConverterEndMinute))]
+        [BsonDateTimeOptions(Kind = DateTimeKind.Local)]
         public DateTime CreateTime { get; set; }
         public decimal OrderPrice { get; set; }
         public OrderStatus OrderStatus { get; set; }
