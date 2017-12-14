@@ -190,7 +190,10 @@ namespace PhotoPrintWXSmall.App_Data
         orderInfoFile.Write(orderText);
             orderInfoFile.Flush();
             orderInfoFile.Close();
-
+            if (File.Exists(savePath + ".zip"))
+            {
+                File.Delete(savePath + ".zip");
+            }
             ZipFile.CreateFromDirectory(savePath, savePath + ".zip");
             return savePath + ".zip";
     }
