@@ -138,6 +138,11 @@ namespace PhotoPrintWXSmall.App_Data
             }
         }
 
+        /// <summary>
+        /// 生成订单文件
+        /// </summary>
+        /// <param name="orderID"></param>
+        /// <returns></returns>
         internal string GetOrderFile(ObjectId orderID)
         {
             var account = mongo.GetMongoCollection<AccountModel>().Find(Builders<AccountModel>.Filter.Eq("Orders.OrderID", orderID)).FirstOrDefault();
@@ -185,12 +190,6 @@ namespace PhotoPrintWXSmall.App_Data
         orderInfoFile.Write(orderText);
             orderInfoFile.Flush();
             orderInfoFile.Close();
-
-
-            order.ShopList.ForEach(x=> {
-
-            });
-
 
             ZipFile.CreateFromDirectory(savePath, savePath + ".zip");
             return savePath + ".zip";

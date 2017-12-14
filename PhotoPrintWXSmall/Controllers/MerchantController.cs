@@ -190,12 +190,18 @@ namespace PhotoPrintWXSmall.Controllers
                 throw;
             }
         }
-
+        
+        /// <summary>
+        /// 获取订单相关文件
+        /// </summary>
+        /// <param name="orderID"></param>
+        /// <returns></returns>
         public IActionResult GetOrderFile(string orderID)
         {
             var zipFile = thisData.GetOrderFile(new ObjectId(orderID));
             var stream = System.IO.File.OpenRead(zipFile);
             return File(stream, "application/vnd.android.package-archive", Path.GetFileName(zipFile));
         }
+
     }
 }
