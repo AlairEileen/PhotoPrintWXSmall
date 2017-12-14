@@ -145,7 +145,7 @@ namespace PhotoPrintWXSmall.App_Data
 
             var savePath = ConstantProperty.BaseDir + ConstantProperty.TempDir + order.OrderNumber;
             Directory.CreateDirectory(savePath);
-            var orderInfoFilePath = savePath + "订单信息.txt";
+            var orderInfoFilePath = savePath + "/订单信息.txt";
             var orderInfoFile = File.CreateText(orderInfoFilePath);
 
             var shopInfo = "";
@@ -163,7 +163,7 @@ namespace PhotoPrintWXSmall.App_Data
                 foreach (var image in x.ShopImages)
                 {
                     var ext=image.FileUrlData[0].Substring(image.FileUrlData[0].LastIndexOf("."));
-                    File.Copy(ConstantProperty.BaseDir + image.FileUrlData[0],picPath+title+ext);
+                    File.Copy(ConstantProperty.BaseDir + image.FileUrlData[0],picPath+"/"+title+ext);
                 }
 
             shopInfo += $@"商品标题：{title}\r\n
@@ -192,8 +192,8 @@ namespace PhotoPrintWXSmall.App_Data
             });
 
 
-            ZipFile.CreateFromDirectory(savePath, savePath + order.OrderNumber + ".zip");
-            return savePath + order.OrderNumber + ".zip";
+            ZipFile.CreateFromDirectory(savePath, savePath + ".zip");
+            return savePath + ".zip";
     }
 
     internal List<Order> GetAllOrders()
