@@ -6,7 +6,6 @@
 }
 <div class="jumbotron">
     <h1>订单展示</h1>
-
 </div>
 <h2>筛选订单状态</h2>
 <div class="row">
@@ -14,6 +13,8 @@
         <select class="form-control">
             <option>全部</option>
             <option>待发货</option>
+            <option>待下载</option>
+            <option>已下载</option>
             <option>完成</option>
         </select>
     </div>
@@ -29,34 +30,46 @@
                 <td>操作</td>
             </tr>
         </thead>
-        <tbody id="orderList">
-            <tr>
-                <td>订单号</td>
-                <td>商品标题</td>
-                <td>订单金额</td>
-                <td>下单时间</td>
-                <td>操作</td>
-            </tr>
-        </tbody>
+        <tbody id="orderList"></tbody>
     </table>
 </div>
 
 <script>
-    $(function () {
-        var orderList=$("#orderList");
+    window.onload = function () {
+        loadOrder();
+    };
+
+    function loadOrder() {
+          var orderList = $("#orderList");
         $.getJSON("/Merchant/GetAllOrders", function (data, status) {
-            if (data.StatusCode ==@Tools.ActionParams.code_ok) {
-                orderList.append("<tr>" +
-                    "<td>" + data.OrderNumber + "</td>" +
-                    "<td>" + data.ShopList[0].Goods.Title + "</td>" +
-                    "<td>" + data.OrderPrice + "</td>" +
-                    "<td>" + data.CreateTime + "</td>" +
-                    "<td>操作" + "</td>" +
-
-                    "</tr>");
+            if (data.StatusCode ==@((int)Tools.ActionParams.code_ok)) {
+                $.each(data.JsonData, function (i, item) {
+                    var title = item.ShopList[0].Goods.GoodsClass ==@((int)GoodsClass.OneGoods)?
+                        item.ShopList[0].Goods.SizeType.TypeName +
+                        item.ShopList[0].Goods.PrintType.TypeName +
+                        item.ShopList[0].Goods.PaperType.TypeName : item.ShopList[0].Goods.Title;
+                    var downloadText = item.Downloaded ? "重新下载" : "下载";
+                    orderList.append("<tr>" +
+                        "<td>" + item.OrderNumber + "</td>" +
+                        "<td>" +
+                        title +
+                        "</td>" +
+                        "<td>" + item.OrderPrice + "</td>" +
+                        "<td>" + item.CreateTime + "</td>" +
+                        "<td><button class='btn btn-primary' onclick=\"downloadOrder('" + item.OrderID.toString() + "')\">" +
+                        downloadText+
+                        "</button></td>" +
+                        "</tr>");
+                });
             }
-
-
         });
-     });
+
+    }
+
+
+    function downloadOrder(orderID) {
+
+        window.location.href = "/Merchant/GetOrderFile?orderID=" + orderID;
+    }
+
 </script>

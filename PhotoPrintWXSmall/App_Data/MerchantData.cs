@@ -13,6 +13,7 @@ using Tools.Models;
 using System.Threading;
 using MongoDB.Bson;
 using Microsoft.AspNetCore.Hosting;
+using System.IO.Compression;
 
 namespace PhotoPrintWXSmall.App_Data
 {
@@ -137,17 +138,75 @@ namespace PhotoPrintWXSmall.App_Data
             }
         }
 
-        internal List<Order> GetAllOrders()
+        internal string GetOrderFile(ObjectId orderID)
         {
-            List<Order> orders = new List<Order>();
-            mongo.GetMongoCollection<AccountModel>().Find(Builders<AccountModel>.Filter.Empty).ToList().ForEach(x =>
+            var account = mongo.GetMongoCollection<AccountModel>().Find(Builders<AccountModel>.Filter.Eq("Orders.OrderID", orderID)).FirstOrDefault();
+            var order = account.Orders.Find(x => x.OrderID.Equals(orderID));
+
+            var savePath = ConstantProperty.BaseDir + ConstantProperty.TempDir + order.OrderNumber;
+            Directory.CreateDirectory(savePath);
+            var orderInfoFilePath = savePath + "订单信息.txt";
+            var orderInfoFile = File.CreateText(orderInfoFilePath);
+
+            var shopInfo = "";
+            var goodsCount = 0;
+            order.ShopList.ForEach(x =>
             {
-                if (x.Orders != null)
+            goodsCount += x.GoodsCount;
+            var title = x.Goods.GoodsClass == GoodsClass.OneGoods ? x.Goods.SizeType.TypeName + x.Goods.PrintType.TypeName + x.Goods.PaperType.TypeName : x.Goods.Title;
+            var type = x.Goods.GoodsClass == GoodsClass.OneGoods ? "单张" : "套餐";
+            var picPath = savePath + $@"/{type}";
+            if (!Directory.Exists(picPath))
+            {
+                Directory.CreateDirectory(picPath);
+            }
+                foreach (var image in x.ShopImages)
                 {
-                    orders.AddRange(orders);
+                    var ext=image.FileUrlData[0].Substring(image.FileUrlData[0].LastIndexOf("."));
+                    File.Copy(ConstantProperty.BaseDir + image.FileUrlData[0],picPath+title+ext);
                 }
+
+            shopInfo += $@"商品标题：{title}\r\n
+商品类型：{type}\r\n
+商品数量：{x.GoodsCount}\r\n
+商品价格：{x.Goods.GoodsPrice}\r\n
+合计：{x.GoodsCount * x.Goods.GoodsPrice}\r\n";
+        });
+
+            var orderText = $@"订单收件信息--------------\r\n
+收件人：{order.OrderLocation.ContactName}\r\n
+收件人联系方式：{order.OrderLocation.ContactPhone}\r\n
+收件地址：{order.OrderLocation.ProvinceCityAreaArray[0]}{order.OrderLocation.ProvinceCityAreaArray[1]}{order.OrderLocation.ProvinceCityAreaArray[2]} {order.OrderLocation.AdressDetail}\r\n
+订单商品信息--------------\r\n
+{shopInfo}\r\n
+商品数量总计：{goodsCount}\r\n
+商品金额总计：{order.OrderPrice}
+";
+        orderInfoFile.Write(orderText);
+            orderInfoFile.Flush();
+            orderInfoFile.Close();
+
+
+            order.ShopList.ForEach(x=> {
+
             });
-            return orders;
-        }
+
+
+            ZipFile.CreateFromDirectory(savePath, savePath + order.OrderNumber + ".zip");
+            return savePath + order.OrderNumber + ".zip";
     }
+
+    internal List<Order> GetAllOrders()
+    {
+        List<Order> orders = new List<Order>();
+        mongo.GetMongoCollection<AccountModel>().Find(Builders<AccountModel>.Filter.Empty).ToList().ForEach(x =>
+        {
+            if (x.Orders != null)
+            {
+                orders.AddRange(x.Orders);
+            }
+        });
+        return orders;
+    }
+}
 }

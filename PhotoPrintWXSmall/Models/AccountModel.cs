@@ -36,6 +36,10 @@ namespace PhotoPrintWXSmall.Models
         public DateTime CreateTime { get; set; }
         public decimal OrderPrice { get; set; }
         public OrderStatus OrderStatus { get; set; }
+        /// <summary>
+        /// 是否已经下载
+        /// </summary>
+        public bool Downloaded { get; set; }
         public OrderLocation OrderLocation { get; set; }
     }
 

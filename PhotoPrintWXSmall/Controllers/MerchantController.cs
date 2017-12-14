@@ -12,6 +12,8 @@ using Tools.ResponseModels;
 using System.Net.Http.Headers;
 using Microsoft.AspNetCore.Hosting.Internal;
 using Microsoft.AspNetCore.Hosting;
+using MongoDB.Bson;
+using System.IO.Compression;
 
 namespace PhotoPrintWXSmall.Controllers
 {
@@ -171,6 +173,10 @@ namespace PhotoPrintWXSmall.Controllers
             return JsonResponseModel.SuccessJson;
         }
 
+        /// <summary>
+        /// 获取所有订单
+        /// </summary>
+        /// <returns></returns>
         public string GetAllOrders()
         {
             try
@@ -183,6 +189,13 @@ namespace PhotoPrintWXSmall.Controllers
                 return JsonResponseModel.ErrorJson;
                 throw;
             }
+        }
+
+        public IActionResult GetOrderFile(string orderID)
+        {
+            var zipFile = thisData.GetOrderFile(new ObjectId(orderID));
+            var stream = System.IO.File.OpenRead(zipFile);
+            return File(stream, "application/vnd.android.package-archive", Path.GetFileName(zipFile));
         }
     }
 }

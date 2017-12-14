@@ -45,11 +45,11 @@ namespace PhotoPrintWXSmall.Models
         /// <summary>
         /// 单张照片商品套餐
         /// </summary>
-        OneGoods=0,
+        OneGoods = 0,
         /// <summary>
         /// 套餐商品
         /// </summary>
-        PlanGoods=1
+        PlanGoods = 1
     }
 
     public class OneGoodsMenu
@@ -88,15 +88,15 @@ namespace PhotoPrintWXSmall.Models
         /// <summary>
         /// 冲印
         /// </summary>
-        Print=0,
+        Print = 0,
         /// <summary>
         /// 纸张
         /// </summary>
-        Paper =1,
+        Paper = 1,
         /// <summary>
         /// 尺寸
         /// </summary>
-        Size =2,
+        Size = 2,
         /// <summary>
         /// 套餐类型
         /// </summary>
