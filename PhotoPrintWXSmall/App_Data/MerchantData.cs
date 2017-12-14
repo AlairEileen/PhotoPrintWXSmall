@@ -166,20 +166,20 @@ namespace PhotoPrintWXSmall.App_Data
                     File.Copy(ConstantProperty.BaseDir + image.FileUrlData[0],picPath+"/"+title+ext);
                 }
 
-            shopInfo += $@"商品标题：{title}\r\n
-商品类型：{type}\r\n
-商品数量：{x.GoodsCount}\r\n
-商品价格：{x.Goods.GoodsPrice}\r\n
-合计：{x.GoodsCount * x.Goods.GoodsPrice}\r\n";
+            shopInfo += $@"商品标题：{title}{Environment.NewLine}
+商品类型：{type}{Environment.NewLine}
+商品数量：{x.GoodsCount}{Environment.NewLine}
+商品价格：{x.Goods.GoodsPrice}{Environment.NewLine}
+合计：{x.GoodsCount * x.Goods.GoodsPrice}{Environment.NewLine}";
         });
 
-            var orderText = $@"订单收件信息--------------\r\n
-收件人：{order.OrderLocation.ContactName}\r\n
-收件人联系方式：{order.OrderLocation.ContactPhone}\r\n
-收件地址：{order.OrderLocation.ProvinceCityAreaArray[0]}{order.OrderLocation.ProvinceCityAreaArray[1]}{order.OrderLocation.ProvinceCityAreaArray[2]} {order.OrderLocation.AdressDetail}\r\n
-订单商品信息--------------\r\n
-{shopInfo}\r\n
-商品数量总计：{goodsCount}\r\n
+            var orderText = $@"订单收件信息--------------{Environment.NewLine}
+收件人：{order.OrderLocation.ContactName}{Environment.NewLine}
+收件人联系方式：{order.OrderLocation.ContactPhone}{Environment.NewLine}
+收件地址：{order.OrderLocation.ProvinceCityAreaArray[0]}{order.OrderLocation.ProvinceCityAreaArray[1]}{order.OrderLocation.ProvinceCityAreaArray[2]} {order.OrderLocation.AdressDetail}{Environment.NewLine}
+订单商品信息--------------{Environment.NewLine}
+{shopInfo}{Environment.NewLine}
+商品数量总计：{goodsCount}{Environment.NewLine}
 商品金额总计：{order.OrderPrice}
 ";
         orderInfoFile.Write(orderText);
