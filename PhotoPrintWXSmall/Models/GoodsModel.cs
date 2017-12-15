@@ -38,7 +38,6 @@ namespace PhotoPrintWXSmall.Models
         [JsonConverter(typeof(ObjectIdConverter))]
         public ObjectId GoodsPicID { get; set; }
         public GoodsClass GoodsClass { get; set; }
-
         public List<FileModel<string[]>> HeaderPics { get; set; }
         public List<FileModel<string[]>> BodyPics { get; set; }
     }
