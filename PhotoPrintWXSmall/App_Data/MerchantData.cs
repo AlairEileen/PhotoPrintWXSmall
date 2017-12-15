@@ -172,6 +172,25 @@ namespace PhotoPrintWXSmall.App_Data
             }
         }
 
+        internal List<GoodsModel> GetAllGoods(GoodsClass goodsClass)
+        {
+            return collection.Find(x => x.GoodsClass == goodsClass).ToList();
+        }
+
+        internal void PatchCompanyUser(CompanyUser companyUser, string oldPassword)
+        {
+            var companyCollection = mongo.GetMongoCollection<CompanyModel>();
+            var filter = Builders<CompanyModel>.Filter;
+            var filterSum = filter.Eq("CompanyUsers.CompanyUserName", companyUser.CompanyUserName) & filter.Eq("CompanyUsers.CompanyUserPassword", oldPassword);
+            var company = companyCollection.Find(filterSum).FirstOrDefault();
+            if (company == null)
+            {
+                throw new Exception("用户名或者密码错误");
+            }
+            filterSum = filter.Eq(x => x.CompanyID, company.CompanyID) & filter.Eq("CompanyUsers.CompanyUserID", company.CompanyUsers.Find(x => x.CompanyUserName.Equals(companyUser.CompanyUserName) && x.CompanyUserPassword.Equals(oldPassword)).CompanyUserID);
+            companyCollection.UpdateOne(filterSum, Builders<CompanyModel>.Update.Set("CompanyUsers.$.CompanyUserPassword", companyUser.CompanyUserPassword));
+        }
+
         /// <summary>
         /// 生成订单文件
         /// </summary>

@@ -10,7 +10,7 @@ namespace PhotoPrintWXSmall.Models
         public CompanyUser CompanyUser { get; set; }
         public bool HasCompanyUser { get; set; }
         public string VerifyPassword { get; set; }
-
+        public string OldPassword { get; set; }
         public bool ErrorAccount { get; set; }
         public bool ErrorVerify { get; set; }
     }

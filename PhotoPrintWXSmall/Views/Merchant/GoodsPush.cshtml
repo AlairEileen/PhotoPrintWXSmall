@@ -92,15 +92,15 @@
     <br />
     <div class="col-xs-6 col-sm-3">
         <label>选择冲印类型</label>
-        <select class="form-control" id="printSelect"></select>
+        <select class="form-control" id="printSelect" onchange="checkOneGoods()"></select>
     </div>
     <div class="col-xs-6 col-sm-3">
         <label>选择纸张</label>
-        <select class="form-control" id="paperSelect"></select>
+        <select class="form-control" id="paperSelect" onchange="checkOneGoods()"></select>
     </div>
     <div class="col-xs-6 col-sm-3">
         <label>选择尺寸</label>
-        <select class="form-control" id="sizeSelect"></select>
+        <select class="form-control" id="sizeSelect" onchange="checkOneGoods()"></select>
     </div>
     <div class="col-xs-6 col-sm-3">
         <label id="pushGoodsPreMessage" class="label-danger"></label>
@@ -216,7 +216,7 @@
         <label>填写套餐照片数量</label>
         <input type="number" class="form-control" id="planGoodsPicsNum" />
     </div>
-   
+
 </div>
 <div class="row planGoods">
     <div class="col-xs-6 col-sm-3">
@@ -239,6 +239,37 @@
 </div>
 
 <script>
+
+    function checkOneGoods() {
+        var printSelect = $("#printSelect").val();
+        var paperSelect = $("#paperSelect").val();
+        var sizeSelect = $("#sizeSelect").val();
+        var pushGoodsPreMessage = $("#pushGoodsPreMessage");
+        pushGoodsPreMessage.html("");
+        var json = {
+            "SelectedPaperTypeID": paperSelect,
+            "SelectedPrintTypeID": printSelect,
+            "SelectedSizeTypeID": sizeSelect
+        };
+        $.ajax({
+            type: "post",
+            url: "/Merchant/HasGoods",
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify(json),
+            dataType: "json",
+            success: function (message) {
+                if (message.StatusCode ==@((int)Tools.ActionParams.code_ok)) {
+                    var text = message.JsonData ? "已经有该商品" : "没有该商品";
+                    pushGoodsPreMessage.append(text);
+                }
+            },
+            error: function (message) {
+                alert("添加失败");
+            }
+        });
+    }
+
+
     function uploadFiles(fileType) {
 
         var goodsType = $.trim($("#fileUploadGoodsType").val());
@@ -293,7 +324,7 @@
         var planGoodsPricePush = $.trim($("#planGoodsPricePush").val());
         var planGoodsPicsNum = $.trim($("#planGoodsPicsNum").val());
         var planGoodsOldPricePush = $.trim($("#planGoodsOldPricePush").val());
-        
+
         var json = {
             "PicsNum": planGoodsPicsNum,
             "Title": title,
@@ -462,7 +493,7 @@
         var sizeSelect = $.trim($("#sizeSelect").val());
         var goodsPricePush = $.trim($("#goodsPricePush").val());
         var goodsOldPricePush = $.trim($("#goodsOldPricePush").val());
-        
+
         if (printSelect.length == 0 || paperSelect.length == 0 || sizeSelect.length == 0 || goodsPricePush.length == 0) {
             return;
         }

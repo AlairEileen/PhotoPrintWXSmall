@@ -190,7 +190,7 @@ namespace PhotoPrintWXSmall.Controllers
                 throw;
             }
         }
-        
+
         /// <summary>
         /// 获取订单相关文件
         /// </summary>
@@ -202,6 +202,40 @@ namespace PhotoPrintWXSmall.Controllers
             var stream = System.IO.File.OpenRead(zipFile);
             return File(stream, "application/vnd.android.package-archive", Path.GetFileName(zipFile));
         }
+        [HttpPatch]
+        public string PatchCompanyUser()
+        {
+            try
+            {
+                string json = new StreamReader(Request.Body).ReadToEnd();
+                var model = JsonConvert.DeserializeObject<LoginViewModel>(json);
+                if (!model.VerifyPassword.Equals(model.CompanyUser.CompanyUserPassword))
+                {
+                    return JsonResponseModel.NullJson;
+                }
+                thisData.PatchCompanyUser(model.CompanyUser, model.OldPassword);
+                return JsonResponseModel.SuccessJson;
+            }
+            catch (Exception)
+            {
+                return JsonResponseModel.ErrorJson;
+                throw;
+            }
+        }
 
+
+        public string GetAllGoods(GoodsClass goodsClass)
+        {
+            try
+            {
+                List<GoodsModel> list = thisData.GetAllGoods(goodsClass);
+                return new BaseResponseModel<List<GoodsModel>>() { StatusCode = Tools.ActionParams.code_ok, JsonData = list }.ToJson();
+            }
+            catch (Exception)
+            {
+                return JsonResponseModel.ErrorJson;
+                throw;
+            }
+        }
     }
 }

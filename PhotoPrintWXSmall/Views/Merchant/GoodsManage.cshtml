@@ -4,3 +4,86 @@
 @{
     PhotoPrintWXSmall.Views.ViewConst.SetRoutType(ViewData, PhotoPrintWXSmall.Views.RoutType.商品管理);
 }
+<div class="jumbotron">
+    <h1>商品查看</h1>
+</div>
+<h2>单张商品</h2>
+<hr />
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <td>冲印类型</td>
+                <td>纸张</td>
+                <td>尺寸</td>
+                <td>原价</td>
+                <td>现价</td>
+            </tr>
+        </thead>
+        <tbody id="oneGoodsList"></tbody>
+    </table>
+</div>
+
+<h2>套餐商品</h2>
+<hr />
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <td>套餐标题</td>
+                <td>套餐筛选类型</td>
+                <td>套餐照片数量</td>
+                <td>原价</td>
+                <td>现价</td>
+            </tr>
+        </thead>
+        <tbody id="planGoodsList"></tbody>
+    </table>
+</div>
+
+<script>
+    window.onload = function () {
+        loadOneGoodsList();
+        loadPlanGoodsList();
+    };
+    function loadOneGoodsList() {
+        var oneGoodsList = $("#oneGoodsList");
+
+        $.getJSON("/Merchant/GetAllGoods?goodsClass=0", function (data, status) {
+            if (data.StatusCode ==@((int)Tools.ActionParams.code_ok)) {
+                oneGoodsList.html("");
+                $.each(data.JsonData, function (i, item) {
+                    oneGoodsList.append("<tr>"+
+                        "<td>" + item.PrintType.TypeName+"</td>"+
+                        "<td>" + item.PaperType.TypeName +"</td>"+
+                        "<td>" + item.SizeType.TypeName +"</td>"+
+                        "<td>" + item.GoodsOldPrice +"</td>"+
+                        "<td>" + item.GoodsPrice +"</td>"+
+                    "</tr>");
+
+                });
+
+            }
+
+         });
+    }
+    function loadPlanGoodsList() {
+        var planGoodsList = $("#planGoodsList");
+        $.getJSON("/Merchant/GetAllGoods?goodsClass=1", function (data, status) {
+            if (data.StatusCode==@((int)Tools.ActionParams.code_ok)) {
+                planGoodsList.html("");
+                $.each(data.JsonData, function (i, item) {
+                    planGoodsList.append("<tr>" +
+                        "<td>" + item.Title + "</td>" +
+                        "<td>" + item.PlanType.TypeName + "</td>" +
+                        "<td>" + item.PicsNum + "</td>" +
+                        "<td>" + item.GoodsOldPrice + "</td>" +
+                        "<td>" + item.GoodsPrice + "</td>" +
+                        "</tr>");
+
+                });
+            }
+
+         });
+    }
+</script>
