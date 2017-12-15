@@ -21,6 +21,9 @@ namespace PhotoPrintWXSmall.Models
         public GoodsType SizeType { get; set; }
         public GoodsType PlanType { get; set; }
         public decimal GoodsPrice { get; set; }
+        public decimal GoodsOldPrice { get; set; }
+        [BsonIgnore]
+        public decimal GoodsSpread { get; set; }
         public int PicsNum { get; set; }
         public string Title { get; set; }
         public GoodsClass GoodsClass { get; set; }
@@ -66,7 +69,11 @@ namespace PhotoPrintWXSmall.Models
         public List<GoodsType> PaperTypes { get; set; }
         public List<GoodsType> PrintTypes { get; set; }
         public List<GoodsType> SizeTypes { get; set; }
+
         public decimal GoodsPrice { get; set; }
+        public decimal GoodsOldPrice { get; set; }
+        [BsonIgnore]
+        public decimal GoodsSpread { get; set; }
     }
 
     public class GoodsType

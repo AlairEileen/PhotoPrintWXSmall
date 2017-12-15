@@ -19,11 +19,19 @@ namespace PhotoPrintWXSmall.App_Data
 {
     public class MerchantData : BaseData<GoodsModel>
     {
+        /// <summary>
+        /// 保存商品类型
+        /// </summary>
+        /// <param name="goodsType"></param>
         internal void SaveGoodsType(GoodsType goodsType)
         {
             mongo.GetMongoCollection<GoodsType>().InsertOne(goodsType);
         }
 
+        /// <summary>
+        /// 添加单张商品菜单
+        /// </summary>
+        /// <param name="goodsMenu"></param>
         internal void PushOneGoodsMenu(OneGoodsMenu goodsMenu)
         {
             var collection = mongo.GetMongoCollection<GoodsType>();
@@ -34,6 +42,7 @@ namespace PhotoPrintWXSmall.App_Data
             this.collection.InsertOne(new GoodsModel()
             {
                 GoodsPrice = goodsMenu.GoodsPrice,
+                GoodsOldPrice = goodsMenu.GoodsOldPrice,
                 Images = goodsImages,
                 PaperType = paperType,
                 PrintType = printType,
@@ -43,11 +52,21 @@ namespace PhotoPrintWXSmall.App_Data
             });
         }
 
+        /// <summary>
+        /// 获取商品类型
+        /// </summary>
+        /// <param name="typeClass"></param>
+        /// <returns></returns>
         internal List<GoodsType> GetGoodsTypes(TypeClass typeClass)
         {
             return mongo.GetMongoCollection<GoodsType>().Find(x => x.TypeClass == typeClass).ToList();
         }
 
+        /// <summary>
+        /// 是否有该商品
+        /// </summary>
+        /// <param name="goodsMenu"></param>
+        /// <returns></returns>
         internal bool HasGoods(OneGoodsMenu goodsMenu)
         {
             var filter = Builders<GoodsModel>.Filter;
@@ -58,11 +77,19 @@ namespace PhotoPrintWXSmall.App_Data
             return collection.Find(filterSum).FirstOrDefault() != null;
         }
 
+        /// <summary>
+        /// 添加套餐商品类型
+        /// </summary>
+        /// <param name="planGoodsType"></param>
         internal void PushPlanGoodsType(string planGoodsType)
         {
             mongo.GetMongoCollection<GoodsType>().InsertOne(new GoodsType() { TypeName = planGoodsType, TypeClass = TypeClass.Plan });
         }
 
+        /// <summary>
+        /// 添加套餐商品
+        /// </summary>
+        /// <param name="goodsModel"></param>
         internal void PushPlanGoods(GoodsModel goodsModel)
         {
             var goodsType = mongo.GetMongoCollection<GoodsType>().Find(x => x.GoodsTypeID.Equals(goodsModel.PlanType.GoodsTypeID)).FirstOrDefault();
@@ -71,6 +98,13 @@ namespace PhotoPrintWXSmall.App_Data
             collection.InsertOne(goodsModel);
         }
 
+        /// <summary>
+        /// 保存商品图片
+        /// </summary>
+        /// <param name="goodsType"></param>
+        /// <param name="picType"></param>
+        /// <param name="files"></param>
+        /// <param name="hostingEnvironment"></param>
         internal void SaveGoodsFiles(int goodsType, int picType, IFormFileCollection files, IHostingEnvironment hostingEnvironment)
         {
             long size = 0;
@@ -157,26 +191,26 @@ namespace PhotoPrintWXSmall.App_Data
             var goodsCount = 0;
             order.ShopList.ForEach(x =>
             {
-            goodsCount += x.GoodsCount;
-            var title = x.Goods.GoodsClass == GoodsClass.OneGoods ? x.Goods.SizeType.TypeName + x.Goods.PrintType.TypeName + x.Goods.PaperType.TypeName : x.Goods.Title;
-            var type = x.Goods.GoodsClass == GoodsClass.OneGoods ? "单张" : "套餐";
-            var picPath = savePath + $@"/{type}";
-            if (!Directory.Exists(picPath))
-            {
-                Directory.CreateDirectory(picPath);
-            }
+                goodsCount += x.GoodsCount;
+                var title = x.Goods.GoodsClass == GoodsClass.OneGoods ? x.Goods.SizeType.TypeName + x.Goods.PrintType.TypeName + x.Goods.PaperType.TypeName : x.Goods.Title;
+                var type = x.Goods.GoodsClass == GoodsClass.OneGoods ? "单张" : "套餐";
+                var picPath = savePath + $@"/{type}";
+                if (!Directory.Exists(picPath))
+                {
+                    Directory.CreateDirectory(picPath);
+                }
                 foreach (var image in x.ShopImages)
                 {
-                    var ext=image.FileUrlData[0].Substring(image.FileUrlData[0].LastIndexOf("."));
-                    File.Copy(ConstantProperty.BaseDir + image.FileUrlData[0],picPath+"/"+title+ext,true);
+                    var ext = image.FileUrlData[0].Substring(image.FileUrlData[0].LastIndexOf("."));
+                    File.Copy(ConstantProperty.BaseDir + image.FileUrlData[0], picPath + "/" + title + ext, true);
                 }
 
-            shopInfo += $@"商品标题：{title}
+                shopInfo += $@"商品标题：{title}
 商品类型：{type}
 商品数量：{x.GoodsCount}
 商品价格：{x.Goods.GoodsPrice}
 合计：{x.GoodsCount * x.Goods.GoodsPrice}";
-        });
+            });
 
             var orderText = $@"订单收件信息--------------
 收件人：{order.OrderLocation.ContactName}
@@ -189,7 +223,7 @@ namespace PhotoPrintWXSmall.App_Data
 商品数量总计：{goodsCount}
 商品金额总计：{order.OrderPrice}
 订单号码：{order.OrderNumber}";
-        orderInfoFile.Write(orderText);
+            orderInfoFile.Write(orderText);
             orderInfoFile.Flush();
             orderInfoFile.Close();
             if (File.Exists(savePath + ".zip"))
@@ -198,19 +232,23 @@ namespace PhotoPrintWXSmall.App_Data
             }
             ZipFile.CreateFromDirectory(savePath, savePath + ".zip");
             return savePath + ".zip";
-    }
+        }
 
-    internal List<Order> GetAllOrders()
-    {
-        List<Order> orders = new List<Order>();
-        mongo.GetMongoCollection<AccountModel>().Find(Builders<AccountModel>.Filter.Empty).ToList().ForEach(x =>
+        /// <summary>
+        /// 获取所有订单信息
+        /// </summary>
+        /// <returns></returns>
+        internal List<Order> GetAllOrders()
         {
-            if (x.Orders != null)
+            List<Order> orders = new List<Order>();
+            mongo.GetMongoCollection<AccountModel>().Find(Builders<AccountModel>.Filter.Empty).ToList().ForEach(x =>
             {
-                orders.AddRange(x.Orders);
-            }
-        });
-        return orders;
+                if (x.Orders != null)
+                {
+                    orders.AddRange(x.Orders);
+                }
+            });
+            return orders;
+        }
     }
-}
 }

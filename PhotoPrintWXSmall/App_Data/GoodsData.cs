@@ -75,14 +75,18 @@ namespace PhotoPrintWXSmall.App_Data
                 SelectedPaperTypeID = selectedPaperType != null ? selectedPaperType.GoodsTypeID : ObjectId.Empty,
                 SelectedPrintTypeID = selectedPrintType != null ? selectedPrintType.GoodsTypeID : ObjectId.Empty,
                 SelectedSizeTypeID = selectedSizeType != null ? selectedSizeType.GoodsTypeID : ObjectId.Empty,
-                GoodsPrice = goods != null ? goods.GoodsPrice : 0
+                GoodsPrice = goods != null ? goods.GoodsPrice : 0,
+                GoodsOldPrice = goods != null ? goods.GoodsOldPrice : 0,
+                GoodsSpread = goods != null ? goods.GoodsOldPrice-goods.GoodsPrice : 0
             };
             return goodsMenu;
         }
 
         internal GoodsModel GetPlanGoodsInfo(ObjectId goodsID)
         {
-            return collection.Find(x=>x.GoodsID.Equals(goodsID)).FirstOrDefault();
+            var goods = collection.Find(x => x.GoodsID.Equals(goodsID)).FirstOrDefault();
+            goods.GoodsSpread = goods.GoodsOldPrice - goods.GoodsPrice;
+            return goods;
         }
 
         internal List<GoodsModel> GetPlanGoodsList(string planTypeID)
@@ -92,7 +96,9 @@ namespace PhotoPrintWXSmall.App_Data
                 return collection.Find(x => x.GoodsClass == GoodsClass.PlanGoods).ToList();
 
             }
-            return collection.Find(x => x.PlanType.GoodsTypeID.Equals(new ObjectId(planTypeID))).ToList();
+            var list = collection.Find(x => x.PlanType.GoodsTypeID.Equals(new ObjectId(planTypeID))).ToList();
+            list.ForEach(x=> { x.GoodsSpread = x.GoodsOldPrice - x.GoodsPrice; });
+            return list;
         }
 
         internal List<GoodsType> GetAllPlanType()
