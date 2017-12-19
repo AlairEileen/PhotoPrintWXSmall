@@ -22,7 +22,7 @@ namespace PhotoPrintWXSmall.App_Data
         /// <param name="accountID">账户ID</param>
         /// <param name="file"></param>
         /// <returns></returns>
-        internal string SaveOneFile(ObjectId accountID, IFormFile file)
+        internal async Task<string> SaveOneFile(ObjectId accountID, IFormFile file)
         {
             string resultFileId = "";
 
@@ -56,18 +56,21 @@ namespace PhotoPrintWXSmall.App_Data
             {
                 accountCollection.UpdateOne(x=>x.AccountID.Equals(accountID),Builders<AccountModel>.Update.Set(x=>x.UploadImages,new List<FileModel<string[]>>()));
             }
-            ParamsCreate3Img params3Img = new ParamsCreate3Img() { FileName = filename, FileDir = ConstantProperty.AlbumDir };
-            params3Img.OnFinish += fileModel =>
-            {
-                fileModel.FileID = ObjectId.GenerateNewId();
-                accountCollection.UpdateOne(x=>x.AccountID.Equals(accountID),
-                    Builders<AccountModel>.Update.Push(x=>x.UploadImages,fileModel));
-                //mongo.GetMongoCollection<FileModel<string[]>>("FileModel").InsertOne(fileModel);
-                resultFileId = fileModel.FileID.ToString();
-            };
+           
             //ThreadPool.QueueUserWorkItem(new WaitCallback(ImageTool.Create3Img), params3Img);
-            new Thread(new ParameterizedThreadStart(ImageTool.Create3Img)).Start(params3Img);
-            return resultFileId;
+           return await Task.Run(()=>{
+               ParamsCreate3Img params3Img = new ParamsCreate3Img() { FileName = filename, FileDir = ConstantProperty.AlbumDir };
+               params3Img.OnFinish += fileModel =>
+               {
+                   fileModel.FileID = ObjectId.GenerateNewId();
+                   accountCollection.UpdateOne(x => x.AccountID.Equals(accountID),
+                       Builders<AccountModel>.Update.Push(x => x.UploadImages, fileModel));
+                   //mongo.GetMongoCollection<FileModel<string[]>>("FileModel").InsertOne(fileModel);
+                   resultFileId = fileModel.FileID.ToString();
+               };
+               ImageTool.Create3Img(params3Img);
+               return resultFileId;
+           });
         }
     }
 }

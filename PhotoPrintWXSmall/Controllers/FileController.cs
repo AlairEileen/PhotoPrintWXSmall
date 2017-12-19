@@ -45,14 +45,14 @@ namespace PhotoPrintWXSmall.Controllers
         /// </summary>
         /// <param name="accountID">账户ID</param>
         /// <returns></returns>
-        public string UploadImage(string accountID)
+        public async Task<string> UploadImage(string accountID)
         {
             var files = Request.Form.Files;
             string resultFileId = null;
             BaseResponseModel<string> responseModel = new BaseResponseModel<string>();
             try
             {
-                resultFileId = thisData.SaveOneFile(new ObjectId(accountID),files[0]);
+                resultFileId = await thisData.SaveOneFile(new ObjectId(accountID),files[0]);
                 if (string.IsNullOrEmpty(resultFileId))
                 {
                     return JsonResponseModel.ErrorJson;
