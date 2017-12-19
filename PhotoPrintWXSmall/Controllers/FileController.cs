@@ -50,7 +50,7 @@ namespace PhotoPrintWXSmall.Controllers
             var files = Request.Form.Files;
             string resultFileId = null;
             BaseResponseModel<string> responseModel = new BaseResponseModel<string>();
-            try
+            try 
             {
                 resultFileId = await thisData.SaveOneFile(new ObjectId(accountID),files[0]);
                 if (string.IsNullOrEmpty(resultFileId))

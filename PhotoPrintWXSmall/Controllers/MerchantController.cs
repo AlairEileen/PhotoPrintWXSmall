@@ -237,5 +237,20 @@ namespace PhotoPrintWXSmall.Controllers
                 throw;
             }
         }
+
+
+        public async Task<string> SavePlanGoodsListPic()
+        {
+            try
+            {
+                var files = Request.Form.Files;
+                return await thisData.SavePlanGoodsListPic(files[0]);
+            }
+            catch (Exception)
+            {
+                return JsonResponseModel.ErrorJson;
+                throw;
+            }
+        }
     }
 }

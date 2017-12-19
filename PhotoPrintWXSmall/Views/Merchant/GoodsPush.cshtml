@@ -58,7 +58,7 @@
     </div>
     <div class="col-xs-6 col-sm-4"></div>
     <div class="col-xs-6 col-sm-4">
-        <input type="file" onchange="loadFile(this,5)" class="hidden" id="goodsInfoPic" multiple />
+        <input type="file" onchange="loadFile(this)" class="hidden" id="goodsInfoPic" multiple />
         <div class="input-append">
             <a class="btn btn-default" onclick="$('input[id=goodsInfoPic]').click();">选择 商品详情图片</a>
             <span>未选择（必须选择）</span>
@@ -208,14 +208,17 @@
         <label>填写套餐标题</label>
         <input type="text" class="form-control" id="planGoodsTitle" />
     </div>
+
     <div class="col-xs-6 col-sm-3">
         <label>选择套餐筛选类型</label>
         <select class="form-control" id="planSelect"></select>
     </div>
+
     <div class="col-xs-6 col-sm-3">
         <label>填写套餐标签</label>
         <input type="text" class="form-control" id="planGoodsCaption" />
     </div>
+
     <div class="col-xs-6 col-sm-3">
         <label>填写套餐照片数量</label>
         <input type="number" class="form-control" id="planGoodsPicsNum" />
@@ -223,6 +226,13 @@
 
 </div>
 <div class="row planGoods">
+    <div class="col-xs-6 col-sm-3">
+        <input type="file" onchange="loadFile(this)" class="hidden" id="planGoodsListPic" />
+        <div class="input-append">
+            <a class="btn btn-default" onclick="$('input[id=planGoodsListPic]').click();">选择 商品列表图片</a>
+            <span>未选择（必须选择）</span>
+        </div>
+    </div>
     <div class="col-xs-6 col-sm-3">
         <label>填写原价</label>
         <input type="number" class="form-control" id="planGoodsOldPricePush" />
@@ -288,8 +298,6 @@
         }
         data.append("goodsType", goodsType);
         data.append("picType", fileType);
-
-
         $.ajax({
             type: "POST",
             url: "/Merchant/SaveGoodsFiles",
@@ -320,41 +328,67 @@
         loadPlan();
         $(".planGoods").hide();
     };
-
-    function pushPlanGoods() {
-        var title = $("#planGoodsTitle").val();
-        var Caption = $("#planGoodsCaption").val();
-        var planGoodsTitle = $.trim(title);
-        var planGoodsCaption = $.trim(Caption);
-        var planSelect = $.trim($("#planSelect").val());
-        var planGoodsPricePush = $.trim($("#planGoodsPricePush").val());
-        var planGoodsPicsNum = $.trim($("#planGoodsPicsNum").val());
-        var planGoodsOldPricePush = $.trim($("#planGoodsOldPricePush").val());
-
-        var json = {
-            "PicsNum": planGoodsPicsNum,
-            "Title": title,
-            "GoodsPrice": planGoodsPricePush,
-            "GoodsOldPrice": planGoodsOldPricePush,
-            "Caption": Caption,
-            "PlanType": {
-                "GoodsTypeID": planSelect
+    function pushPlanGoodsListPic() {
+        var planGoodsListPic = $("# planGoodsListPic").get(0);
+        var files = planGoodsListPic.files;
+        var data = new FormData();
+        for (var i = 0; i < files.length; i++) {
+            data.append(files[i].name, files[i]);
+        }
+        $.ajax({
+            type: "POST",
+            url: "/Merchant/SavePlanGoodsListPic",
+            contentType: false,
+            processData: false,
+            data: data,
+            success: function (message) {
+                pushPlanGoods(message)
+            },
+            error: function () {
+                alert("There was error uploading files!");
             }
-        };
-        if (planGoodsTitle.length > 0 && planGoodsPricePush.length > 0 && planSelect.length > 0 && planGoodsPicsNum.length > 0) {
-            $.ajax({
-                type: "post",
-                url: "/Merchant/PushPlanGoods",
-                contentType: "application/json; charset=utf-8",
-                data: JSON.stringify(json),
-                dataType: "json",
-                success: function (message) {
-                    alert("添加成功");
-                },
-                error: function (message) {
-                    alert("添加失败");
+        });
+
+    }
+    function pushPlanGoods(fileId) {
+        if (fileId == undefined || fileId == null) {
+            pushPlanGoodsListPic();
+        } else {
+            var title = $("#planGoodsTitle").val();
+            var Caption = $("#planGoodsCaption").val();
+            var planGoodsTitle = $.trim(title);
+            var planGoodsCaption = $.trim(Caption);
+            var planSelect = $.trim($("#planSelect").val());
+            var planGoodsPricePush = $.trim($("#planGoodsPricePush").val());
+            var planGoodsPicsNum = $.trim($("#planGoodsPicsNum").val());
+            var planGoodsOldPricePush = $.trim($("#planGoodsOldPricePush").val());
+
+            var json = {
+                "PicsNum": planGoodsPicsNum,
+                "Title": title,
+                "GoodsPrice": planGoodsPricePush,
+                "GoodsOldPrice": planGoodsOldPricePush,
+                "Caption": Caption,
+                "GoodsListPic": fileId,
+                "PlanType": {
+                    "GoodsTypeID": planSelect
                 }
-            });
+            };
+            if (planGoodsTitle.length > 0 && planGoodsPricePush.length > 0 && planSelect.length > 0 && planGoodsPicsNum.length > 0) {
+                $.ajax({
+                    type: "post",
+                    url: "/Merchant/PushPlanGoods",
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify(json),
+                    dataType: "json",
+                    success: function (message) {
+                        alert("添加成功");
+                    },
+                    error: function (message) {
+                        alert("添加失败");
+                    }
+                });
+            }
         }
     }
 

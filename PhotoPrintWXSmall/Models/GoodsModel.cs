@@ -31,7 +31,7 @@ namespace PhotoPrintWXSmall.Models
         /// 标题
         /// </summary>
         public string Caption { get; set; }
-
+        public FileModel<string[]> GoodsListPic { get; set; }
     }
 
 

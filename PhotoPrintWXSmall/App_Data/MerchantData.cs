@@ -177,6 +177,46 @@ namespace PhotoPrintWXSmall.App_Data
             return collection.Find(x => x.GoodsClass == goodsClass).ToList();
         }
 
+        internal async Task<string> SavePlanGoodsListPic(IFormFile file)
+        {
+            string resultFileId = "";
+
+            long size = 0;
+
+            var filename = ContentDispositionHeaderValue
+                                  .Parse(file.ContentDisposition)
+                                  .FileName
+                                  .Trim('"');
+            string saveDir = $@"{ConstantProperty.BaseDir}{ConstantProperty.GoodsImagesDir}";
+            string dbSaveDir = $@"{ConstantProperty.GoodsImagesDir}";
+            if (!Directory.Exists(saveDir))
+            {
+                Directory.CreateDirectory(saveDir);
+            }
+            string exString = filename.Substring(filename.LastIndexOf("."));
+            string saveName = Guid.NewGuid().ToString("N");
+            filename = $@"{saveDir}{saveName}{exString}";
+
+            size += file.Length;
+            FileModel<string[]> fileCard = new FileModel<string[]>();
+            using (FileStream fs = System.IO.File.Create(filename))
+            {
+                file.CopyTo(fs);
+                fs.Flush();
+                string[] fileUrls = new string[] { $@"{dbSaveDir}{saveName}{exString}" };
+            }
+            return await Task.Run(() => {
+                ParamsCreate3Img params3Img = new ParamsCreate3Img() { FileName = filename, FileDir = ConstantProperty.GoodsImagesDir };
+                params3Img.OnFinish += fileModel =>
+                {
+                    mongo.GetMongoCollection<FileModel<string[]>>("FileModel").InsertOne(fileModel);
+                    resultFileId = fileModel.FileID.ToString();
+                };
+                ImageTool.Create3Img(params3Img);
+                return resultFileId;
+            });
+        }
+
         internal void PatchCompanyUser(CompanyUser companyUser, string oldPassword)
         {
             var companyCollection = mongo.GetMongoCollection<CompanyModel>();
