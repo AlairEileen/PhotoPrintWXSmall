@@ -95,6 +95,8 @@ namespace PhotoPrintWXSmall.App_Data
             var goodsType = mongo.GetMongoCollection<GoodsType>().Find(x => x.GoodsTypeID.Equals(goodsModel.PlanType.GoodsTypeID)).FirstOrDefault();
             goodsModel.PlanType = goodsType;
             goodsModel.GoodsClass = GoodsClass.PlanGoods;
+            var file = mongo.GetMongoCollection<FileModel<string[]>>("FileModel").Find(x => x.FileID.Equals(goodsModel.GoodsListPic.FileID)).FirstOrDefault();
+            goodsModel.GoodsListPic = file;
             collection.InsertOne(goodsModel);
         }
 
