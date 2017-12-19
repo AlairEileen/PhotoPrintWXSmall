@@ -59,6 +59,7 @@ namespace PhotoPrintWXSmall.App_Data
             ParamsCreate3Img params3Img = new ParamsCreate3Img() { FileName = filename, FileDir = ConstantProperty.AlbumDir };
             params3Img.OnFinish += fileModel =>
             {
+                fileModel.FileID = ObjectId.GenerateNewId();
                 accountCollection.UpdateOne(x=>x.AccountID.Equals(accountID),
                     Builders<AccountModel>.Update.Push(x=>x.UploadImages,fileModel));
                 //mongo.GetMongoCollection<FileModel<string[]>>("FileModel").InsertOne(fileModel);

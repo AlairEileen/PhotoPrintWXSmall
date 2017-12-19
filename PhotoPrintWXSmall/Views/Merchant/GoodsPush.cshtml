@@ -213,6 +213,10 @@
         <select class="form-control" id="planSelect"></select>
     </div>
     <div class="col-xs-6 col-sm-3">
+        <label>填写套餐标签</label>
+        <input type="text" class="form-control" id="planGoodsCaption" />
+    </div>
+    <div class="col-xs-6 col-sm-3">
         <label>填写套餐照片数量</label>
         <input type="number" class="form-control" id="planGoodsPicsNum" />
     </div>
@@ -319,7 +323,9 @@
 
     function pushPlanGoods() {
         var title = $("#planGoodsTitle").val();
+        var Caption = $("#planGoodsCaption").val();
         var planGoodsTitle = $.trim(title);
+        var planGoodsCaption = $.trim(Caption);
         var planSelect = $.trim($("#planSelect").val());
         var planGoodsPricePush = $.trim($("#planGoodsPricePush").val());
         var planGoodsPicsNum = $.trim($("#planGoodsPicsNum").val());
@@ -330,6 +336,7 @@
             "Title": title,
             "GoodsPrice": planGoodsPricePush,
             "GoodsOldPrice": planGoodsOldPricePush,
+            "Caption": Caption,
             "PlanType": {
                 "GoodsTypeID": planSelect
             }

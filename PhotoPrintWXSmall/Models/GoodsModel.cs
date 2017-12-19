@@ -27,6 +27,10 @@ namespace PhotoPrintWXSmall.Models
         public int PicsNum { get; set; }
         public string Title { get; set; }
         public GoodsClass GoodsClass { get; set; }
+        /// <summary>
+        /// 标题
+        /// </summary>
+        public string Caption { get; set; }
 
     }
 
