@@ -95,6 +95,29 @@ namespace PhotoPrintWXSmall.App_Data
             collection.UpdateOne(filter, update);
         }
 
+        internal void SetDefaultOrderLocation(ObjectId accountID, ObjectId orderLocationID)
+        {
+            FilterDefinition<AccountModel> filter = Builders<AccountModel>.Filter.Eq(x => x.AccountID, accountID);
+            UpdateDefinition<AccountModel> update = null;
+            var account =collection.Find(x=>x.AccountID.Equals(accountID)).FirstOrDefault();
+            foreach (var item in account.OrderLocations)
+            {
+                filter = Builders<AccountModel>.Filter.Eq(x => x.AccountID, accountID)
+                    & Builders<AccountModel>.Filter
+                .Eq("OrderLocations.OrderLocationID", item.OrderLocationID);
+                update = Builders<AccountModel>.Update.Set("OrderLocations.$.IsDefault", item.OrderLocationID.Equals(orderLocationID)?true: false);
+                collection.UpdateOne(filter, update);
+            }
+        }
+
+        internal OrderLocation GetDefaultOrderLocation(ObjectId accountID)
+        {
+            var account = collection.Find(x => x.AccountID.Equals(accountID)).FirstOrDefault();
+            return account.OrderLocations.Find(x=>x.IsDefault);
+        }
+
+
+
         /// <summary>
         /// 删除订单地址
         /// </summary>

@@ -104,6 +104,45 @@ namespace PhotoPrintWXSmall.Controllers
         }
 
         /// <summary>
+        /// 变更默认地址
+        /// </summary>
+        /// <param name="accountID">账户ID</param>
+        /// <param name="orderLocationID">手机地址ID</param>
+        /// <returns></returns>
+        public string SetDefaultOrderLocation(string accountID,string orderLocationID)
+        {
+            try
+            {
+                thisData.SetDefaultOrderLocation(new ObjectId(accountID),new ObjectId(orderLocationID));
+                return JsonResponseModel.SuccessJson;
+            }
+            catch (Exception)
+            {
+                return JsonResponseModel.ErrorJson;
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// 获取用户默认收件地址
+        /// </summary>
+        /// <param name="accountID">账户ID</param>
+        /// <returns></returns>
+        public string GetDefaultOrderLocation(string accountID)
+        {
+            try
+            {
+                OrderLocation orderLocation = thisData.GetDefaultOrderLocation(new ObjectId(accountID));
+                return new BaseResponseModel<OrderLocation>() { StatusCode = ActionParams.code_ok, JsonData = orderLocation }.ToJson();
+            }
+            catch (Exception)
+            {
+                return JsonResponseModel.ErrorJson;
+                throw;
+            }
+        }
+
+        /// <summary>
         /// 删除收货地址
         /// </summary>
         /// <param name="accountID"></param>
