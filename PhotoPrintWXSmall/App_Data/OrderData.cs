@@ -28,10 +28,10 @@ namespace PhotoPrintWXSmall.App_Data
             }
             shop.Goods = goods;
             shop.GoodsCount = 1;
-            var filesCollection = mongo.GetMongoCollection<FileModel<string[]>>("FileModel");
+            //var filesCollection = mongo.GetMongoCollection<FileModel<string[]>>("FileModel");
             for (int i = 0; i < shop.ShopImages.Count; i++)
             {
-                var file = filesCollection.Find(x => x.FileID.Equals(shop.ShopImages[i].FileID)).FirstOrDefault();
+                var file = account.UploadImages.Find(x => x.FileID.Equals(shop.ShopImages[i].FileID)).FirstOrDefault();
                 shop.ShopImages[i] = file;
             }
             shop.CreateTime = DateTime.Now;
