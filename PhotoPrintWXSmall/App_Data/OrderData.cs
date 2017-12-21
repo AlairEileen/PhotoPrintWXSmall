@@ -31,7 +31,7 @@ namespace PhotoPrintWXSmall.App_Data
             //var filesCollection = mongo.GetMongoCollection<FileModel<string[]>>("FileModel");
             for (int i = 0; i < shop.ShopImages.Count; i++)
             {
-                var file = account.UploadImages.Find(x => x.FileID.Equals(shop.ShopImages[i].FileID)).FirstOrDefault();
+                var file = account.UploadImages.Find(x => x.FileID.Equals(shop.ShopImages[i].FileID));
                 shop.ShopImages[i] = file;
             }
             shop.CreateTime = DateTime.Now;
