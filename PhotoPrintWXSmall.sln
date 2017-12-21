@@ -1,13 +1,17 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27004.2010
+VisualStudioVersion = 15.0.27130.2010
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhotoPrintWXSmall", "PhotoPrintWXSmall\PhotoPrintWXSmall.csproj", "{D39198AA-FC64-412D-9212-E9BF7BE63DC2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PhotoPrintWXSmall", "PhotoPrintWXSmall\PhotoPrintWXSmall.csproj", "{D39198AA-FC64-412D-9212-E9BF7BE63DC2}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tools", "Tools\Tools.csproj", "{700A1EB9-E4DE-4F77-B14E-A641810DC869}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WXSmallAppCommon", "WXSmallAppCommon\WXSmallAppCommon.csproj", "{E4352AA0-0DAA-4B14-A881-7A3CE9C69051}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "We7Tools", "We7Tools\We7Tools.csproj", "{17C1A3E3-A5D6-4D92-B944-3B7C31C4F88D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConfigData", "ConfigData\ConfigData.csproj", "{D669E800-7B3E-4E76-98A5-B0BFCE2AA622}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +31,14 @@ Global
 		{E4352AA0-0DAA-4B14-A881-7A3CE9C69051}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E4352AA0-0DAA-4B14-A881-7A3CE9C69051}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E4352AA0-0DAA-4B14-A881-7A3CE9C69051}.Release|Any CPU.Build.0 = Release|Any CPU
+		{17C1A3E3-A5D6-4D92-B944-3B7C31C4F88D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{17C1A3E3-A5D6-4D92-B944-3B7C31C4F88D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{17C1A3E3-A5D6-4D92-B944-3B7C31C4F88D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{17C1A3E3-A5D6-4D92-B944-3B7C31C4F88D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D669E800-7B3E-4E76-98A5-B0BFCE2AA622}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D669E800-7B3E-4E76-98A5-B0BFCE2AA622}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D669E800-7B3E-4E76-98A5-B0BFCE2AA622}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D669E800-7B3E-4E76-98A5-B0BFCE2AA622}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

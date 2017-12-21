@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Tools\Tools.csproj" />
+    <ProjectReference Include="..\We7Tools\We7Tools.csproj" />
     <ProjectReference Include="..\WXSmallAppCommon\WXSmallAppCommon.csproj" />
   </ItemGroup>
 
