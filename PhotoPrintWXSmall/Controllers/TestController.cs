@@ -4,7 +4,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Tools.ResponseModels;
 using We7Tools;
+using We7Tools.MysqlTool;
 
 namespace PhotoPrintWXSmall.Controllers
 {
@@ -30,6 +32,12 @@ namespace PhotoPrintWXSmall.Controllers
             var fileName = Path.GetFileName(fileUrl);
             System.IO.File.Delete(fileUrl);
             return File(fileByteArray, "application/vnd.android.package-archive", fileName);
+        }
+
+        public string getTestUserList()
+        {
+            var list = new MysqlDBTool().GetTestUserList();
+            return new BaseResponseModel<List<TestUser>>() { JsonData=list }.ToJson();
         }
     }
 }

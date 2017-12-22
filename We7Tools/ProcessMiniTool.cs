@@ -21,7 +21,7 @@ namespace We7Tools
   'redirect_module': '" + siteInfo.redirect_module + @"',
   'template': '" + siteInfo.template + @"'
 };
-//模块暴露
+//模块暴露0
 module.exports = siteinfo;";
             using (var sw = new StreamWriter(We7Config.ProcessMiniFolderPath + "/siteinfo.js", false, Encoding.UTF8))
             {

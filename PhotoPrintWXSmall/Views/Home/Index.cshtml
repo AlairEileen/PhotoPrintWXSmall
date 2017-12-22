@@ -1,7 +1,7 @@
 ﻿@using PhotoPrintWXSmall.Views;
 @model LoginViewModel
 @{
-    ViewConst.SetRoutType(ViewData,RoutType.登录);
+    ViewConst.SetRoutType(ViewData, RoutType.登录);
 }
 <style>
     body {
@@ -51,9 +51,10 @@
             border-top-right-radius: 0;
         }
 </style>
+
 <form class="form-signin" asp-action="DoLogin" method="post">
-    <input asp-for="HasCompanyUser" class="hidden"/>
-    <h2 class="form-signin-heading">管理员@(!Model.HasCompanyUser? "用户设置" : "登录")</h2>
+    <input asp-for="HasCompanyUser" class="hidden" />
+    <h2 class="form-signin-heading">管理员@(!Model.HasCompanyUser ? "用户设置" : "登录")</h2>
     <label for="inputEmail" class="sr-only">用户名</label>
     <input type="text" id="inputEmail" asp-for="CompanyUser.CompanyUserName" class="form-control" placeholder="用户名" required autofocus>
     <label for="inputPassword" class="sr-only">密码</label>
@@ -65,5 +66,5 @@
     <p class=' form-control  label-danger @(Model.ErrorAccount?"":"hidden")'>用户名或者密码有误！</p>
     <p class=' form-control  label-danger @(Model.ErrorVerify?"":"hidden")'>两次密码不一致！</p>
 
-    <button class="btn btn-lg btn-primary btn-block" type="submit">@(!Model.HasCompanyUser? "提交设置" : "登录")</button>
+    <button class="btn btn-lg btn-primary btn-block" type="submit">@(!Model.HasCompanyUser ? "提交设置" : "登录")</button>
 </form>

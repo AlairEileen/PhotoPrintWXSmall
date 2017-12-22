@@ -10,7 +10,7 @@ namespace Tools.DB
         /// 数据库连接
         /// </summary>
         private const string conn = "mongodb://localhost:27027";
-        private const string lineConn = "mongodb://119.27.179.81:27027";
+        private const string lineConn = "mongodb://47.94.208.29:27027";
 
 
         private const string debugConn = "mongodb://192.168.2.80:27027";
@@ -34,6 +34,7 @@ namespace Tools.DB
                 var connectionString = conn;
 #if DEBUG
                 connectionString = debugConn;
+                //connectionString = lineConn;
 #endif
                 MongoClient mongoClient = new MongoClient(connectionString);
                 mongoDatabase = mongoClient.GetDatabase(dbName);

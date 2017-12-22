@@ -15,6 +15,15 @@ namespace PhotoPrintWXSmall.Models
         [JsonConverter(typeof(ObjectIdConverter))]
         public ObjectId CompanyID { get; set; }
         public List<CompanyUser> CompanyUsers { get; set; }
+        public OrderProperty OrderProperty { get; set; }
+    }
+
+    public class OrderProperty
+    {
+        [BsonId]
+        [JsonConverter(typeof(ObjectIdConverter))]
+        public ObjectId OrderPropertyID { get; set; }
+        public decimal DefaultCarriage { get; set; }
     }
 
     public class CompanyUser
