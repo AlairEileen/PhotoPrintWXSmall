@@ -33,8 +33,8 @@ namespace Tools.DB
             {
                 var connectionString = conn;
 #if DEBUG
-                //connectionString = debugConn;
-                connectionString = lineConn;
+                connectionString = debugConn;
+                //connectionString = lineConn;
 #endif
                 MongoClient mongoClient = new MongoClient(connectionString);
                 mongoDatabase = mongoClient.GetDatabase(dbName);
