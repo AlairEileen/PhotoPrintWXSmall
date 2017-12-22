@@ -9,6 +9,6 @@ namespace ConfigData
         /// <summary>
         /// 小程序文件夹目录
         /// </summary>
-        public const string ProcessMiniFolderPath = @"/Repositories/WorkSpaces/WeChat/TestMiniApp";
+        public const string ProcessMiniFolderPath = @"/Home/Share/Temp/luckey";
     }
 }
