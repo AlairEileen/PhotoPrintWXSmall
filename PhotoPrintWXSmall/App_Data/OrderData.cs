@@ -31,11 +31,16 @@ namespace PhotoPrintWXSmall.App_Data
             //var filesCollection = mongo.GetMongoCollection<FileModel<string[]>>("FileModel");
             for (int i = 0; i < shop.ShopImages.Count; i++)
             {
-                var file = account.UploadImages.Find(x => x.FileID.Equals(shop.ShopImages[i].FileID));
+                var file = account.UploadImages.Find(x =>x!=null&&x.FileID!=null&& x.FileID.Equals(shop.ShopImages[i].FileID));
                 shop.ShopImages[i] = file;
             }
             shop.CreateTime = DateTime.Now;
             shop.ShopID = ObjectId.GenerateNewId();
+            if (account.ShoppingCart==null)
+            {
+                collection.UpdateOne(x => x.AccountID.Equals(accountID),
+                   Builders<AccountModel>.Update.Set(x => x.ShoppingCart, new List<Shop>() ));
+            }
             collection.UpdateOne(x => x.AccountID.Equals(accountID),
                 Builders<AccountModel>.Update.Push(x => x.ShoppingCart, shop));
         }

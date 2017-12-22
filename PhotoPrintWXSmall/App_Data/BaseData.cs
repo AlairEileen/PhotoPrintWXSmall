@@ -1,4 +1,5 @@
-﻿using MongoDB.Driver;
+﻿using MongoDB.Bson;
+using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,5 +18,21 @@ namespace PhotoPrintWXSmall.App_Data
             collection = mongo.GetMongoCollection<T>();
         }
 
+        protected BaseData(string collectionName)
+        {
+            mongo = new MongoDBTool();
+            collection = mongo.GetMongoCollection<T>(collectionName);
+        }
+
+        protected T GetModelByID(ObjectId objectId)
+        {
+            return collection.Find(Builders<T>.Filter.Eq("_id", objectId)).FirstOrDefault();
+        }
+
+        protected List<T> GetAllModel()
+        {
+            return collection.Find(Builders<T>.Filter.Empty).ToList();
+        }
+            
     }
 }
