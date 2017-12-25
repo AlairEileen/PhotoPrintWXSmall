@@ -124,9 +124,9 @@ namespace PhotoPrintWXSmall.Controllers
         /// 获取订单列表
         /// </summary>
         /// <param name="accountID">账户ID</param>
-        /// <param name="orderStatus">（-1：失效，0：待付款，1：待发货，2：待收货，3：待评价，4：完成）</param>
+        /// <param name="orderStatus">（-2：全部，-1：失效，0：待付款，1：待发货，2：待收货，3：待评价，4：完成）</param>
         /// <returns></returns>
-        public string GetOrderList(string accountID, OrderStatus orderStatus)
+        public string GetOrderList(string accountID, int orderStatus=-2)
         {
             try
             {

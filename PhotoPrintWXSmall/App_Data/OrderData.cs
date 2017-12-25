@@ -114,13 +114,20 @@ namespace PhotoPrintWXSmall.App_Data
                 Builders<AccountModel>.Update.Push(x => x.Orders, order));
         }
 
-        internal List<Order> GetOrderList(ObjectId accountID, OrderStatus orderStatus)
+        internal List<Order> GetOrderList(ObjectId accountID, int orderStatus)
         {
             var account = GetModelByID(accountID);
             List<Order> orders = null;
             if (account.Orders != null)
             {
-                orders = account.Orders.FindAll(x => x.OrderStatus == orderStatus);
+                if (orderStatus == -2)
+                {
+                    orders = account.Orders;
+                }
+                else
+                {
+                    orders = account.Orders.FindAll(x => x.OrderStatus == (OrderStatus)orderStatus);
+                }
                 orders.Sort((x, y) => -x.CreateTime.CompareTo(y.CreateTime));
             }
             return orders;
