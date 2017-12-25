@@ -31,15 +31,15 @@ namespace PhotoPrintWXSmall.App_Data
             //var filesCollection = mongo.GetMongoCollection<FileModel<string[]>>("FileModel");
             for (int i = 0; i < shop.ShopImages.Count; i++)
             {
-                var file = account.UploadImages.Find(x =>x!=null&&x.FileID!=null&& x.FileID.Equals(shop.ShopImages[i].FileID));
+                var file = account.UploadImages.Find(x => x != null && x.FileID != null && x.FileID.Equals(shop.ShopImages[i].FileID));
                 shop.ShopImages[i] = file;
             }
             shop.CreateTime = DateTime.Now;
             shop.ShopID = ObjectId.GenerateNewId();
-            if (account.ShoppingCart==null)
+            if (account.ShoppingCart == null)
             {
                 collection.UpdateOne(x => x.AccountID.Equals(accountID),
-                   Builders<AccountModel>.Update.Set(x => x.ShoppingCart, new List<Shop>() ));
+                   Builders<AccountModel>.Update.Set(x => x.ShoppingCart, new List<Shop>()));
             }
             collection.UpdateOne(x => x.AccountID.Equals(accountID),
                 Builders<AccountModel>.Update.Push(x => x.ShoppingCart, shop));
@@ -70,9 +70,9 @@ namespace PhotoPrintWXSmall.App_Data
 
         internal void PushOrder(ObjectId accountID, List<Shop> shopList)
         {
-          
+
         }
-       
+
         /// <summary>
         /// 创建订单
         /// </summary>
@@ -82,8 +82,8 @@ namespace PhotoPrintWXSmall.App_Data
         internal void PushOrder(ObjectId accountID, ObjectId orderLocationID, List<Shop> shopList)
         {
             var account = collection.Find(x => x.AccountID.Equals(accountID)).FirstOrDefault();
-            var orderLocation = account.OrderLocations.Find(x=>x.OrderLocationID.Equals(orderLocationID));
-            if (orderLocation==null)
+            var orderLocation = account.OrderLocations.Find(x => x.OrderLocationID.Equals(orderLocationID));
+            if (orderLocation == null)
             {
                 throw new Exception("订单收件地址错误");
             }
@@ -114,9 +114,21 @@ namespace PhotoPrintWXSmall.App_Data
                 Builders<AccountModel>.Update.Push(x => x.Orders, order));
         }
 
+        internal List<Order> GetOrderList(ObjectId accountID, OrderStatus orderStatus)
+        {
+            var account = GetModelByID(accountID);
+            List<Order> orders = null;
+            if (account.Orders != null)
+            {
+                orders = account.Orders.FindAll(x => x.OrderStatus == orderStatus);
+                orders.Sort((x, y) => -x.CreateTime.CompareTo(y.CreateTime));
+            }
+            return orders;
+        }
+
         internal void ChangeOrderStatus(ObjectId orderID, OrderStatus orderStatus)
         {
-            if (orderStatus==OrderStatus.waitingGet)
+            if (orderStatus == OrderStatus.waitingGet)
             {
                 return;
             }

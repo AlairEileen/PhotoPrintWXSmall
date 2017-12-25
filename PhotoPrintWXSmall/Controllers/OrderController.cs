@@ -89,7 +89,6 @@ namespace PhotoPrintWXSmall.Controllers
             {
                 List<Shop> shoppingCart = thisData.GetShoppingCart(new ObjectId(accountID));
                 return new BaseResponseModel<List<Shop>>() { StatusCode = Tools.ActionParams.code_ok, JsonData = shoppingCart }.ToJson();
-
             }
             catch (Exception)
             {
@@ -104,9 +103,9 @@ namespace PhotoPrintWXSmall.Controllers
         /// <param name="accountID">账户ID</param>
         /// <param name="orderLocationID">订单地址ID</param>
         /// <returns></returns>
-        public string PushOrder(string accountID,string orderLocationID)
+        public string PushOrder(string accountID, string orderLocationID)
         {
-           
+
             try
             {
                 string json = new StreamReader(Request.Body).ReadToEnd();
@@ -120,14 +119,35 @@ namespace PhotoPrintWXSmall.Controllers
                 throw;
             }
         }
-      
+       
+        /// <summary>
+        /// 获取订单列表
+        /// </summary>
+        /// <param name="accountID">账户ID</param>
+        /// <param name="orderStatus">（-1：失效，0：待付款，1：待发货，2：待收货，3：待评价，4：完成）</param>
+        /// <returns></returns>
+        public string GetOrderList(string accountID, OrderStatus orderStatus)
+        {
+            try
+            {
+                List<Order> list = thisData.GetOrderList(new ObjectId(accountID), orderStatus);
+                return new BaseResponseModel<List<Order>>() { StatusCode = Tools.ActionParams.code_ok, JsonData = list }.ToJson();
+
+            }
+            catch (Exception)
+            {
+                return JsonResponseModel.ErrorJson;
+                throw;
+            }
+        }
+
         /// <summary>
         /// 修改订单状态
         /// </summary>
         /// <param name="orderID">订单ID</param>
         /// <param name="orderStatus">订单状态：（0：待付款，2：待收货，4：完成）</param>
         /// <returns></returns>
-        public string ChangeOrderStatus(string orderID,OrderStatus orderStatus)
+        public string ChangeOrderStatus(string orderID, OrderStatus orderStatus)
         {
             try
             {

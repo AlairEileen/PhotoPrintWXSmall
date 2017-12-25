@@ -5,7 +5,7 @@ using WXSmallAppCommon.WXTool;
 
 namespace WXSmallAppCommon.WXInteractions
 {
-   public class JsApiPay
+    public class JsApiPay
     {
         /// <summary>
         /// 统一下单接口返回结果
@@ -19,7 +19,7 @@ namespace WXSmallAppCommon.WXInteractions
         /// 商品金额，用于统一下单
         /// </summary>
         public int total_fee { get; set; }
-    
+
         /// <summary>
         /// 调用统一下单，获得下单结果,失败时抛异常WxPayException
         /// </summary>
@@ -27,7 +27,7 @@ namespace WXSmallAppCommon.WXInteractions
         /// <param name="attach"></param>
         /// <param name="goods_tag"></param>
         /// <returns>统一下单结果</returns>
-        public WxPayData GetUnifiedOrderResult(string body,string attach,string goods_tag)
+        public WxPayData GetUnifiedOrderResult(string body, string attach, string goods_tag, string appID = WxPayConfig.APPID, string mchID = WxPayConfig.MCHID)
         {
             //统一下单
             WxPayData data = new WxPayData();
@@ -41,7 +41,7 @@ namespace WXSmallAppCommon.WXInteractions
             data.SetValue("trade_type", "JSAPI");
             data.SetValue("openid", openid);
 
-            WxPayData result = WxPayApi.UnifiedOrder(data);
+            WxPayData result = WxPayApi.UnifiedOrder(data, 6, appID, mchID);
             if (!result.IsSet("appid") || !result.IsSet("prepay_id") || result.GetValue("prepay_id").ToString() == "")
             {
                 Log.Error(this.GetType().ToString(), "UnifiedOrder response error!");

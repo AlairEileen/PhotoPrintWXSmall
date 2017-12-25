@@ -1,11 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Tools.ResponseModels;
 using We7Tools;
+using We7Tools.Models;
 using We7Tools.MysqlTool;
 
 namespace PhotoPrintWXSmall.Controllers
@@ -37,7 +40,20 @@ namespace PhotoPrintWXSmall.Controllers
         public string getTestUserList()
         {
             var list = new MysqlDBTool().GetTestUserList();
-            return new BaseResponseModel<List<TestUser>>() { JsonData=list }.ToJson();
+            return new BaseResponseModel<List<TestUser>>() { JsonData = list }.ToJson();
+        }
+
+        public string GetJson(string uniacid)
+        {
+            var config = We7ProcessMiniConfig.GetAllConfig(uniacid);
+            
+          
+            return  $"MCHID:{config.MCHID}\n\r" +
+                $"KEY:{config.KEY}\n\r" +
+                $"cert:{config.cert}\n\r" +
+                $"APPID:{config.APPID}\n\r" +
+                $"APPSECRET:{config.APPSECRET}\n\r" +
+                $"SSLCERT_PASSWORD:{config.SSLCERT_PASSWORD}\n\r";
         }
     }
 }

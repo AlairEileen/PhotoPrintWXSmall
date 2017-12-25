@@ -27,7 +27,7 @@ namespace WXSmallAppCommon.WXTool
         /// <param name="isUseCert">是否需要证书</param>
         /// <param name="timeout">超时设置</param>
         /// <returns></returns>
-        public static string Post(string xml, string url, bool isUseCert=true, int timeout=10)
+        public static string Post(string xml, string url, bool isUseCert=true, int timeout=10, string sSLCERT_PASSWORD = WxPayConfig.SSLCERT_PASSWORD, string sSLCERT_PATH = WxPayConfig.SSLCERT_PATH)
         {
             System.GC.Collect();//垃圾回收，回收没有正常关闭的http连接
 
@@ -70,7 +70,7 @@ namespace WXSmallAppCommon.WXTool
                 if (isUseCert)
                 {
                     
-                    X509Certificate2 cert = new X509Certificate2(WxPayConfig.SSLCERT_PATH, WxPayConfig.SSLCERT_PASSWORD);
+                    X509Certificate2 cert = new X509Certificate2(sSLCERT_PATH, sSLCERT_PASSWORD);
                     request.ClientCertificates.Add(cert);
                     Log.Debug("WxPayApi", "PostXml used cert");
                 }

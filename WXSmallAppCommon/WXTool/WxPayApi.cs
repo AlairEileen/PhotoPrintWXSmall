@@ -156,7 +156,7 @@ namespace WXSmallAppCommon.WXTool
         * @throws WxPayException
         * @return 成功时返回接口调用结果，其他抛异常
         */
-        public static WxPayData Refund(WxPayData inputObj, int timeOut = 6)
+        public static WxPayData Refund(WxPayData inputObj, int timeOut = 6,string appID=WxPayConfig.APPID,string mchID=WxPayConfig.MCHID,string key=WxPayConfig.KEY, string sSLCERT_PASSWORD = WxPayConfig.SSLCERT_PASSWORD, string sSLCERT_PATH = WxPayConfig.SSLCERT_PATH)
         {
             string url = "https://api.mch.weixin.qq.com/secapi/pay/refund";
             //检测必填参数
@@ -181,16 +181,16 @@ namespace WXSmallAppCommon.WXTool
                 throw new WxPayException("退款申请接口中，缺少必填参数op_user_id！");
             }
 
-            inputObj.SetValue("appid", WxPayConfig.APPID);//公众账号ID
-            inputObj.SetValue("mch_id", WxPayConfig.MCHID);//商户号
+            inputObj.SetValue("appid", appID);//公众账号ID
+            inputObj.SetValue("mch_id", mchID);//商户号
             inputObj.SetValue("nonce_str", Guid.NewGuid().ToString().Replace("-", ""));//随机字符串
-            inputObj.SetValue("sign", inputObj.MakeSign());//签名
+            inputObj.SetValue("sign", inputObj.MakeSign(key));//签名
 
             string xml = inputObj.ToXml();
             var start = DateTime.Now;
 
             Log.Debug("WxPayApi", "Refund request : " + xml);
-            string response = HttpService.Post(xml, url, true, timeOut);//调用HTTP通信接口提交数据到API
+            string response = HttpService.Post(xml, url, true, timeOut,sSLCERT_PASSWORD,sSLCERT_PATH);//调用HTTP通信接口提交数据到API
             Log.Debug("WxPayApi", "Refund response : " + response);
 
             var end = DateTime.Now;
@@ -344,7 +344,7 @@ namespace WXSmallAppCommon.WXTool
         * @throws WxPayException
         * @return 成功时返回，其他抛异常
         */
-        public static WxPayData UnifiedOrder(WxPayData inputObj, int timeOut = 6)
+        public static WxPayData UnifiedOrder(WxPayData inputObj, int timeOut = 6,string appID=WxPayConfig.APPID,string mchID=WxPayConfig.MCHID,string key=WxPayConfig.KEY)
         {
             string url = "https://api.mch.weixin.qq.com/pay/unifiedorder";
             //检测必填参数
@@ -381,13 +381,13 @@ namespace WXSmallAppCommon.WXTool
                 inputObj.SetValue("notify_url", WxPayConfig.NOTIFY_URL);//异步通知url
             }
 
-            inputObj.SetValue("appid", WxPayConfig.APPID);//公众账号ID
-            inputObj.SetValue("mch_id", WxPayConfig.MCHID);//商户号
+            inputObj.SetValue("appid", appID);//公众账号ID
+            inputObj.SetValue("mch_id",mchID);//商户号
             inputObj.SetValue("spbill_create_ip", WxPayConfig.IP);//终端ip	  	    
             inputObj.SetValue("nonce_str", GenerateNonceStr());//随机字符串
 
             //签名
-            inputObj.SetValue("sign", inputObj.MakeSign());
+            inputObj.SetValue("sign", inputObj.MakeSign(key));
             string xml = inputObj.ToXml();
 
             var start = DateTime.Now;

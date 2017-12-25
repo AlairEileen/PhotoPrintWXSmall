@@ -12,7 +12,7 @@ namespace PhotoPrintWXSmall.Controllers
         protected T thisData;
         protected BaseController()
         {
-            thisData = System.Activator.CreateInstance<T>();
+            thisData = Activator.CreateInstance<T>();
         }
     }
 }

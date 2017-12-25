@@ -10,19 +10,28 @@ namespace WXSmallAppCommon.WXInteractions
 {
     public class WXLoginAction
     {
-        public static WXAccountInfo ProcessRequest(string code, string iv, string encryptedData)
+        /// <summary>
+        /// 获取用户信息——包括微擎方式
+        /// </summary>
+        /// <param name="code"></param>
+        /// <param name="iv"></param>
+        /// <param name="encryptedData"></param>
+        /// <param name="appID"></param>
+        /// <param name="appSecret"></param>
+        /// <returns></returns>
+        public static WXAccountInfo ProcessRequest(string code, string iv, string encryptedData,string appID= WxPayConfig.APPID,string appSecret=WxPayConfig.APPSECRET)
         {
-            
+
             Console.WriteLine("进入登陆：&&&");
             string grant_type = "authorization_code";
             WXAccountInfo userInfo = new WXAccountInfo();
             //向微信服务端 使用登录凭证 code 获取 session_key 和 openid 
-            string url = "https://api.weixin.qq.com/sns/jscode2session?appid=" + WxPayConfig.APPID + "&secret=" + WxPayConfig.APPSECRET + "&js_code=" + code + "&grant_type=" + grant_type;
+            string url = $"https://api.weixin.qq.com/sns/jscode2session?appid={appID}&secret={appSecret}&js_code={code}&grant_type={grant_type}";
             string type = "utf-8";
 
             WXAccountInfoGetter GetUsersHelper = new WXAccountInfoGetter();
             string j = WXAccountInfoGetter.GetUrltoHtml(url, type);//获取微信服务器返回字符串
-            Console.WriteLine("登陆返回参数："+j);
+            Console.WriteLine("登陆返回参数：" + j);
             //将字符串转换为json格式
             JObject jo = (JObject)JsonConvert.DeserializeObject(j);
 
@@ -66,7 +75,7 @@ namespace WXSmallAppCommon.WXInteractions
                 Console.WriteLine("unionId:" + userInfo.UnionId);
 
                 userInfo.NickName = _usrInfo["nickName"].ToString();
-                userInfo.Gender =Convert.ToInt16(_usrInfo["gender"].ToString());
+                userInfo.Gender = Convert.ToInt16(_usrInfo["gender"].ToString());
                 userInfo.City = _usrInfo["city"].ToString();
                 userInfo.Province = _usrInfo["province"].ToString();
                 userInfo.Country = _usrInfo["country"].ToString();

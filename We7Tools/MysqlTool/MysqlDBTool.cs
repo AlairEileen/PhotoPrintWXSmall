@@ -7,9 +7,9 @@ namespace We7Tools.MysqlTool
 {
     public class MysqlDBTool
     {
-        public string ConnectionString = "server=47.94.42.159;database=wxstest;uid=root;pwd=1230000;charset='utf8';SslMode=None";
+        public static string ConnectionString = "server=47.94.56.159;database=we7_dev;uid=root;pwd=f73fce430e8e5f75;charset='utf8';SslMode=None";
 
-        private MySqlConnection GetConnection()
+        internal static MySqlConnection GetConnection()
         {
             return new MySqlConnection(ConnectionString);
         }
