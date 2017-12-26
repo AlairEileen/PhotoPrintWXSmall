@@ -133,6 +133,21 @@ namespace PhotoPrintWXSmall.App_Data
             return orders;
         }
 
+        internal List<Shop> GetShoppingCartList(ObjectId accountID, List<ObjectId> shopIDList)
+        {
+            var account = GetModelByID(accountID);
+            if (account==null||account.ShoppingCart==null)
+            {
+                return null;
+            }
+            List<Shop> shops = new List<Shop>();
+            foreach (var item in shopIDList)
+            {
+                shops.Add(account.ShoppingCart.Find(x => x.ShopID.Equals(item)));
+            }
+            return shops;
+        }
+
         internal void ChangeOrderStatus(ObjectId orderID, OrderStatus orderStatus)
         {
             if (orderStatus == OrderStatus.waitingGet)

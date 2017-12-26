@@ -160,6 +160,31 @@ namespace PhotoPrintWXSmall.Controllers
                 throw;
             }
         }
-
+       
+        /// <summary>
+        /// 获取下单列表（根据shopID集合获取）
+        /// </summary>
+        /// <param name="accountID">账户ID</param>
+        /// <returns></returns>
+        public string GetShoppingCartList(string accountID)
+        {
+            try
+            {
+                string json = new StreamReader(Request.Body).ReadToEnd();
+                List<string> shopIDList = JsonConvert.DeserializeObject<List<string>>(json);
+                List<ObjectId> idList = new List<ObjectId>();
+                foreach (var item in shopIDList)
+                {
+                    idList.Add(new ObjectId(item));
+                }
+                var list = thisData.GetShoppingCartList(new ObjectId(accountID), idList);
+                return new BaseResponseModel<List<Shop>>() { StatusCode = Tools.ActionParams.code_ok, JsonData = list }.ToJson();
+            }
+            catch (Exception)
+            {
+                return JsonResponseModel.ErrorJson;
+                throw;
+            }
+        }
     }
 }
