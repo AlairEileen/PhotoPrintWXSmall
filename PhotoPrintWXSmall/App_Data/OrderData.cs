@@ -68,10 +68,6 @@ namespace PhotoPrintWXSmall.App_Data
             return list;
         }
 
-        internal void PushOrder(ObjectId accountID, List<Shop> shopList)
-        {
-
-        }
 
         /// <summary>
         /// 创建订单
@@ -79,9 +75,9 @@ namespace PhotoPrintWXSmall.App_Data
         /// <param name="accountID"></param>
         /// <param name="orderLocationID"></param>
         /// <param name="shopList"></param>
-        internal void PushOrder(ObjectId accountID, ObjectId orderLocationID, List<Shop> shopList)
+        internal Order PushOrder(ObjectId accountID, ObjectId orderLocationID, List<Shop> shopList, out AccountModel account)
         {
-            var account = collection.Find(x => x.AccountID.Equals(accountID)).FirstOrDefault();
+            account = collection.Find(x => x.AccountID.Equals(accountID)).FirstOrDefault();
             var orderLocation = account.OrderLocations.Find(x => x.OrderLocationID.Equals(orderLocationID));
             if (orderLocation == null)
             {
@@ -112,6 +108,7 @@ namespace PhotoPrintWXSmall.App_Data
             };
             collection.UpdateOne(x => x.AccountID.Equals(accountID),
                 Builders<AccountModel>.Update.Push(x => x.Orders, order));
+            return order;
         }
 
         internal List<Order> GetOrderList(ObjectId accountID, int orderStatus)
@@ -136,7 +133,7 @@ namespace PhotoPrintWXSmall.App_Data
         internal List<Shop> GetShoppingCartList(ObjectId accountID, List<ObjectId> shopIDList)
         {
             var account = GetModelByID(accountID);
-            if (account==null||account.ShoppingCart==null)
+            if (account == null || account.ShoppingCart == null)
             {
                 return null;
             }

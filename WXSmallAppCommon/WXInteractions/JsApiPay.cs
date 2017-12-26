@@ -19,13 +19,15 @@ namespace WXSmallAppCommon.WXInteractions
         /// 商品金额，用于统一下单
         /// </summary>
         public int total_fee { get; set; }
-
+      
         /// <summary>
         /// 调用统一下单，获得下单结果,失败时抛异常WxPayException
         /// </summary>
         /// <param name="body"></param>
         /// <param name="attach"></param>
         /// <param name="goods_tag"></param>
+        /// <param name="appID"></param>
+        /// <param name="mchID"></param>
         /// <returns>统一下单结果</returns>
         public WxPayData GetUnifiedOrderResult(string body, string attach, string goods_tag, string appID = WxPayConfig.APPID, string mchID = WxPayConfig.MCHID)
         {

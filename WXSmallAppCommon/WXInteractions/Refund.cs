@@ -15,10 +15,9 @@ namespace WXSmallAppCommon.WXInteractions
         /// <param name="total_fee">订单总金额</param>
         /// <param name="refund_fee">退款金额</param>
         /// <returns> 退款结果（xml格式）</returns>
-        public static string Run(string transaction_id, string out_trade_no, int total_fee, int refund_fee,string mchID=WxPayConfig.MCHID)
+        public static string Run(string transaction_id, string out_trade_no, int total_fee, int refund_fee,string appID=WxPayConfig.APPID, string mchID=WxPayConfig.MCHID,string key=WxPayConfig.KEY,string sSLCERT_PASSWORD = WxPayConfig.SSLCERT_PASSWORD,string sSLCERT_PATH=WxPayConfig.SSLCERT_PATH)
         {
             Log.Info("Refund", "Refund is processing...");
-
             WxPayData data = new WxPayData();
             if (!string.IsNullOrEmpty(transaction_id))//微信订单号存在的条件下，则已微信订单号为准
             {
@@ -32,7 +31,7 @@ namespace WXSmallAppCommon.WXInteractions
             data.SetValue("refund_fee", refund_fee);//退款金额
             data.SetValue("out_refund_no", WxPayApi.GenerateOutTradeNo());//随机生成商户退款单号
             data.SetValue("op_user_id",mchID);//操作员，默认为商户号
-            WxPayData result = WxPayApi.Refund(data);//提交退款申请给API，接收返回数据
+            WxPayData result = WxPayApi.Refund(data,6,appID,mchID,key,sSLCERT_PASSWORD,sSLCERT_PATH);//提交退款申请给API，接收返回数据
             Log.Info("Refund", "Refund process complete, result : " + result.ToXml());
             return result.ToPrintStr();
         }

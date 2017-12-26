@@ -8,8 +8,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Tools;
 using Tools.Response;
 using Tools.ResponseModels;
+using We7Tools;
+using WXSmallAppCommon.WXInteractions;
 
 namespace PhotoPrintWXSmall.Controllers
 {
@@ -108,9 +111,21 @@ namespace PhotoPrintWXSmall.Controllers
 
             try
             {
+
                 string json = new StreamReader(Request.Body).ReadToEnd();
                 List<Shop> shopList = JsonConvert.DeserializeObject<List<Shop>>(json);
-                thisData.PushOrder(new ObjectId(accountID), new ObjectId(orderLocationID), shopList);
+                AccountModel account;
+                var order = thisData.PushOrder(new ObjectId(accountID), new ObjectId(orderLocationID), shopList, account);
+
+                //JsApiPay jsApiPay = new JsApiPay();
+                //jsApiPay.openid = account.OpenID;
+                //jsApiPay.total_fee = order.OrderPrice.ConvertToMoneyCent();
+                //var body = "test";
+                //var attach = order.OrderID.ToString();
+                //var goods_tag = order.ShopList[0].ShopID.ToString();
+                //jsApiPay.CreateWeChatOrder(body, attach, goods_tag);
+                //var param = jsApiPay.GetJsApiParameters();
+
                 return JsonResponseModel.SuccessJson;
             }
             catch (Exception)
@@ -119,14 +134,14 @@ namespace PhotoPrintWXSmall.Controllers
                 throw;
             }
         }
-       
+
         /// <summary>
         /// 获取订单列表
         /// </summary>
         /// <param name="accountID">账户ID</param>
         /// <param name="orderStatus">（-2：全部，-1：失效，0：待付款，1：待发货，2：待收货，3：待评价，4：完成）</param>
         /// <returns></returns>
-        public string GetOrderList(string accountID, int orderStatus=-2)
+        public string GetOrderList(string accountID, int orderStatus = -2)
         {
             try
             {
@@ -160,7 +175,7 @@ namespace PhotoPrintWXSmall.Controllers
                 throw;
             }
         }
-       
+
         /// <summary>
         /// 获取下单列表（根据shopID集合获取）
         /// </summary>

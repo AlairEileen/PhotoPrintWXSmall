@@ -67,6 +67,7 @@ namespace We7Tools.Models
         public string APPSECRET { get; set; }
         public string SSLCERT_PASSWORD { get { return sSLCERT_PASSWORD == null ? MCHID : sSLCERT_PASSWORD; } set { sSLCERT_PASSWORD = value; } }
 
+        public string SSLCERT_PATH { get; internal set; }
     }
 
     internal class AccountWXApp
