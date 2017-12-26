@@ -115,7 +115,7 @@ namespace PhotoPrintWXSmall.Controllers
                 string json = new StreamReader(Request.Body).ReadToEnd();
                 List<Shop> shopList = JsonConvert.DeserializeObject<List<Shop>>(json);
                 AccountModel account;
-                var order = thisData.PushOrder(new ObjectId(accountID), new ObjectId(orderLocationID), shopList, account);
+                var order = thisData.PushOrder(new ObjectId(accountID), new ObjectId(orderLocationID), shopList, out account);
 
                 //JsApiPay jsApiPay = new JsApiPay();
                 //jsApiPay.openid = account.OpenID;
