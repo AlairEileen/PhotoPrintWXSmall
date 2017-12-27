@@ -103,10 +103,8 @@ namespace PhotoPrintWXSmall.Controllers
         /// <returns></returns>
         public string PushOrder(string accountID, string orderLocationID)
         {
-
             try
             {
-
                 string json = new StreamReader(Request.Body).ReadToEnd();
                 List<Shop> shopList = JsonConvert.DeserializeObject<List<Shop>>(json);
                 AccountModel account;

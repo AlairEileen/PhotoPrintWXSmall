@@ -59,7 +59,9 @@
             <span>未选择（必须选择）</span>
         </div>
     </div>
-    <div class="col-xs-6 col-sm-3"></div>
+    <div class="col-xs-6 col-sm-3">
+        <a class="btn btn-default" data-toggle="modal" data-target="#picsShowModal" onclick="showPics(0)">查看该类型轮播图</a>
+    </div>
     <div class="col-xs-6 col-sm-3">
         <input type="file" onchange="loadFile(this)" class="hidden" id="goodsInfoPic" multiple />
         <div class="input-append">
@@ -67,7 +69,9 @@
             <span>未选择（必须选择）</span>
         </div>
     </div>
-    <div class="col-xs-6 col-sm-3"></div>
+    <div class="col-xs-6 col-sm-3">
+        <a class="btn btn-default" data-toggle="modal" data-target="#picsShowModal" onclick="showPics(1)">查看该类型详情图</a>
+    </div>
 </div>
 <br />
 <div class="row">
@@ -76,16 +80,13 @@
     </div>
     <div class="col-xs-6 col-sm-3">
         <button class="btn btn-danger" onclick="delFiles(0)">删除 商品轮播图片</button>
-
     </div>
-
     <div class="col-xs-6 col-sm-3">
         <button class="btn btn-primary" onclick="uploadFiles(1)">提交 商品详情图片</button>
     </div>
     <div class="col-xs-6 col-sm-3">
         <button class="btn btn-danger" onclick="delFiles(1)">删除 商品详情图片</button>
     </div>
-
 </div>
 <br />
 <br />
@@ -214,7 +215,34 @@
     </div>
 </div>
 <!-- #endregion 套餐类型添加-->
-
+<!-- #region 图片浏览 -->
+<div class="modal fade" id="picsShowModal" tabindex="-1" role="dialog" aria-labelledby="picsShowTitle" aria-hidden="true">
+    <div class="modal-dialog" style="width:90%;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="picsShowTitle">图片浏览</h4>
+            </div>
+            <div class="modal-body" id="picsShowBody">
+                <div class="row">
+                    <div class="col-xs-6 col-sm-4">
+                        <img src="~/images/banner1.svg" />
+                    </div>
+                    <div class="col-xs-6 col-sm-4">
+                        <img src="~/images/banner2.svg" />
+                    </div>
+                    <div class="col-xs-6 col-sm-4">
+                        <img src="~/images/banner3.svg" />
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="picsShowClose" class="btn btn-default" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- #endregion 图片浏览 -->
 
 <div class="row planGoods">
     <br />
@@ -296,7 +324,49 @@
             }
         });
     }
+    function showPics(fileType) {
+         var goodsType = $.trim($("#fileUploadGoodsType").val());
+        var title = (fileType == 0 ? "轮播图" : "详情图片");
+        var type = (goodsType ==@((int)GoodsClass.OneGoods)?"单张商品" : "套餐商品");
+        var text = type + " 中的 " + title + " 浏览";
+        $("#picsShowTitle").html(text);
+        var container = $("#picsShowBody");
+        container.html("");
+        $.getJSON("../goods/GetGoodsPics", { goodsClass: goodsType }, function (data, status) {
+            if (fileType == 0) {
+                $.each(data.JsonData.HeaderPics, function (i, item) {
+                    if (i % 4 == 0) {
+                        if (i!=0) {
+                            container.append('</div>');
+                        }
+                        if (i != data.JsonData.HeaderPics.length) {
+                            container.append('<div class="row">');
+                        }
+                    }
+                    container.append(' <div class="col-xs-6 col-sm-4">'+
+                        '<img src= "../file/fileDownload?fileUrl=' + item.FileUrlData[0]+'" />'+
+                  '</div >');
 
+                });
+            } else {
+                $.each(data.JsonData.BodyPics, function (i, item) {
+
+                    if (i % 4 == 0) {
+                        if (i != 0) {
+                            container.append('</div>');
+                        }
+                        if (i != data.JsonData.BodyPics.length) {
+                            container.append('<div class="row">');
+                        }
+                    }
+                    container.append(' <div class="col-xs-6 col-sm-4">' +
+                        '<img src= "file/fileDownload?fileUrl=' + item.FileUrlData[0] + '" />' +
+                        '</div >');
+                                    });
+            }
+        });
+
+    }
     function delFiles(fileType) {
         var goodsType = $.trim($("#fileUploadGoodsType").val());
         var title = (fileType == 0 ? "轮播图" : "详情图片");
@@ -335,7 +405,11 @@
             processData: false,
             data: data,
             success: function (message) {
-                alert(message);
+                if (message.StatusCode ==@((int)Tools.ActionParams.code_ok)) {
+                    alert("上传成功");
+                } else {
+                    alert("上传失败");
+                }
             },
             error: function () {
                 alert("There was error uploading files!");
@@ -372,7 +446,11 @@
             processData: false,
             data: data,
             success: function (message) {
-                pushPlanGoods(message)
+                  if (message.StatusCode ==@((int)Tools.ActionParams.code_ok)) {
+                    alert("添加成功");
+                } else {
+                      alert("添加失败");
+                }
             },
             error: function () {
                 alert("There was error uploading files!");
@@ -414,7 +492,11 @@
                     data: JSON.stringify(json),
                     dataType: "json",
                     success: function (message) {
-                        alert("添加成功");
+                       if (message.StatusCode ==@((int)Tools.ActionParams.code_ok)) {
+                    alert("添加成功");
+                } else {
+                      alert("添加失败");
+                }
                     },
                     error: function (message) {
                         alert("添加失败");
@@ -440,7 +522,7 @@
         var pushPlanTypeName = $.trim($("#pushPlanTypeName").val());
         if (pushPlanTypeName.length > 0) {
             $.getJSON("PushPlanGoodsType?planGoodsType=" + pushPlanTypeName, function (data, status) {
-                if (data.StatusCode == 1000) {
+                if (data.StatusCode ==  @((int)Tools.ActionParams.code_ok)) {
                     loadPlan();
                 }
             });
@@ -454,7 +536,7 @@
         printSelect.html("");
         $.getJSON("GetGoodsType", { typeClass: 0 }, function (data, status) {
 
-            if (data.StatusCode == 1000) {
+            if (data.StatusCode ==  @((int)Tools.ActionParams.code_ok)) {
                 $.each(data.JsonData, function (i, item) {
                     printCon.append("<li>" + item.TypeName + "<li>");
                     printSelect.append("<option value='" + item.GoodsTypeID + "'>" + item.TypeName + "</option>");
@@ -471,7 +553,7 @@
         paperSelect.html("");
         $.getJSON("GetGoodsType", { typeClass: 1 }, function (data, status) {
 
-            if (data.StatusCode == 1000) {
+            if (data.StatusCode ==  @((int)Tools.ActionParams.code_ok)) {
                 $.each(data.JsonData, function (i, item) {
                     printCon.append("<li>" + item.TypeName + "<li>");
                     paperSelect.append("<option value='" + item.GoodsTypeID + "'>" + item.TypeName + "</option>");
@@ -487,7 +569,7 @@
         sizeSelect.html("");
         $.getJSON("GetGoodsType", { typeClass: 2 }, function (data, status) {
 
-            if (data.StatusCode == 1000) {
+            if (data.StatusCode ==  @((int)Tools.ActionParams.code_ok)) {
                 $.each(data.JsonData, function (i, item) {
                     printCon.append("<li>" + item.TypeName + "<li>");
                     sizeSelect.append("<option value='" + item.GoodsTypeID + "'>" + item.TypeName + "</option>");
@@ -502,7 +584,7 @@
         paperSelect.html("");
         $.getJSON("GetGoodsType", { typeClass: 3 }, function (data, status) {
 
-            if (data.StatusCode == 1000) {
+            if (data.StatusCode == @((int)Tools.ActionParams.code_ok)) {
                 $.each(data.JsonData, function (i, item) {
                     printCon.append("<li>" + item.TypeName + "<li>");
                     paperSelect.append("<option value='" + item.GoodsTypeID + "'>" + item.TypeName + "</option>");
@@ -547,8 +629,6 @@
                 },
                 error: function (message) {
                     alert(message);
-
-
                 }
             });
 
