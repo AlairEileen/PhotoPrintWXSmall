@@ -11,18 +11,18 @@
 <h2>单张商品添加类型</h2>
 <hr />
 <div class="row" id="oneGoods">
-    <div class="col-xs-6 col-sm-3">
+    <div class="col-xs-6 col-sm-4">
 
         <p><label>已有冲印类型列表</label><a class="btn" data-toggle="modal" data-target="#pushPrintTypeModal">新增</a></p>
         <ul class="list-unstyled" id="printList"></ul>
 
     </div>
-    <div class="col-xs-6 col-sm-3">
+    <div class="col-xs-6 col-sm-4">
         <p><label>已有纸张类型列表</label><a class="btn" data-toggle="modal" data-target="#pushPaperTypeModal">新增</a></p>
         <ul class="list-unstyled" id="paperList"></ul>
 
     </div>
-    <div class="col-xs-6 col-sm-3">
+    <div class="col-xs-6 col-sm-4">
         <p><label>已有尺寸类型列表</label><a class="btn" data-toggle="modal" data-target="#pushSizeTypeModal">新增</a></p>
         <ul class="list-unstyled" id="sizeList"></ul>
     </div>
@@ -32,7 +32,7 @@
 <h2>套餐商品添加类型</h2>
 <hr />
 <div class="row">
-    <div class="col-xs-6 col-sm-3">
+    <div class="col-xs-6 col-sm-4">
         <p><label>已有套餐筛选类型列表</label><a class="btn" data-toggle="modal" data-target="#pushPlanTypeModal">新增</a></p>
         <ul class="list-unstyled" id="planList"></ul>
     </div>
@@ -42,7 +42,7 @@
 <h2>商品图片设置</h2>
 <hr />
 <div class="row">
-    <div class="col-xs-6 col-sm-3">
+    <div class="col-xs-6 col-sm-6">
         <label>选择商品类型</label>
         <select class="form-control" id="fileUploadGoodsType">
             <option value="0">单张商品</option>
@@ -60,7 +60,7 @@
         </div>
     </div>
     <div class="col-xs-6 col-sm-3">
-        <a class="btn btn-default" data-toggle="modal" data-target="#picsShowModal" onclick="showPics(0)">查看该类型轮播图</a>
+        <a class="btn btn-info" data-toggle="modal" data-target="#picsShowModal" onclick="showPics(0)">查看该类型轮播图</a>
     </div>
     <div class="col-xs-6 col-sm-3">
         <input type="file" onchange="loadFile(this)" class="hidden" id="goodsInfoPic" multiple />
@@ -70,7 +70,7 @@
         </div>
     </div>
     <div class="col-xs-6 col-sm-3">
-        <a class="btn btn-default" data-toggle="modal" data-target="#picsShowModal" onclick="showPics(1)">查看该类型详情图</a>
+        <a class="btn btn-info" data-toggle="modal" data-target="#picsShowModal" onclick="showPics(1)">查看该类型详情图</a>
     </div>
 </div>
 <br />
@@ -94,7 +94,7 @@
 <hr />
 
 <div class="row">
-    <div class="col-xs-6 col-sm-3">
+    <div class="col-xs-6 col-sm-6">
         <label>选择商品类型</label>
         <select class="form-control" onchange="changePushGoodsType(this)">
             <option value="0">单张商品</option>
