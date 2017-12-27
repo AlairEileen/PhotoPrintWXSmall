@@ -1,15 +1,21 @@
 ﻿using ConfigData;
+using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using We7Tools.Extend;
 
 namespace We7Tools
 {
     public class ProcessMiniTool
     {
-        public static void CreateProcessMiniZip(SiteInfo siteInfo, out string zipFilePath)
+        public static void GetProcessMiniZipPath(ISession session, out string zipFilePath)
         {
+            var siteInfo = GetSiteInfo(session);
+
             var siteInfoJs = @"var siteinfo={
   'title': '" + siteInfo.title + @"',
   'uniacid': '" + siteInfo.uniacid + @"',
@@ -21,7 +27,7 @@ namespace We7Tools
   'redirect_module': '" + siteInfo.redirect_module + @"',
   'template': '" + siteInfo.template + @"'
 };
-//模块暴露0
+//模块暴露
 module.exports = siteinfo;";
             using (var sw = new StreamWriter(We7Config.ProcessMiniFolderPath + "/siteinfo.js", false, Encoding.UTF8))
             {
@@ -32,6 +38,25 @@ module.exports = siteinfo;";
                 We7Config.ProcessMiniFolderPath.Substring(0, We7Config.ProcessMiniFolderPath.LastIndexOf("/")) :
                 We7Config.ProcessMiniFolderPath) + ".zip";
             System.IO.Compression.ZipFile.CreateFromDirectory(We7Config.ProcessMiniFolderPath, zipFilePath);
+        }
+
+        private static SiteInfo GetSiteInfo(ISession session)
+        {
+            JObject jObject = session.GetWe7Data();
+            var siteInfo = new SiteInfo()
+            {
+                title = "",
+                uniacid = (string)jObject["uniacid"],
+                acid = (string)jObject["acid"],
+                design_method = "",
+                multiid = "",
+                redirect_module = "",
+                siteroot = We7Config.SiteRoot,
+                template = (string)jObject["template"],
+                version = We7Config.PMVersion
+            };
+
+            return siteInfo;
         }
     }
 

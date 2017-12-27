@@ -41,7 +41,7 @@
 
     function loadOrder() {
           var orderList = $("#orderList");
-        $.getJSON("/Merchant/GetAllOrders", function (data, status) {
+        $.getJSON("GetAllOrders", function (data, status) {
             if (data.StatusCode ==@((int)Tools.ActionParams.code_ok)) {
                 $.each(data.JsonData, function (i, item) {
                     var title = item.ShopList[0].Goods.GoodsClass ==@((int)GoodsClass.OneGoods)?
@@ -69,7 +69,7 @@
 
     function downloadOrder(orderID) {
 
-        window.location.href = "/Merchant/GetOrderFile?orderID=" + orderID;
+        window.location.href = "GetOrderFile?orderID=" + orderID;
     }
 
 </script>

@@ -64,16 +64,24 @@
             <span>未选择（必须选择）</span>
         </div>
     </div>
+    <div class="col-xs-6 col-sm-4"></div>
 </div>
 <div class="row">
     <div class="col-xs-6 col-sm-4">
         <button class="btn btn-primary" onclick="uploadFiles(0)">提交 商品轮播图片</button>
     </div>
-    <div class="col-xs-6 col-sm-4"></div>
+    <div class="col-xs-6 col-sm-4">
+        <button class="btn btn-danger" onclick="delFiles(0)">删除 商品轮播图片</button>
+
+    </div>
 
     <div class="col-xs-6 col-sm-4">
         <button class="btn btn-primary" onclick="uploadFiles(1)">提交 商品详情图片</button>
     </div>
+    <div class="col-xs-6 col-sm-4">
+        <button class="btn btn-danger" onclick="delFiles(1)">删除 商品详情图片</button>
+    </div>
+
 </div>
 <br />
 <h2>商品添加</h2>
@@ -267,7 +275,7 @@
         };
         $.ajax({
             type: "post",
-            url: "/Merchant/HasGoods",
+            url: "HasGoods",
             contentType: "application/json; charset=utf-8",
             data: JSON.stringify(json),
             dataType: "json",
@@ -282,11 +290,27 @@
             }
         });
     }
-
+   
+    function delFiles(fileType) {
+        var goodsType = $.trim($("#fileUploadGoodsType").val());
+        var title = fileType == 0 ? "轮播图" : "详情图片";
+        var type = goodsType ==@((int)GoodsClass.OneGoods)?"单张商品" : "套餐商品";
+        var text = "您确认要完全删除 " + goodsType + " 中的 " + fileType + " 吗？";
+        if (window.confirm(text)) {
+            $.getJSON("Merchant/DelGoodsFiles", { goodsType: goodsType, picType: fileType }, function (data, status) {
+                if (data.StatusCode ==@((int)Tools.ActionParams.code_ok)) {
+                    alert("删除成功");
+                } else {
+                    alert("删除失败");
+                }
+            });
+        }
+    }
 
     function uploadFiles(fileType) {
 
         var goodsType = $.trim($("#fileUploadGoodsType").val());
+
         var fileUpload = $("#goodsHeadPics").get(0);
         if (fileType == 1) {
             fileUpload = $("#goodsInfoPic").get(0);
@@ -300,7 +324,7 @@
         data.append("picType", fileType);
         $.ajax({
             type: "POST",
-            url: "/Merchant/SaveGoodsFiles",
+            url: "SaveGoodsFiles",
             contentType: false,
             processData: false,
             data: data,
@@ -337,7 +361,7 @@
         }
         $.ajax({
             type: "POST",
-            url: "/Merchant/SavePlanGoodsListPic",
+            url: "SavePlanGoodsListPic",
             contentType: false,
             processData: false,
             data: data,
@@ -379,7 +403,7 @@
             if (planGoodsTitle.length > 0 && planGoodsPricePush.length > 0 && planSelect.length > 0 && planGoodsPicsNum.length > 0) {
                 $.ajax({
                     type: "post",
-                    url: "/Merchant/PushPlanGoods",
+                    url: "PushPlanGoods",
                     contentType: "application/json; charset=utf-8",
                     data: JSON.stringify(json),
                     dataType: "json",
@@ -409,7 +433,7 @@
     function doPushPlanType() {
         var pushPlanTypeName = $.trim($("#pushPlanTypeName").val());
         if (pushPlanTypeName.length > 0) {
-            $.getJSON("/Merchant/PushPlanGoodsType?planGoodsType=" + pushPlanTypeName, function (data, status) {
+            $.getJSON("PushPlanGoodsType?planGoodsType=" + pushPlanTypeName, function (data, status) {
                 if (data.StatusCode == 1000) {
                     loadPlan();
                 }
@@ -422,7 +446,7 @@
         var printCon = $("#printList");
         printCon.html("");
         printSelect.html("");
-        $.getJSON("/Merchant/GetGoodsType", { typeClass: 0 }, function (data, status) {
+        $.getJSON("GetGoodsType", { typeClass: 0 }, function (data, status) {
 
             if (data.StatusCode == 1000) {
                 $.each(data.JsonData, function (i, item) {
@@ -439,7 +463,7 @@
         var printCon = $("#paperList");
         printCon.html("");
         paperSelect.html("");
-        $.getJSON("/Merchant/GetGoodsType", { typeClass: 1 }, function (data, status) {
+        $.getJSON("GetGoodsType", { typeClass: 1 }, function (data, status) {
 
             if (data.StatusCode == 1000) {
                 $.each(data.JsonData, function (i, item) {
@@ -455,7 +479,7 @@
         var printCon = $("#sizeList");
         printCon.html("");
         sizeSelect.html("");
-        $.getJSON("/Merchant/GetGoodsType", { typeClass: 2 }, function (data, status) {
+        $.getJSON("GetGoodsType", { typeClass: 2 }, function (data, status) {
 
             if (data.StatusCode == 1000) {
                 $.each(data.JsonData, function (i, item) {
@@ -470,7 +494,7 @@
         var printCon = $("#planList");
         printCon.html("");
         paperSelect.html("");
-        $.getJSON("/Merchant/GetGoodsType", { typeClass: 3 }, function (data, status) {
+        $.getJSON("GetGoodsType", { typeClass: 3 }, function (data, status) {
 
             if (data.StatusCode == 1000) {
                 $.each(data.JsonData, function (i, item) {
@@ -497,7 +521,7 @@
         if (name.length > 0) {
             $.ajax({
                 type: "post",
-                url: "/Merchant/PushGoodsType",
+                url: "PushGoodsType",
                 contentType: "application/json; charset=utf-8",
                 data: JSON.stringify(json),
                 dataType: "json",
@@ -550,7 +574,7 @@
 
         $.ajax({
             type: "post",
-            url: "/Merchant/PushGoodsMenu",
+            url: "PushGoodsMenu",
             contentType: "application/json; charset=utf-8",
             data: JSON.stringify(json),
             dataType: "json",

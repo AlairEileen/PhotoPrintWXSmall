@@ -21,6 +21,7 @@ namespace PhotoPrintWXSmall.Controllers
     {
         IHostingEnvironment hostingEnvironment;
         public MerchantController(IHostingEnvironment hostingEnvironment)
+            : base(true)
         {
             this.hostingEnvironment = hostingEnvironment;
         }
@@ -158,7 +159,7 @@ namespace PhotoPrintWXSmall.Controllers
         /// <param name="goodsType"></param>
         /// <param name="picType"></param>
         /// <returns></returns>
-        public string SaveGoodsFiles(int goodsType, int picType)
+        public string SaveGoodsFiles(GoodsClass goodsType, int picType)
         {
             try
             {
@@ -171,6 +172,26 @@ namespace PhotoPrintWXSmall.Controllers
                 throw;
             }
             return JsonResponseModel.SuccessJson;
+        }
+        /// <summary>
+        /// 删除商品图片
+        /// </summary>
+        /// <param name="goodsType">商品类型</param>
+        /// <param name="picType">图片类型（0：轮播图，1：详情图）</param>
+        /// <returns></returns>
+        [HttpDelete]
+        public string DelGoodsFiles(GoodsClass goodsType,int picType)
+        {
+            try
+            {
+                thisData.DelGoodsFiles(goodsType,picType);
+                return JsonResponseModel.SuccessJson;
+            }
+            catch (Exception)
+            {
+                return JsonResponseModel.ErrorJson;
+                throw;
+            }
         }
 
         /// <summary>

@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@using We7Tools.Extend;
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
@@ -17,7 +18,7 @@
     </environment>
 </head>
 <body>
-    <nav class='navbar navbar-inverse navbar-fixed-top @(PhotoPrintWXSmall.Views.ViewConst.CheckRout(ViewData,PhotoPrintWXSmall.Views.RoutType.登录)?"hidden":"")'>
+    <nav class='navbar navbar-inverse navbar-fixed-top @(PhotoPrintWXSmall.Views.ViewConst.CheckRout(ViewData,PhotoPrintWXSmall.Views.RoutType.登录)||PhotoPrintWXSmall.Views.ViewConst.CheckRout(ViewData,PhotoPrintWXSmall.Views.RoutType.错误)?"hidden":"")'>
         <div class="container">
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -33,10 +34,15 @@
                     <li class='@(PhotoPrintWXSmall.Views.ViewConst.CheckRout(ViewData,PhotoPrintWXSmall.Views.RoutType.订单)?"active":"")'><a asp-area="" asp-controller="Merchant" asp-action="Index">@PhotoPrintWXSmall.Views.RoutType.订单.ToString()</a></li>
                     <li class='@(PhotoPrintWXSmall.Views.ViewConst.CheckRout(ViewData,PhotoPrintWXSmall.Views.RoutType.商品添加)?"active":"")'><a asp-area="" asp-controller="Merchant" asp-action="GoodsPush">@PhotoPrintWXSmall.Views.RoutType.商品添加.ToString()</a></li>
                     <li class='@(PhotoPrintWXSmall.Views.ViewConst.CheckRout(ViewData,PhotoPrintWXSmall.Views.RoutType.商品管理)?"active":"")'><a asp-area="" asp-controller="Merchant" asp-action="GoodsManage">@PhotoPrintWXSmall.Views.RoutType.商品管理.ToString()</a></li>
-                    <li class='@(PhotoPrintWXSmall.Views.ViewConst.CheckRout(ViewData,PhotoPrintWXSmall.Views.RoutType.设置)?"active":"")'><a asp-area="" asp-controller="Merchant" asp-action="Settings">@PhotoPrintWXSmall.Views.RoutType.设置.ToString()</a></li>
-                    <li class='@(PhotoPrintWXSmall.Views.ViewConst.CheckRout(ViewData,PhotoPrintWXSmall.Views.RoutType.管理)?"active":"")'><a asp-area="" asp-controller="Manage" asp-action="Index">@PhotoPrintWXSmall.Views.RoutType.管理.ToString()</a></li>
+                    <li class='@(PhotoPrintWXSmall.Views.ViewConst.CheckRout(ViewData,PhotoPrintWXSmall.Views.RoutType.系统管理)?"active":"")'><a asp-area="" asp-controller="Manage" asp-action="Index">@PhotoPrintWXSmall.Views.RoutType.系统管理.ToString()</a></li>
                 </ul>
+                <div class="navbar-right">
+                    <ul class="nav navbar-nav">
+                        <li class='@(Context.Session.GetUserName()==null?"hidden":"active")'><a>@Context.Session.GetUserName()</a></li>
+                    </ul>
+                </div>
             </div>
+           
         </div>
     </nav>
     <div class="container body-content">

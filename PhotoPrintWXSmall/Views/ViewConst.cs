@@ -22,6 +22,6 @@ namespace PhotoPrintWXSmall.Views
 
     public enum RoutType
     {
-        登录 = -1, 订单 = 0, 商品添加 = 1, 设置 = 2, 商品管理 = 3, 管理=4
+        登录 = -1, 订单 = 0, 商品添加 = 1, 系统管理 = 2, 商品管理 = 3, 错误=4
     }
 }

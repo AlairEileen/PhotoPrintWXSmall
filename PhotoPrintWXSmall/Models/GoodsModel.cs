@@ -25,7 +25,19 @@ namespace PhotoPrintWXSmall.Models
         [BsonIgnore]
         public decimal GoodsSpread { get; set; }
         public int PicsNum { get; set; }
-        public string Title { get; set; }
+        private string title;
+        public string Title
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(title))
+                {
+                    title = SizeType.TypeName + PrintType.TypeName + PaperType.TypeName;
+                }
+                return title;
+            }
+            set { title = value; }
+        }
         public GoodsClass GoodsClass { get; set; }
         /// <summary>
         /// 标题

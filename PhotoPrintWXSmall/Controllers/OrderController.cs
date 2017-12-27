@@ -6,13 +6,8 @@ using PhotoPrintWXSmall.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Tools;
 using Tools.Response;
 using Tools.ResponseModels;
-using We7Tools;
-using WXSmallAppCommon.WXInteractions;
 
 namespace PhotoPrintWXSmall.Controllers
 {
@@ -116,7 +111,7 @@ namespace PhotoPrintWXSmall.Controllers
                 List<Shop> shopList = JsonConvert.DeserializeObject<List<Shop>>(json);
                 AccountModel account;
                 var order = thisData.PushOrder(new ObjectId(accountID), new ObjectId(orderLocationID), shopList, out account);
-
+                ///微擎相关
                 //JsApiPay jsApiPay = new JsApiPay();
                 //jsApiPay.openid = account.OpenID;
                 //jsApiPay.total_fee = order.OrderPrice.ConvertToMoneyCent();

@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using PhotoPrintWXSmall.Middleware;
 
 namespace PhotoPrintWXSmall
 {
@@ -36,27 +35,27 @@ namespace PhotoPrintWXSmall
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
+                app.UseExceptionHandler();
             }
 
             app.UseStaticFiles();
             app.UseSession();
-            app.MapWhen(context =>
-          context.Request.Path.StartsWithSegments("/Merchant"), x =>
-          {
-              x.UseLoginMiddleware();
-              x.UseMvc(routes =>
-              {
-                  routes.MapRoute(
-                      name: "default",
-                      template: "{controller}/{action=Index}/{id?}");
-              });
-          });
+          //  app.MapWhen(context =>
+          //context.Request.Path.StartsWithSegments("/Merchant"), x =>
+          //{
+          //    x.UseLoginMiddleware();
+          //    x.UseMvc(routes =>
+          //    {
+          //        routes.MapRoute(
+          //            name: "default",
+          //            template: "{controller}/{action=Index}/{id?}");
+          //    });
+          //});
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                    template: "{controller=Merchant}/{action=Index}/{id?}");
             });
         }
     }

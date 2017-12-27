@@ -49,7 +49,7 @@
     function loadOneGoodsList() {
         var oneGoodsList = $("#oneGoodsList");
 
-        $.getJSON("/Merchant/GetAllGoods?goodsClass=0", function (data, status) {
+        $.getJSON("GetAllGoods?goodsClass=0", function (data, status) {
             if (data.StatusCode ==@((int)Tools.ActionParams.code_ok)) {
                 oneGoodsList.html("");
                 $.each(data.JsonData, function (i, item) {
@@ -69,7 +69,7 @@
     }
     function loadPlanGoodsList() {
         var planGoodsList = $("#planGoodsList");
-        $.getJSON("/Merchant/GetAllGoods?goodsClass=1", function (data, status) {
+        $.getJSON("GetAllGoods?goodsClass=1", function (data, status) {
             if (data.StatusCode==@((int)Tools.ActionParams.code_ok)) {
                 planGoodsList.html("");
                 $.each(data.JsonData, function (i, item) {

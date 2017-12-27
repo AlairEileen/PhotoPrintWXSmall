@@ -22,6 +22,7 @@ namespace PhotoPrintWXSmall.Controllers
 {
     public class AccountController : BaseController<AccountData, AccountModel>
     {
+
         /// <summary>
         /// 请求登录
         /// </summary>
