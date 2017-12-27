@@ -272,5 +272,19 @@ namespace PhotoPrintWXSmall.Controllers
                 throw;
             }
         }
+
+        public string SendOrder(string orderID)
+        {
+            //try
+            //{
+            //    thisData.SendOrder(new ObjectId(orderID));
+            //    return JsonResponseModel.SuccessJson;
+            //}
+            //catch (Exception)
+            //{
+            //    return JsonResponseModel.ErrorJson;
+            //    throw;
+            //}
+        }
     }
 }

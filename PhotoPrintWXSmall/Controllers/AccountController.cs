@@ -31,13 +31,16 @@ namespace PhotoPrintWXSmall.Controllers
         /// <param name="encryptedData"></param>
         /// <returns></returns>
         [HttpGet]
-        public string GetAccountID(string code, string iv, string encryptedData)
+        public string GetAccountID(string uniacid,string code, string iv, string encryptedData)
         {
             try
             {
                 BaseResponseModel<AccountModel> responseModel = new BaseResponseModel<AccountModel>();
-                WXSmallAppCommon.Models.WXAccountInfo wXAccount = WXSmallAppCommon.WXInteractions.WXLoginAction.ProcessRequest(code, iv, encryptedData);
-                var accountCard = thisData.SaveOrdUpdateAccount(wXAccount);
+
+                //WXSmallAppCommon.Models.WXAccountInfo wXAccount = WXSmallAppCommon.WXInteractions.WXLoginAction.ProcessRequest(code, iv, encryptedData);
+                ///微擎方式
+                WXSmallAppCommon.Models.WXAccountInfo wXAccount = We7Tools.We7Tools.GetWeChatUserInfo(uniacid, code, iv, encryptedData);
+                var accountCard = thisData.SaveOrdUpdateAccount(uniacid,wXAccount);
                 ActionParams stautsCode = ActionParams.code_error;
                 if (accountCard != null)
                 {

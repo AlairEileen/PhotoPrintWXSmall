@@ -21,6 +21,7 @@ namespace PhotoPrintWXSmall.Models
 
         public List<Order> Orders { get; set; }
         public List<FileModel<string[]>> UploadImages { get; set; }
+        public string uniacid { get; set; }
 
     }
 
@@ -41,6 +42,7 @@ namespace PhotoPrintWXSmall.Models
         /// </summary>
         public bool Downloaded { get; set; }
         public OrderLocation OrderLocation { get; set; }
+        public string uniacid { get; set; }
     }
 
     public enum OrderStatus

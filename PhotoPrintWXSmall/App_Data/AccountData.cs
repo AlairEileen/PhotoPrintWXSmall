@@ -18,12 +18,13 @@ namespace PhotoPrintWXSmall.App_Data
         /// </summary>
         /// <param name="wXAccount">微信用户</param>
         /// <returns></returns>
-        internal AccountModel SaveOrdUpdateAccount(WXAccountInfo wXAccount)
+        internal AccountModel SaveOrdUpdateAccount(string uniacid, WXAccountInfo wXAccount)
         {
             AccountModel accountCard = null;
             if (wXAccount.OpenId != null)
             {
-                var filter = Builders<AccountModel>.Filter.And(Builders<AccountModel>.Filter.Eq(x => x.OpenID, wXAccount.OpenId));
+                var filter = Builders<AccountModel>.Filter.And(Builders<AccountModel>.Filter.Eq(x => x.OpenID, wXAccount.OpenId),
+                   Builders<AccountModel>.Filter.Eq(x => x.uniacid, uniacid));
                 var update = Builders<AccountModel>.Update.Set(x => x.LastChangeTime, DateTime.Now);
                 accountCard = collection.FindOneAndUpdate<AccountModel>(filter, update);
 
@@ -31,7 +32,7 @@ namespace PhotoPrintWXSmall.App_Data
                 {
                     //string avatarUrl = DownloadAvatar(wXAccount.AvatarUrl, wXAccount.OpenId);
                     string avatarUrl = wXAccount.AvatarUrl;
-                    accountCard = new AccountModel() { OpenID = wXAccount.OpenId, AccountName = wXAccount.NickName, Gender = wXAccount.GetGender, AccountAvatar = avatarUrl, CreateTime = DateTime.Now, LastChangeTime = DateTime.Now };
+                    accountCard = new AccountModel() { uniacid = uniacid, OpenID = wXAccount.OpenId, AccountName = wXAccount.NickName, Gender = wXAccount.GetGender, AccountAvatar = avatarUrl, CreateTime = DateTime.Now, LastChangeTime = DateTime.Now };
                     collection.InsertOne(accountCard);
                 }
             }
@@ -99,13 +100,13 @@ namespace PhotoPrintWXSmall.App_Data
         {
             FilterDefinition<AccountModel> filter = Builders<AccountModel>.Filter.Eq(x => x.AccountID, accountID);
             UpdateDefinition<AccountModel> update = null;
-            var account =collection.Find(x=>x.AccountID.Equals(accountID)).FirstOrDefault();
+            var account = collection.Find(x => x.AccountID.Equals(accountID)).FirstOrDefault();
             foreach (var item in account.OrderLocations)
             {
                 filter = Builders<AccountModel>.Filter.Eq(x => x.AccountID, accountID)
                     & Builders<AccountModel>.Filter
                 .Eq("OrderLocations.OrderLocationID", item.OrderLocationID);
-                update = Builders<AccountModel>.Update.Set("OrderLocations.$.IsDefault", item.OrderLocationID.Equals(orderLocationID)?true: false);
+                update = Builders<AccountModel>.Update.Set("OrderLocations.$.IsDefault", item.OrderLocationID.Equals(orderLocationID) ? true : false);
                 collection.UpdateOne(filter, update);
             }
         }
@@ -113,7 +114,7 @@ namespace PhotoPrintWXSmall.App_Data
         internal OrderLocation GetDefaultOrderLocation(ObjectId accountID)
         {
             var account = collection.Find(x => x.AccountID.Equals(accountID)).FirstOrDefault();
-            return account.OrderLocations.Find(x=>x.IsDefault);
+            return account.OrderLocations.Find(x => x.IsDefault);
         }
 
 

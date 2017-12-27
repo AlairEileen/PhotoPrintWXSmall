@@ -58,7 +58,7 @@
                         "<td>" + item.CreateTime + "</td>" +
                         "<td><button class='btn btn-primary' onclick=\"downloadOrder('" + item.OrderID.toString() + "')\">" +
                         downloadText+
-                        "</button></td>" +
+                        "</button><button class='btn btn-danger' onclick=\"sendOrder('" + item.OrderID.toString() + "')\"></button></td>" +
                         "</tr>");
                 });
             }
@@ -71,5 +71,8 @@
 
         window.location.href = "GetOrderFile?orderID=" + orderID;
     }
+    function sendOrder(orderID) {
 
+
+    }
 </script>
