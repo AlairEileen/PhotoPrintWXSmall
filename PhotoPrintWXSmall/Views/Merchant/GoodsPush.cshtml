@@ -303,7 +303,7 @@
         var type = (goodsType ==@((int)GoodsClass.OneGoods)?"单张商品" : "套餐商品");
         var text = "您确认要完全删除 " + type + " 中的 " + title + " 吗？";
         if (window.confirm(text)) {
-            $.getJSON("Merchant/DelGoodsFiles", { goodsType: goodsType, picType: fileType }, function (data, status) {
+            $.getJSON("DelGoodsFiles", { goodsType: goodsType, picType: fileType }, function (data, status) {
                 if (data.StatusCode ==@((int)Tools.ActionParams.code_ok)) {
                     alert("删除成功");
                 } else {

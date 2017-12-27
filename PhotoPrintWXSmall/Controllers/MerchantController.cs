@@ -179,7 +179,6 @@ namespace PhotoPrintWXSmall.Controllers
         /// <param name="goodsType">商品类型</param>
         /// <param name="picType">图片类型（0：轮播图，1：详情图）</param>
         /// <returns></returns>
-        [HttpDelete]
         public string DelGoodsFiles(GoodsClass goodsType,int picType)
         {
             try
