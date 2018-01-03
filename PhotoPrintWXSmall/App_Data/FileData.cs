@@ -22,7 +22,7 @@ namespace PhotoPrintWXSmall.App_Data
         /// <param name="accountID">账户ID</param>
         /// <param name="file"></param>
         /// <returns></returns>
-        internal async Task<string> SaveOneFile(ObjectId accountID, IFormFile file)
+        internal async Task<string> SaveOneFile(string uniacid, ObjectId accountID, IFormFile file)
         {
             string resultFileId = "";
 
@@ -32,8 +32,8 @@ namespace PhotoPrintWXSmall.App_Data
                                   .Parse(file.ContentDisposition)
                                   .FileName
                                   .Trim('"');
-            string saveDir = $@"{ConstantProperty.BaseDir}{ConstantProperty.AlbumDir}";
-            string dbSaveDir = $@"{ConstantProperty.AlbumDir}";
+            string saveDir = $@"{ConstantProperty.BaseDir}{ConstantProperty.AlbumDir}{uniacid}/";
+            string dbSaveDir = $@"{ConstantProperty.AlbumDir}{uniacid}/";
             if (!Directory.Exists(saveDir))
             {
                 Directory.CreateDirectory(saveDir);
@@ -51,19 +51,21 @@ namespace PhotoPrintWXSmall.App_Data
                 string[] fileUrls = new string[] { $@"{dbSaveDir}{saveName}{exString}" };
             }
             var accountCollection = mongo.GetMongoCollection<AccountModel>();
+            FilterDefinition<AccountModel> filter = Builders<AccountModel>.Filter.Eq(x => x.AccountID, accountID) & Builders<AccountModel>.Filter.Eq(x => x.uniacid, uniacid);
+
             var account = accountCollection.Find(x=>x.AccountID.Equals(accountID)).FirstOrDefault();
             if (account.UploadImages==null)
             {
-                accountCollection.UpdateOne(x=>x.AccountID.Equals(accountID),Builders<AccountModel>.Update.Set(x=>x.UploadImages,new List<FileModel<string[]>>()));
+                accountCollection.UpdateOne(filter,Builders<AccountModel>.Update.Set(x=>x.UploadImages,new List<FileModel<string[]>>()));
             }
            
             //ThreadPool.QueueUserWorkItem(new WaitCallback(ImageTool.Create3Img), params3Img);
            return await Task.Run(()=>{
-               ParamsCreate3Img params3Img = new ParamsCreate3Img() { FileName = filename, FileDir = ConstantProperty.AlbumDir };
+               ParamsCreate3Img params3Img = new ParamsCreate3Img() { FileName = filename, FileDir = ConstantProperty.AlbumDir+$"{uniacid}/" };
                params3Img.OnFinish += fileModel =>
                {
                    fileModel.FileID = ObjectId.GenerateNewId();
-                   accountCollection.UpdateOne(x => x.AccountID.Equals(accountID),
+                   accountCollection.UpdateOne(filter,
                        Builders<AccountModel>.Update.Push(x => x.UploadImages, fileModel));
                    //mongo.GetMongoCollection<FileModel<string[]>>("FileModel").InsertOne(fileModel);
                    resultFileId = fileModel.FileID.ToString();

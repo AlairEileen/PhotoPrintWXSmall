@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Hosting.Internal;
 using Microsoft.AspNetCore.Hosting;
 using MongoDB.Bson;
 using System.IO.Compression;
+using We7Tools.Extend;
 
 namespace PhotoPrintWXSmall.Controllers
 {
@@ -41,6 +42,7 @@ namespace PhotoPrintWXSmall.Controllers
         {
             return View();
         }
+
         /// <summary>
         /// 添加商品类型
         /// </summary>
@@ -51,6 +53,7 @@ namespace PhotoPrintWXSmall.Controllers
             {
                 string json = new StreamReader(Request.Body).ReadToEnd();
                 GoodsType goodsType = JsonConvert.DeserializeObject<GoodsType>(json);
+                goodsType.uniacid = HttpContext.Session.GetUniacID();
                 thisData.SaveGoodsType(goodsType);
                 return JsonResponseModel.SuccessJson;
             }
@@ -60,6 +63,7 @@ namespace PhotoPrintWXSmall.Controllers
                 throw;
             }
         }
+
         /// <summary>
         /// 添加商品菜单
         /// </summary>
@@ -70,7 +74,7 @@ namespace PhotoPrintWXSmall.Controllers
             {
                 string json = new StreamReader(Request.Body).ReadToEnd();
                 var goodsMenu = JsonConvert.DeserializeObject<OneGoodsMenu>(json);
-                thisData.PushOneGoodsMenu(goodsMenu); return JsonResponseModel.SuccessJson;
+                thisData.PushOneGoodsMenu(HttpContext.Session.GetUniacID(), goodsMenu); return JsonResponseModel.SuccessJson;
             }
             catch (Exception)
             {
@@ -78,6 +82,7 @@ namespace PhotoPrintWXSmall.Controllers
                 throw;
             }
         }
+
         /// <summary>
         /// 获取商品类型列表
         /// </summary>
@@ -87,7 +92,7 @@ namespace PhotoPrintWXSmall.Controllers
         {
             try
             {
-                List<GoodsType> typeList = thisData.GetGoodsTypes(typeClass);
+                List<GoodsType> typeList = thisData.GetGoodsTypes(HttpContext.Session.GetUniacID(), typeClass);
                 return new BaseResponseModel<List<GoodsType>>() { StatusCode = Tools.ActionParams.code_ok, JsonData = typeList }.ToJson();
             }
             catch (Exception)
@@ -96,6 +101,7 @@ namespace PhotoPrintWXSmall.Controllers
                 throw;
             }
         }
+
         /// <summary>
         /// 是否有该商品
         /// </summary>
@@ -106,7 +112,7 @@ namespace PhotoPrintWXSmall.Controllers
             {
                 string json = new StreamReader(Request.Body).ReadToEnd();
                 var goodsMenu = JsonConvert.DeserializeObject<OneGoodsMenu>(json);
-                bool hasGoods = thisData.HasGoods(goodsMenu);
+                bool hasGoods = thisData.HasGoods(HttpContext.Session.GetUniacID(), goodsMenu);
                 return new BaseResponseModel<bool>() { StatusCode = Tools.ActionParams.code_ok, JsonData = hasGoods }.ToJson();
             }
             catch (Exception)
@@ -115,6 +121,7 @@ namespace PhotoPrintWXSmall.Controllers
                 throw;
             }
         }
+
         /// <summary>
         /// 添加商品套餐类型
         /// </summary>
@@ -124,7 +131,7 @@ namespace PhotoPrintWXSmall.Controllers
         {
             try
             {
-                thisData.PushPlanGoodsType(planGoodsType);
+                thisData.PushPlanGoodsType(HttpContext.Session.GetUniacID(), planGoodsType);
                 return JsonResponseModel.SuccessJson;
             }
             catch (Exception)
@@ -144,6 +151,7 @@ namespace PhotoPrintWXSmall.Controllers
             {
                 string json = new StreamReader(Request.Body).ReadToEnd();
                 var goodsModel = JsonConvert.DeserializeObject<GoodsModel>(json);
+                goodsModel.uniacid = HttpContext.Session.GetUniacID();
                 thisData.PushPlanGoods(goodsModel); return JsonResponseModel.SuccessJson;
             }
             catch (Exception)
@@ -164,7 +172,7 @@ namespace PhotoPrintWXSmall.Controllers
             try
             {
                 var files = Request.Form.Files;
-                thisData.SaveGoodsFiles(goodsType, picType, files, hostingEnvironment);
+                thisData.SaveGoodsFiles(HttpContext.Session.GetUniacID(), goodsType, picType, files, hostingEnvironment);
             }
             catch (Exception)
             {
@@ -173,17 +181,18 @@ namespace PhotoPrintWXSmall.Controllers
             }
             return JsonResponseModel.SuccessJson;
         }
+
         /// <summary>
         /// 删除商品图片
         /// </summary>
         /// <param name="goodsType">商品类型</param>
         /// <param name="picType">图片类型（0：轮播图，1：详情图）</param>
         /// <returns></returns>
-        public string DelGoodsFiles(GoodsClass goodsType,int picType)
+        public string DelGoodsFiles(GoodsClass goodsType, int picType)
         {
             try
             {
-                thisData.DelGoodsFiles(goodsType,picType);
+                thisData.DelGoodsFiles(HttpContext.Session.GetUniacID(), goodsType, picType);
                 return JsonResponseModel.SuccessJson;
             }
             catch (Exception)
@@ -197,11 +206,11 @@ namespace PhotoPrintWXSmall.Controllers
         /// 获取所有订单
         /// </summary>
         /// <returns></returns>
-        public string GetAllOrders()
+        public string GetAllOrders(OrderStatus orderStatus, int downloaded = -1)
         {
             try
             {
-                List<Order> orders = thisData.GetAllOrders();
+                List<Order> orders = thisData.GetAllOrders(HttpContext.Session.GetUniacID(), orderStatus, downloaded);
                 return new BaseResponseModel<List<Order>>() { StatusCode = Tools.ActionParams.code_ok, JsonData = orders }.ToJson();
             }
             catch (Exception)
@@ -222,6 +231,7 @@ namespace PhotoPrintWXSmall.Controllers
             var stream = System.IO.File.OpenRead(zipFile);
             return File(stream, "application/vnd.android.package-archive", Path.GetFileName(zipFile));
         }
+
         [HttpPatch]
         public string PatchCompanyUser()
         {
@@ -243,12 +253,11 @@ namespace PhotoPrintWXSmall.Controllers
             }
         }
 
-
         public string GetAllGoods(GoodsClass goodsClass)
         {
             try
             {
-                List<GoodsModel> list = thisData.GetAllGoods(goodsClass);
+                List<GoodsModel> list = thisData.GetAllGoods(HttpContext.Session.GetUniacID(), goodsClass);
                 return new BaseResponseModel<List<GoodsModel>>() { StatusCode = Tools.ActionParams.code_ok, JsonData = list }.ToJson();
             }
             catch (Exception)
@@ -258,13 +267,12 @@ namespace PhotoPrintWXSmall.Controllers
             }
         }
 
-
         public async Task<string> SavePlanGoodsListPic()
         {
             try
             {
                 var files = Request.Form.Files;
-                return await thisData.SavePlanGoodsListPic(files[0]);
+                return await thisData.SavePlanGoodsListPic(HttpContext.Session.GetUniacID(), files[0]);
             }
             catch (Exception)
             {
@@ -273,18 +281,37 @@ namespace PhotoPrintWXSmall.Controllers
             }
         }
 
-        public string SendOrder(string orderID)
+        public string SendOrder(string orderID, string company, string number)
         {
-            //try
-            //{
-            //    thisData.SendOrder(new ObjectId(orderID));
-            //    return JsonResponseModel.SuccessJson;
-            //}
-            //catch (Exception)
-            //{
-            //    return JsonResponseModel.ErrorJson;
-            //    throw;
-            //}
+            try
+            {
+                if (string.IsNullOrEmpty(company) || string.IsNullOrEmpty(number))
+                {
+                    return JsonResponseModel.ErrorNullJson;
+                }
+                thisData.SendOrder(new ObjectId(orderID), company, number);
+                return JsonResponseModel.SuccessJson;
+            }
+            catch (Exception)
+            {
+                return JsonResponseModel.ErrorJson;
+                throw;
+            }
         }
+
+        public string DelGoods(string goodsID)
+        {
+            try
+            {
+                thisData.DelGoods(new ObjectId(goodsID));
+                return JsonResponseModel.SuccessJson;
+            }
+            catch (Exception)
+            {
+                return JsonResponseModel.ErrorJson;
+                throw;
+            }
+        }
+
     }
 }

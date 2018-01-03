@@ -46,7 +46,15 @@ namespace We7Tools.Extend
             }
             return (string)jObj["username"];
         }
-      
+      public static string GetUniacID(this Microsoft.AspNetCore.Http.ISession session)
+        {
+            var jObj = GetWe7Data(session);
+            if (jObj==null)
+            {
+                return null;
+            }
+            return (string)jObj["uniacid"];
+        }
     }
 
 

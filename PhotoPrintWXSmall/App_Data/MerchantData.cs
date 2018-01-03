@@ -32,13 +32,13 @@ namespace PhotoPrintWXSmall.App_Data
         /// 添加单张商品菜单
         /// </summary>
         /// <param name="goodsMenu"></param>
-        internal void PushOneGoodsMenu(OneGoodsMenu goodsMenu)
+        internal void PushOneGoodsMenu(string uniacid, OneGoodsMenu goodsMenu)
         {
             var collection = mongo.GetMongoCollection<GoodsType>();
-            var printType = collection.Find(x => x.GoodsTypeID.Equals(goodsMenu.SelectedPrintTypeID)).FirstOrDefault();
-            var paperType = collection.Find(x => x.GoodsTypeID.Equals(goodsMenu.SelectedPaperTypeID)).FirstOrDefault();
-            var sizeType = collection.Find(x => x.GoodsTypeID.Equals(goodsMenu.SelectedSizeTypeID)).FirstOrDefault();
-            var goodsImages = mongo.GetMongoCollection<GoodsPic>().Find(x => x.GoodsClass == GoodsClass.OneGoods).FirstOrDefault();
+            var printType = collection.Find(x => x.GoodsTypeID.Equals(goodsMenu.SelectedPrintTypeID) && x.uniacid.Equals(uniacid)).FirstOrDefault();
+            var paperType = collection.Find(x => x.GoodsTypeID.Equals(goodsMenu.SelectedPaperTypeID) && x.uniacid.Equals(uniacid)).FirstOrDefault();
+            var sizeType = collection.Find(x => x.GoodsTypeID.Equals(goodsMenu.SelectedSizeTypeID) && x.uniacid.Equals(uniacid)).FirstOrDefault();
+            var goodsImages = mongo.GetMongoCollection<GoodsPic>().Find(x => x.GoodsClass == GoodsClass.OneGoods && x.uniacid.Equals(uniacid)).FirstOrDefault();
             this.collection.InsertOne(new GoodsModel()
             {
                 GoodsPrice = goodsMenu.GoodsPrice,
@@ -49,7 +49,8 @@ namespace PhotoPrintWXSmall.App_Data
                 PicsNum = 1,
                 SizeType = sizeType,
                 GoodsClass = GoodsClass.OneGoods,
-                Title = sizeType.TypeName + printType.TypeName + paperType.TypeName
+                Title = sizeType.TypeName + printType.TypeName + paperType.TypeName,
+                uniacid = uniacid
             });
         }
 
@@ -58,34 +59,40 @@ namespace PhotoPrintWXSmall.App_Data
         /// </summary>
         /// <param name="typeClass"></param>
         /// <returns></returns>
-        internal List<GoodsType> GetGoodsTypes(TypeClass typeClass)
+        internal List<GoodsType> GetGoodsTypes(string uniacid, TypeClass typeClass)
         {
-            return mongo.GetMongoCollection<GoodsType>().Find(x => x.TypeClass == typeClass).ToList();
+            return mongo.GetMongoCollection<GoodsType>().Find(x => x.TypeClass == typeClass && x.uniacid.Equals(uniacid)).ToList();
         }
+
 
         /// <summary>
         /// 是否有该商品
         /// </summary>
         /// <param name="goodsMenu"></param>
         /// <returns></returns>
-        internal bool HasGoods(OneGoodsMenu goodsMenu)
+        internal bool HasGoods(string uniacid, OneGoodsMenu goodsMenu)
         {
             var filter = Builders<GoodsModel>.Filter;
-            var filterSum = filter.Eq(x => x.GoodsClass, GoodsClass.OneGoods) &
+            var filterSum = filter.Eq(x => x.uniacid, uniacid)
+                & filter.Eq(x => x.GoodsClass, GoodsClass.OneGoods) &
                filter.Eq(x => x.PrintType.GoodsTypeID, goodsMenu.SelectedPrintTypeID)
                 & filter.Eq(x => x.PaperType.GoodsTypeID, goodsMenu.SelectedPaperTypeID)
                 & filter.Eq(x => x.SizeType.GoodsTypeID, goodsMenu.SelectedSizeTypeID);
             return collection.Find(filterSum).FirstOrDefault() != null;
         }
 
+
+
         /// <summary>
         /// 添加套餐商品类型
         /// </summary>
         /// <param name="planGoodsType"></param>
-        internal void PushPlanGoodsType(string planGoodsType)
+        internal void PushPlanGoodsType(string uniacid, string planGoodsType)
         {
-            mongo.GetMongoCollection<GoodsType>().InsertOne(new GoodsType() { TypeName = planGoodsType, TypeClass = TypeClass.Plan });
+            mongo.GetMongoCollection<GoodsType>().InsertOne(new GoodsType() { TypeName = planGoodsType, TypeClass = TypeClass.Plan, uniacid = uniacid });
         }
+
+
 
         /// <summary>
         /// 添加套餐商品
@@ -93,13 +100,15 @@ namespace PhotoPrintWXSmall.App_Data
         /// <param name="goodsModel"></param>
         internal void PushPlanGoods(GoodsModel goodsModel)
         {
-            var goodsType = mongo.GetMongoCollection<GoodsType>().Find(x => x.GoodsTypeID.Equals(goodsModel.PlanType.GoodsTypeID)).FirstOrDefault();
+            var goodsType = mongo.GetMongoCollection<GoodsType>().Find(x => x.GoodsTypeID.Equals(goodsModel.PlanType.GoodsTypeID) && x.uniacid.Equals(goodsModel.uniacid)).FirstOrDefault();
             goodsModel.PlanType = goodsType;
             goodsModel.GoodsClass = GoodsClass.PlanGoods;
             var file = mongo.GetMongoCollection<FileModel<string[]>>("FileModel").Find(x => x.FileID.Equals(goodsModel.GoodsListPic.FileID)).FirstOrDefault();
             goodsModel.GoodsListPic = file;
             collection.InsertOne(goodsModel);
         }
+
+
 
         /// <summary>
         /// 保存商品图片
@@ -108,7 +117,7 @@ namespace PhotoPrintWXSmall.App_Data
         /// <param name="picType"></param>
         /// <param name="files"></param>
         /// <param name="hostingEnvironment"></param>
-        internal void SaveGoodsFiles(GoodsClass goodsType, int picType, IFormFileCollection files, IHostingEnvironment hostingEnvironment)
+        internal void SaveGoodsFiles(string uniacid, GoodsClass goodsType, int picType, IFormFileCollection files, IHostingEnvironment hostingEnvironment)
         {
             long size = 0;
             foreach (var file in files)
@@ -117,8 +126,8 @@ namespace PhotoPrintWXSmall.App_Data
                                 .Parse(file.ContentDisposition)
                                 .FileName
                                 .Trim('"');
-                string saveDir = $@"{ConstantProperty.BaseDir}{ConstantProperty.GoodsImagesDir}";
-                string dbSaveDir = $@"{ConstantProperty.GoodsImagesDir}";
+                string saveDir = $@"{ConstantProperty.BaseDir}{ConstantProperty.GoodsImagesDir}{uniacid}/";
+                string dbSaveDir = $@"{ConstantProperty.GoodsImagesDir}{uniacid}/";
                 if (!Directory.Exists(saveDir))
                 {
                     Directory.CreateDirectory(saveDir);
@@ -137,36 +146,36 @@ namespace PhotoPrintWXSmall.App_Data
                 }
 
                 var goodsPicCollection = mongo.GetMongoCollection<GoodsPic>();
-                var goodsPic = goodsPicCollection.Find(x => x.GoodsClass == goodsType).FirstOrDefault();
+                var goodsPic = goodsPicCollection.Find(x => x.GoodsClass == goodsType && x.uniacid.Equals(uniacid)).FirstOrDefault();
                 if (goodsPic == null)
                 {
-                    goodsPic = new GoodsPic() { GoodsClass = goodsType };
+                    goodsPic = new GoodsPic() { GoodsClass = goodsType, uniacid = uniacid };
 
                     goodsPicCollection.InsertOne(goodsPic);
                 }
                 if (goodsPic.HeaderPics == null)
                 {
-                    goodsPicCollection.UpdateOne(x => x.GoodsPicID.Equals(goodsPic.GoodsPicID),
+                    goodsPicCollection.UpdateOne(x => x.GoodsPicID.Equals(goodsPic.GoodsPicID) && x.uniacid.Equals(uniacid),
                         Builders<GoodsPic>.Update.Set(x => x.HeaderPics, new List<FileModel<string[]>>()));
                 }
                 if (goodsPic.BodyPics == null)
                 {
-                    goodsPicCollection.UpdateOne(x => x.GoodsPicID.Equals(goodsPic.GoodsPicID),
+                    goodsPicCollection.UpdateOne(x => x.GoodsPicID.Equals(goodsPic.GoodsPicID) && x.uniacid.Equals(uniacid),
                         Builders<GoodsPic>.Update.Set(x => x.BodyPics, new List<FileModel<string[]>>()));
                 }
-                ParamsCreate3Img params3Img = new ParamsCreate3Img() { FileName = filename, FileDir = ConstantProperty.GoodsImagesDir };
+                ParamsCreate3Img params3Img = new ParamsCreate3Img() { FileName = filename, FileDir = ConstantProperty.GoodsImagesDir + $"{uniacid}/" };
                 params3Img.OnFinish += fileModel =>
                 {
                     fileModel.FileID = ObjectId.GenerateNewId();
                     if (picType == 0)
                     {
                         var update = Builders<GoodsPic>.Update.Push(x => x.HeaderPics, fileModel);
-                        goodsPicCollection.UpdateOne(x => x.GoodsPicID.Equals(goodsPic.GoodsPicID), update);
+                        goodsPicCollection.UpdateOne(x => x.GoodsPicID.Equals(goodsPic.GoodsPicID) && x.uniacid.Equals(uniacid), update);
                     }
                     else
                     {
                         var update = Builders<GoodsPic>.Update.Push(x => x.BodyPics, fileModel);
-                        goodsPicCollection.UpdateOne(x => x.GoodsPicID.Equals(goodsPic.GoodsPicID), update);
+                        goodsPicCollection.UpdateOne(x => x.GoodsPicID.Equals(goodsPic.GoodsPicID) && x.uniacid.Equals(uniacid), update);
                     }
                     mongo.GetMongoCollection<FileModel<string[]>>("FileModel").InsertOne(fileModel);
                 };
@@ -175,11 +184,13 @@ namespace PhotoPrintWXSmall.App_Data
             }
         }
 
-        internal void DelGoodsFiles(GoodsClass goodsType, int picType)
+
+
+        internal void DelGoodsFiles(string uniacid, GoodsClass goodsType, int picType)
         {
 
             var goodsPicCollection = mongo.GetMongoCollection<GoodsPic>();
-            var goodsPic = goodsPicCollection.Find(x => x.GoodsClass == goodsType).FirstOrDefault();
+            var goodsPic = goodsPicCollection.Find(x => x.GoodsClass == goodsType && x.uniacid.Equals(uniacid)).FirstOrDefault();
             if (goodsPic == null)
             {
                 throw new Exception();
@@ -195,7 +206,23 @@ namespace PhotoPrintWXSmall.App_Data
                 DelGoodsPics(goodsPic.BodyPics);
                 update = Builders<GoodsPic>.Update.Set(x => x.BodyPics, new List<FileModel<string[]>>());
             }
-            goodsPicCollection.UpdateOne(x => x.GoodsClass == goodsType, update);
+            goodsPicCollection.UpdateOne(x => x.GoodsClass == goodsType && x.uniacid.Equals(uniacid), update);
+        }
+
+        internal void SendOrder(ObjectId orderID, string company, string number)
+        {
+            var accountCollection = mongo.GetMongoCollection<AccountModel>();
+            var accountModel = accountCollection.Find(Builders<AccountModel>.Filter.Eq("Orders.OrderID", orderID)).FirstOrDefault();
+            var logistics = new Logistics() { Company = company, Number = number };
+            var update = Builders<AccountModel>.Update.Set("Orders.$.Logistics", logistics).Set("Orders.$.OrderStatus", OrderStatus.waitingGet);
+            var filter = Builders<AccountModel>.Filter;
+            var filterSum = filter.Eq(x => x.AccountID, accountModel.AccountID) & filter.Eq("Orders.OrderID", orderID);
+            accountCollection.UpdateOne(filterSum, update);
+        }
+
+        internal void DelGoods(ObjectId goodsID)
+        {
+            collection.DeleteOne(x => x.GoodsID.Equals(goodsID));
         }
 
         private void DelGoodsPics(List<FileModel<string[]>> picsList)
@@ -212,12 +239,13 @@ namespace PhotoPrintWXSmall.App_Data
             }
         }
 
-        internal List<GoodsModel> GetAllGoods(GoodsClass goodsClass)
+
+        internal List<GoodsModel> GetAllGoods(string uniacid, GoodsClass goodsClass)
         {
-            return collection.Find(x => x.GoodsClass == goodsClass).ToList();
+            return collection.Find(x => x.GoodsClass == goodsClass && x.uniacid.Equals(uniacid)).ToList();
         }
 
-        internal async Task<string> SavePlanGoodsListPic(IFormFile file)
+        internal async Task<string> SavePlanGoodsListPic(string uniacid, IFormFile file)
         {
             string resultFileId = "";
 
@@ -227,8 +255,8 @@ namespace PhotoPrintWXSmall.App_Data
                                   .Parse(file.ContentDisposition)
                                   .FileName
                                   .Trim('"');
-            string saveDir = $@"{ConstantProperty.BaseDir}{ConstantProperty.GoodsImagesDir}";
-            string dbSaveDir = $@"{ConstantProperty.GoodsImagesDir}";
+            string saveDir = $@"{ConstantProperty.BaseDir}{ConstantProperty.GoodsImagesDir}{uniacid}/";
+            string dbSaveDir = $@"{ConstantProperty.GoodsImagesDir}{uniacid}/";
             if (!Directory.Exists(saveDir))
             {
                 Directory.CreateDirectory(saveDir);
@@ -247,7 +275,7 @@ namespace PhotoPrintWXSmall.App_Data
             }
             return await Task.Run(() =>
             {
-                ParamsCreate3Img params3Img = new ParamsCreate3Img() { FileName = filename, FileDir = ConstantProperty.GoodsImagesDir };
+                ParamsCreate3Img params3Img = new ParamsCreate3Img() { FileName = filename, FileDir = ConstantProperty.GoodsImagesDir + $"{uniacid}/" };
                 params3Img.OnFinish += fileModel =>
                 {
                     mongo.GetMongoCollection<FileModel<string[]>>("FileModel").InsertOne(fileModel);
@@ -279,14 +307,15 @@ namespace PhotoPrintWXSmall.App_Data
         /// <returns></returns>
         internal string GetOrderFile(ObjectId orderID)
         {
-            var account = mongo.GetMongoCollection<AccountModel>().Find(Builders<AccountModel>.Filter.Eq("Orders.OrderID", orderID)).FirstOrDefault();
+            var accountCollection = mongo.GetMongoCollection<AccountModel>();
+            var account = accountCollection.Find(Builders<AccountModel>.Filter.Eq("Orders.OrderID", orderID)).FirstOrDefault();
             var order = account.Orders.Find(x => x.OrderID.Equals(orderID));
-
+            var filter = Builders<AccountModel>.Filter.Eq(x => x.AccountID, account.AccountID) & Builders<AccountModel>.Filter.Eq("Orders.OrderID", orderID);
+            accountCollection.UpdateOne(filter, Builders<AccountModel>.Update.Set("Orders.$.Downloaded", true));
             var savePath = ConstantProperty.BaseDir + ConstantProperty.TempDir + order.OrderNumber;
             Directory.CreateDirectory(savePath);
             var orderInfoFilePath = savePath + "/订单信息.txt";
             var orderInfoFile = File.CreateText(orderInfoFilePath);
-
             var shopInfo = "";
             var goodsCount = 0;
             order.ShopList.ForEach(x =>
@@ -338,15 +367,30 @@ namespace PhotoPrintWXSmall.App_Data
         /// 获取所有订单信息
         /// </summary>
         /// <returns></returns>
-        internal List<Order> GetAllOrders()
+        internal List<Order> GetAllOrders(string uniacid, OrderStatus orderStatus, int downloaded)
         {
             List<Order> orders = new List<Order>();
-            mongo.GetMongoCollection<AccountModel>().Find(Builders<AccountModel>.Filter.Empty).ToList().ForEach(x =>
+            var accountModels = mongo.GetMongoCollection<AccountModel>().Find(Builders<AccountModel>.Filter.Eq(x => x.uniacid, uniacid)).ToList();
+            accountModels.ForEach(x =>
             {
                 if (x.Orders != null)
                 {
-                    orders.AddRange(x.Orders);
+                    if (orderStatus == OrderStatus.all)
+                    {
+                        orders.AddRange(x.Orders);
+                    }
+                    else
+                    {
+                        foreach (var order in x.Orders)
+                        {
+                            if (order.OrderStatus == orderStatus && (downloaded == -1 ? true : (order.Downloaded == (downloaded == 1))))
+                            {
+                                orders.Add(order);
+                            }
+                        }
+                    }
                 }
+
             });
             return orders;
         }

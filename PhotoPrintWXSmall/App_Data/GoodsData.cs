@@ -10,10 +10,10 @@ namespace PhotoPrintWXSmall.App_Data
 {
     public class GoodsData : BaseData<GoodsModel>
     {
-        internal OneGoodsMenu GetGoodsMenu(ObjectId printTypeID, ObjectId paperTypeID, ObjectId sizeTypeID)
+        internal OneGoodsMenu GetGoodsMenu(string uniacid, ObjectId printTypeID, ObjectId paperTypeID, ObjectId sizeTypeID)
         {
             var goodsTypeCollection = mongo.GetMongoCollection<GoodsType>();
-            var goodsTypeList = goodsTypeCollection.Find(Builders<GoodsType>.Filter.Empty).ToList();
+            var goodsTypeList = goodsTypeCollection.Find(Builders<GoodsType>.Filter.Eq(x => x.uniacid, uniacid)).ToList();
 
             var printTypes = goodsTypeList.FindAll(x => x.TypeClass == TypeClass.Print);
             var paperTypes = goodsTypeList.FindAll(x => x.TypeClass == TypeClass.Paper);
@@ -58,7 +58,8 @@ namespace PhotoPrintWXSmall.App_Data
             else
             {
 
-                goods = collection.Find(x => x.PrintType.GoodsTypeID.Equals(selectedPrintType.GoodsTypeID) &&
+                goods = collection.Find(x => x.uniacid.Equals(uniacid) &&
+                x.PrintType.GoodsTypeID.Equals(selectedPrintType.GoodsTypeID) &&
                x.PaperType.GoodsTypeID.Equals(selectedPaperType.GoodsTypeID) &&
                x.SizeType.GoodsTypeID.Equals(selectedSizeType.GoodsTypeID)).FirstOrDefault();
                 GetCurrentSelect(printTypes, paperTypes, sizeTypes, selectedPaperType, selectedPrintType, selectedSizeType);
@@ -77,38 +78,39 @@ namespace PhotoPrintWXSmall.App_Data
                 SelectedSizeTypeID = selectedSizeType != null ? selectedSizeType.GoodsTypeID : ObjectId.Empty,
                 GoodsPrice = goods != null ? goods.GoodsPrice : 0,
                 GoodsOldPrice = goods != null ? goods.GoodsOldPrice : 0,
-                GoodsSpread = goods != null ? goods.GoodsOldPrice-goods.GoodsPrice : 0
+                GoodsSpread = goods != null ? goods.GoodsOldPrice - goods.GoodsPrice : 0
             };
             return goodsMenu;
         }
 
-        internal GoodsModel GetPlanGoodsInfo(ObjectId goodsID)
+
+        internal GoodsModel GetPlanGoodsInfo(string uniacid, ObjectId goodsID)
         {
-            var goods = collection.Find(x => x.GoodsID.Equals(goodsID)).FirstOrDefault();
+            var goods = collection.Find(x => x.GoodsID.Equals(goodsID) && x.uniacid.Equals(uniacid)).FirstOrDefault();
             goods.GoodsSpread = goods.GoodsOldPrice - goods.GoodsPrice;
             return goods;
         }
 
-        internal List<GoodsModel> GetPlanGoodsList(string planTypeID)
+        internal List<GoodsModel> GetPlanGoodsList(string uniacid, string planTypeID)
         {
             if (string.IsNullOrEmpty(planTypeID))
             {
-                return collection.Find(x => x.GoodsClass == GoodsClass.PlanGoods).ToList();
+                return collection.Find(x => x.GoodsClass == GoodsClass.PlanGoods && x.uniacid.Equals(uniacid)).ToList();
 
             }
-            var list = collection.Find(x => x.PlanType.GoodsTypeID.Equals(new ObjectId(planTypeID))).ToList();
-            list.ForEach(x=> { x.GoodsSpread = x.GoodsOldPrice - x.GoodsPrice; });
+            var list = collection.Find(x => x.PlanType.GoodsTypeID.Equals(new ObjectId(planTypeID)) && x.uniacid.Equals(uniacid)).ToList();
+            list.ForEach(x => { x.GoodsSpread = x.GoodsOldPrice - x.GoodsPrice; });
             return list;
         }
 
-        internal List<GoodsType> GetAllPlanType()
+        internal List<GoodsType> GetAllPlanType(string uniacid)
         {
-            return mongo.GetMongoCollection<GoodsType>().Find(x => x.TypeClass == TypeClass.Plan).ToList();
+            return mongo.GetMongoCollection<GoodsType>().Find(x => x.TypeClass == TypeClass.Plan && x.uniacid.Equals(uniacid)).ToList();
         }
 
-        internal GoodsPic GetGoodsPics(GoodsClass goodsClass)
+        internal GoodsPic GetGoodsPics(string uniacid, GoodsClass goodsClass)
         {
-            var goodsPic = mongo.GetMongoCollection<GoodsPic>().Find(x => x.GoodsClass == goodsClass).FirstOrDefault();
+            var goodsPic = mongo.GetMongoCollection<GoodsPic>().Find(x => x.GoodsClass == goodsClass && x.uniacid.Equals(uniacid)).FirstOrDefault();
             return goodsPic;
         }
 

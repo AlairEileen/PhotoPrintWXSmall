@@ -53,5 +53,17 @@ namespace Tools.Response
                 return nullJson;
             }
         }
+        private static string errorNullJson;
+        public static string ErrorNullJson
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(errorNullJson))
+                {
+                    errorNullJson = JsonConvert.SerializeObject(new BaseResponseModel<string>() { StatusCode = ActionParams.code_error_null }, jsonSerializerSettings);
+                }
+                return errorNullJson;
+            }
+        }
     }
 }

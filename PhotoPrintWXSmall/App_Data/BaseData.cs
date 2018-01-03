@@ -28,11 +28,18 @@ namespace PhotoPrintWXSmall.App_Data
         {
             return collection.Find(Builders<T>.Filter.Eq("_id", objectId)).FirstOrDefault();
         }
+        protected T GetModelByIDAndUniacID(ObjectId objectId, string uniacid)
+        {
+            return collection.Find(GetModelIDAndUniacIDFilter(objectId, uniacid)).FirstOrDefault();
+        }
 
         protected List<T> GetAllModel()
         {
             return collection.Find(Builders<T>.Filter.Empty).ToList();
         }
-            
+        protected FilterDefinition<T> GetModelIDAndUniacIDFilter(ObjectId objectId, string uniacid)
+        {
+            return Builders<T>.Filter.Eq("_id", objectId) & Builders<T>.Filter.Eq("uniacid", uniacid);
+        }
     }
 }

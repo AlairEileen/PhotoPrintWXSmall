@@ -44,6 +44,8 @@ namespace PhotoPrintWXSmall.Models
         /// </summary>
         public string Caption { get; set; }
         public FileModel<string[]> GoodsListPic { get; set; }
+        public string uniacid { get; set; }
+
     }
 
 
@@ -56,6 +58,8 @@ namespace PhotoPrintWXSmall.Models
         public GoodsClass GoodsClass { get; set; }
         public List<FileModel<string[]>> HeaderPics { get; set; }
         public List<FileModel<string[]>> BodyPics { get; set; }
+        public string uniacid { get; set; }
+
     }
 
     public enum GoodsClass
@@ -103,6 +107,7 @@ namespace PhotoPrintWXSmall.Models
         /// </summary>
         public bool HasGoods { get; set; }
         public decimal GoodsPrice { get; set; }
+        public string uniacid { get; set; }
     }
 
     public enum TypeClass

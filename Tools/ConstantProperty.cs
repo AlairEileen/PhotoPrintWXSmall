@@ -8,5 +8,6 @@ namespace Tools
         public const string TempDir = "temp/";
         public const string AlbumDir = "album/";
         public const string GoodsImagesDir = "goods_images/";
+        public const string LogoImagesDir = "logos/";
     }
 }

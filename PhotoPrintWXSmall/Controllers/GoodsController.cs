@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Tools.Response;
 using Tools.ResponseModels;
+using We7Tools.Extend;
 
 namespace PhotoPrintWXSmall.Controllers
 {
@@ -20,11 +21,11 @@ namespace PhotoPrintWXSmall.Controllers
         /// <param name="selectedPaperTypeID">当前选中的纸张ID</param>
         /// <param name="selectedSizeTypeID">当前选中的尺寸ID</param>
         /// <returns></returns>
-        public string GetGoodsOne(string selectedPrintTypeID, string selectedPaperTypeID, string selectedSizeTypeID)
+        public string GetGoodsOne(string uniacid, string selectedPrintTypeID, string selectedPaperTypeID, string selectedSizeTypeID)
         {
             try
             {
-                OneGoodsMenu goodsMenu = thisData.GetGoodsMenu(
+                OneGoodsMenu goodsMenu = thisData.GetGoodsMenu(uniacid,
                      string.IsNullOrEmpty(selectedPrintTypeID) ? ObjectId.Empty : new ObjectId(selectedPrintTypeID),
                     string.IsNullOrEmpty(selectedPaperTypeID) ? ObjectId.Empty : new ObjectId(selectedPaperTypeID),
                       string.IsNullOrEmpty(selectedSizeTypeID) ? ObjectId.Empty : new ObjectId(selectedSizeTypeID));
@@ -43,11 +44,15 @@ namespace PhotoPrintWXSmall.Controllers
         /// </summary>
         /// <param name="goodsClass">商品类别（0：单张，1：套餐）</param>
         /// <returns></returns>
-        public string GetGoodsPics(GoodsClass goodsClass)
+        public string GetGoodsPics(string uniacid, GoodsClass goodsClass)
         {
             try
             {
-                GoodsPic goodsPic = thisData.GetGoodsPics(goodsClass);
+                if (string.IsNullOrEmpty(uniacid))
+                {
+                    uniacid = HttpContext.Session.GetUniacID();
+                }
+                GoodsPic goodsPic = thisData.GetGoodsPics(uniacid, goodsClass);
                 return new BaseResponseModel<GoodsPic>() { StatusCode = Tools.ActionParams.code_ok, JsonData = goodsPic }.ToJson();
             }
             catch (Exception)
@@ -62,11 +67,11 @@ namespace PhotoPrintWXSmall.Controllers
         /// </summary>
         /// <param name="planTypeID">套餐类型ID</param>
         /// <returns></returns>
-        public string GetPlanGoodsList(string planTypeID)
+        public string GetPlanGoodsList(string uniacid, string planTypeID)
         {
             try
             {
-                List<GoodsModel> goodsList = thisData.GetPlanGoodsList(planTypeID);
+                List<GoodsModel> goodsList = thisData.GetPlanGoodsList(uniacid, planTypeID);
                 return new BaseResponseModel<List<GoodsModel>>() { StatusCode = Tools.ActionParams.code_ok, JsonData = goodsList }.ToJson();
             }
             catch (Exception)
@@ -81,11 +86,11 @@ namespace PhotoPrintWXSmall.Controllers
         /// </summary>
         /// <param name="goodsID">商品ID</param>
         /// <returns></returns>
-        public string GetPlanGoodsInfo(string goodsID)
+        public string GetPlanGoodsInfo(string uniacid, string goodsID)
         {
             try
             {
-                var goods = thisData.GetPlanGoodsInfo(new ObjectId(goodsID));
+                var goods = thisData.GetPlanGoodsInfo(uniacid, new ObjectId(goodsID));
                 return new BaseResponseModel<GoodsModel>() { StatusCode = Tools.ActionParams.code_ok, JsonData = goods }.ToJson();
             }
             catch (Exception)
@@ -99,11 +104,11 @@ namespace PhotoPrintWXSmall.Controllers
         /// 获取所有套餐类型
         /// </summary>
         /// <returns></returns>
-        public string GetAllPlanType()
+        public string GetAllPlanType(string uniacid)
         {
             try
             {
-                List<GoodsType> list = thisData.GetAllPlanType();
+                List<GoodsType> list = thisData.GetAllPlanType(uniacid);
                 return new BaseResponseModel<List<GoodsType>>() { StatusCode = Tools.ActionParams.code_ok, JsonData = list }.ToJson();
             }
             catch (Exception)

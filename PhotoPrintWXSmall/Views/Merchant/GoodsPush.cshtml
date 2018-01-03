@@ -314,7 +314,7 @@
             data: JSON.stringify(json),
             dataType: "json",
             success: function (message) {
-                if (message.StatusCode ==@((int)Tools.ActionParams.code_ok)) {
+                if (message.StatusCode == @((int)Tools.ActionParams.code_ok)) {
                     var text = message.JsonData ? "已经有该商品" : "没有该商品";
                     pushGoodsPreMessage.append(text);
                 }
@@ -327,7 +327,7 @@
     function showPics(fileType) {
          var goodsType = $.trim($("#fileUploadGoodsType").val());
         var title = (fileType == 0 ? "轮播图" : "详情图片");
-        var type = (goodsType ==@((int)GoodsClass.OneGoods)?"单张商品" : "套餐商品");
+        var type = (goodsType == @((int)GoodsClass.OneGoods)?"单张商品" : "套餐商品");
         var text = type + " 中的 " + title + " 浏览";
         $("#picsShowTitle").html(text);
         var container = $("#picsShowBody");
@@ -370,11 +370,11 @@
     function delFiles(fileType) {
         var goodsType = $.trim($("#fileUploadGoodsType").val());
         var title = (fileType == 0 ? "轮播图" : "详情图片");
-        var type = (goodsType ==@((int)GoodsClass.OneGoods)?"单张商品" : "套餐商品");
+        var type = (goodsType == @((int)GoodsClass.OneGoods)?"单张商品" : "套餐商品");
         var text = "您确认要完全删除 " + type + " 中的 " + title + " 吗？";
         if (window.confirm(text)) {
             $.getJSON("DelGoodsFiles", { goodsType: goodsType, picType: fileType }, function (data, status) {
-                if (data.StatusCode ==@((int)Tools.ActionParams.code_ok)) {
+                if (data.StatusCode == @((int)Tools.ActionParams.code_ok)) {
                     alert("删除成功");
                 } else {
                     alert("删除失败");
@@ -405,7 +405,7 @@
             processData: false,
             data: data,
             success: function (message) {
-                if (message.StatusCode ==@((int)Tools.ActionParams.code_ok)) {
+                if (message.StatusCode == @((int)Tools.ActionParams.code_ok)) {
                     alert("上传成功");
                 } else {
                     alert("上传失败");
@@ -446,11 +446,7 @@
             processData: false,
             data: data,
             success: function (message) {
-                  if (message.StatusCode ==@((int)Tools.ActionParams.code_ok)) {
-                    alert("添加成功");
-                } else {
-                      alert("添加失败");
-                }
+                pushPlanGoods(message);
             },
             error: function () {
                 alert("There was error uploading files!");
@@ -492,7 +488,7 @@
                     data: JSON.stringify(json),
                     dataType: "json",
                     success: function (message) {
-                       if (message.StatusCode ==@((int)Tools.ActionParams.code_ok)) {
+                       if (message.StatusCode == @((int)Tools.ActionParams.code_ok)) {
                     alert("添加成功");
                 } else {
                       alert("添加失败");

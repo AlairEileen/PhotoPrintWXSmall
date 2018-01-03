@@ -36,7 +36,11 @@ namespace PhotoPrintWXSmall.Controllers
         {
             if (string.IsNullOrEmpty(key))
             {
-                return View();
+                if (HttpContext.Session.HasWe7Data())
+                {
+                    return View(InitManageData());
+                }
+                return RedirectToAction("Index", "Error", new { errorType = ErrorType.ErrorNoUserOrTimeOut });
             }
             ViewData["key"] = key;
             var db = new MongoDBTool().GetMongoCollection<We7Temp>();
@@ -60,6 +64,12 @@ namespace PhotoPrintWXSmall.Controllers
             }
             hasIdentity = true;
             return RedirectToAction("Index", "Merchant");
+        }
+
+        private ManageViewModel InitManageData()
+        {
+            var companyModel = thisData.GetCompanyModel(HttpContext.Session.GetUniacID());
+            return new ManageViewModel() { OrderProperty = companyModel.OrderProperty, ProcessMiniInfo = companyModel.ProcessMiniInfo };
         }
 
         public string ReceiveWe7Data()
@@ -98,6 +108,51 @@ namespace PhotoPrintWXSmall.Controllers
             {
                 return RedirectToAction("Index", "Error");
                 //throw;
+            }
+        }
+
+        public string SetDefaultCarriage(decimal carriage)
+        {
+            try
+            {
+                thisData.SetDefaultCarriage(HttpContext.Session.GetUniacID(), carriage);
+                return JsonResponseModel.SuccessJson;
+            }
+            catch (Exception)
+            {
+                return JsonResponseModel.ErrorJson;
+                throw;
+            }
+        }
+
+        public string SetProcessMiniInfo()
+        {
+            try
+            {
+                var uniacid = HttpContext.Session.GetUniacID();
+                string json = new StreamReader(Request.Body).ReadToEnd();
+                ProcessMiniInfo processMiniInfo = JsonConvert.DeserializeObject<ProcessMiniInfo>(json);
+                thisData.SetProcessMiniInfo(uniacid, processMiniInfo);
+                return JsonResponseModel.SuccessJson;
+            }
+            catch (Exception)
+            {
+                return JsonResponseModel.ErrorJson;
+                throw;
+            }
+        }
+
+        public async Task<string> SaveProcessMiniLogo()
+        {
+            try
+            {
+                var files = Request.Form.Files;
+                return await thisData.SaveProcessMiniLogo(HttpContext.Session.GetUniacID(), files[0]);
+            }
+            catch (Exception)
+            {
+                return JsonResponseModel.ErrorJson;
+                throw;
             }
         }
     }

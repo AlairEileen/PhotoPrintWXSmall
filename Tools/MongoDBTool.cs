@@ -13,7 +13,7 @@ namespace Tools.DB
         private const string lineConn = "mongodb://47.94.208.29:27027";
 
 
-        private const string debugConn = "mongodb://192.168.2.80:27027";
+        private const string debugConn = "mongodb://192.168.2.85:27027";
         /// <summary>
         /// 指定的数据库
         /// </summary>
@@ -33,8 +33,8 @@ namespace Tools.DB
             {
                 var connectionString = conn;
 #if DEBUG
-                connectionString = debugConn;
-                //connectionString = lineConn;
+                //connectionString = debugConn;
+                connectionString = lineConn;
 #endif
                 MongoClient mongoClient = new MongoClient(connectionString);
                 mongoDatabase = mongoClient.GetDatabase(dbName);

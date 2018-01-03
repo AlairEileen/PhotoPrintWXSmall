@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Tools.Json;
+using Tools.Models;
 
 namespace PhotoPrintWXSmall.Models
 {
@@ -16,13 +17,19 @@ namespace PhotoPrintWXSmall.Models
         public ObjectId CompanyID { get; set; }
         public List<CompanyUser> CompanyUsers { get; set; }
         public OrderProperty OrderProperty { get; set; }
+        public string uniacid { get; set; }
+        public ProcessMiniInfo ProcessMiniInfo { get; set; }
+    }
+
+    public class ProcessMiniInfo
+    {
+        public string Detail { get; set; }
+        public string Name { get; set; }
+        public FileModel<string[]> Logo { get; set; }
     }
 
     public class OrderProperty
     {
-        [BsonId]
-        [JsonConverter(typeof(ObjectIdConverter))]
-        public ObjectId OrderPropertyID { get; set; }
         public decimal DefaultCarriage { get; set; }
     }
 

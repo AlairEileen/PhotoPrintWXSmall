@@ -18,6 +18,7 @@
                 <td>尺寸</td>
                 <td>原价</td>
                 <td>现价</td>
+                <td>操作</td>
             </tr>
         </thead>
         <tbody id="oneGoodsList"></tbody>
@@ -35,6 +36,7 @@
                 <td>套餐照片数量</td>
                 <td>原价</td>
                 <td>现价</td>
+                <td>操作</td>
             </tr>
         </thead>
         <tbody id="planGoodsList"></tbody>
@@ -43,9 +45,14 @@
 
 <script>
     window.onload = function () {
+        loadList();
+
+    };
+    function loadList() {
         loadOneGoodsList();
         loadPlanGoodsList();
-    };
+
+    }
     function loadOneGoodsList() {
         var oneGoodsList = $("#oneGoodsList");
 
@@ -58,7 +65,8 @@
                         "<td>" + item.PaperType.TypeName +"</td>"+
                         "<td>" + item.SizeType.TypeName +"</td>"+
                         "<td>" + item.GoodsOldPrice +"</td>"+
-                        "<td>" + item.GoodsPrice +"</td>"+
+                        "<td>" + item.GoodsPrice + "</td>" +
+                        "<td><a class='btn btn-danger' onclick='delGoods(\"" + item.GoodsID +"\")'>删除</a></td>"+
                     "</tr>");
 
                 });
@@ -66,6 +74,15 @@
             }
 
          });
+    }
+    function delGoods(goodsID) {
+        if (window.confirm("您确定要删除该商品吗？")) {
+            $.getJSON("DelGoods", { goodsID: goodsID }, function (data, status) {
+                loadList();
+            });
+        }
+      
+
     }
     function loadPlanGoodsList() {
         var planGoodsList = $("#planGoodsList");
@@ -79,6 +96,7 @@
                         "<td>" + item.PicsNum + "</td>" +
                         "<td>" + item.GoodsOldPrice + "</td>" +
                         "<td>" + item.GoodsPrice + "</td>" +
+                        "<td><a class='btn btn-danger' onclick='delGoods(\"" + item.GoodsID +"\")'>删除</a></td>" +
                         "</tr>");
 
                 });

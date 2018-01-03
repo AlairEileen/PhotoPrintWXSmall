@@ -43,34 +43,44 @@ namespace PhotoPrintWXSmall.Models
         public bool Downloaded { get; set; }
         public OrderLocation OrderLocation { get; set; }
         public string uniacid { get; set; }
+        public decimal Carriage { get; set; }
+        public string WXOrderId { get; set; }
+        public Logistics Logistics { get; set; }
+    }
+
+    public class Logistics
+    {
+        public string Company { get; set; }
+        public string Number { get; set; }
     }
 
     public enum OrderStatus
     {
+        all = -2,
         /// <summary>
         /// 失效
         /// </summary>
-        cancel=-1,
+        cancel = -1,
         /// <summary>
         /// 待付款
         /// </summary>
-        waitingPay=0,
+        waitingPay = 0,
         /// <summary>
         /// 待发货
         /// </summary>
-        waitingSend=1,
+        waitingSend = 1,
         /// <summary>
         /// 待收货
         /// </summary>
-        waitingGet=2,
+        waitingGet = 2,
         /// <summary>
         /// 待评价
         /// </summary>
-        waitAssess=3,
+        waitAssess = 3,
         /// <summary>
         /// 完成
         /// </summary>
-        finish=4
+        finish = 4
     }
 
     public class Shop
@@ -82,7 +92,7 @@ namespace PhotoPrintWXSmall.Models
         public int GoodsCount { get; set; }
         public List<FileModel<string[]>> ShopImages { get; set; }
         [JsonConverter(typeof(Tools.Json.DateConverterEndMinute))]
-        [BsonDateTimeOptions(Kind =DateTimeKind.Local)]
+        [BsonDateTimeOptions(Kind = DateTimeKind.Local)]
         public DateTime CreateTime { get; set; }
     }
 

@@ -31,7 +31,7 @@ namespace PhotoPrintWXSmall.Controllers
         /// <param name="encryptedData"></param>
         /// <returns></returns>
         [HttpGet]
-        public string GetAccountID(string uniacid,string code, string iv, string encryptedData)
+        public string GetAccountID(string uniacid, string code, string iv, string encryptedData)
         {
             try
             {
@@ -40,7 +40,7 @@ namespace PhotoPrintWXSmall.Controllers
                 //WXSmallAppCommon.Models.WXAccountInfo wXAccount = WXSmallAppCommon.WXInteractions.WXLoginAction.ProcessRequest(code, iv, encryptedData);
                 ///微擎方式
                 WXSmallAppCommon.Models.WXAccountInfo wXAccount = We7Tools.We7Tools.GetWeChatUserInfo(uniacid, code, iv, encryptedData);
-                var accountCard = thisData.SaveOrdUpdateAccount(uniacid,wXAccount);
+                var accountCard = thisData.SaveOrdUpdateAccount(uniacid, wXAccount);
                 ActionParams stautsCode = ActionParams.code_error;
                 if (accountCard != null)
                 {
@@ -66,16 +66,13 @@ namespace PhotoPrintWXSmall.Controllers
         /// </summary>
         /// <param name="accountID">账户ID</param>
         /// <returns></returns>
-        public string GetOrderLocations(string accountID)
+        public string GetOrderLocations(string uniacid, string accountID)
         {
             try
             {
-                var account = thisData.GetAccount(accountID);
-                if (account.OrderLocations == null || account.OrderLocations.Count == 0)
-                {
-                    return new BaseResponseModel<string>() { StatusCode = ActionParams.code_null }.ToJson();
-                }
-                return new BaseResponseModel<List<OrderLocation>>() { StatusCode = ActionParams.code_ok, JsonData = account.OrderLocations }.ToJson();
+                List<OrderLocation> ols = thisData.GetOrderLocations(uniacid, new ObjectId(accountID));
+
+                return new BaseResponseModel<List<OrderLocation>>() { StatusCode = ols == null ? ActionParams.code_null : ActionParams.code_ok, JsonData = ols }.ToJson();
             }
             catch (Exception)
             {
@@ -90,13 +87,13 @@ namespace PhotoPrintWXSmall.Controllers
         /// </summary>
         /// <param name="accountID">账户ID</param>
         /// <returns></returns>
-        public string SaveOrderLocation(string accountID)
+        public string SaveOrderLocation(string uniacid, string accountID)
         {
             try
             {
                 string json = new StreamReader(Request.Body).ReadToEnd();
                 OrderLocation orderLocation = JsonConvert.DeserializeObject<OrderLocation>(json);
-                thisData.SaveOrderLocation(accountID, orderLocation);
+                thisData.SaveOrderLocation(uniacid, new ObjectId(accountID), orderLocation);
                 return JsonResponseModel.SuccessJson;
             }
             catch (Exception ex)
@@ -113,11 +110,11 @@ namespace PhotoPrintWXSmall.Controllers
         /// <param name="accountID">账户ID</param>
         /// <param name="orderLocationID">手机地址ID</param>
         /// <returns></returns>
-        public string SetDefaultOrderLocation(string accountID,string orderLocationID)
+        public string SetDefaultOrderLocation(string uniacid, string accountID, string orderLocationID)
         {
             try
             {
-                thisData.SetDefaultOrderLocation(new ObjectId(accountID),new ObjectId(orderLocationID));
+                thisData.SetDefaultOrderLocation(uniacid, new ObjectId(accountID), new ObjectId(orderLocationID));
                 return JsonResponseModel.SuccessJson;
             }
             catch (Exception)
@@ -132,11 +129,11 @@ namespace PhotoPrintWXSmall.Controllers
         /// </summary>
         /// <param name="accountID">账户ID</param>
         /// <returns></returns>
-        public string GetDefaultOrderLocation(string accountID)
+        public string GetDefaultOrderLocation(string uniacid, string accountID)
         {
             try
             {
-                OrderLocation orderLocation = thisData.GetDefaultOrderLocation(new ObjectId(accountID));
+                OrderLocation orderLocation = thisData.GetDefaultOrderLocation(uniacid, new ObjectId(accountID));
                 return new BaseResponseModel<OrderLocation>() { StatusCode = ActionParams.code_ok, JsonData = orderLocation }.ToJson();
             }
             catch (Exception)
@@ -152,11 +149,11 @@ namespace PhotoPrintWXSmall.Controllers
         /// <param name="accountID"></param>
         /// <param name="orderLocationID"></param>
         /// <returns></returns>
-        public string DelOrderLocation(string accountID, string orderLocationID)
+        public string DelOrderLocation(string uniacid, string accountID, string orderLocationID)
         {
             try
             {
-                thisData.DelOrderLocation(accountID, orderLocationID);
+                thisData.DelOrderLocation(uniacid, new ObjectId(accountID), new ObjectId(orderLocationID));
                 return JsonResponseModel.SuccessJson;
             }
             catch (Exception ex)
@@ -173,11 +170,11 @@ namespace PhotoPrintWXSmall.Controllers
         /// <param name="accountID">账户ID</param>
         /// <param name="fileID">文件ID</param>
         /// <returns></returns>
-        public string DelFile(string accountID, string fileID)
+        public string DelFile(string uniacid, string accountID, string fileID)
         {
             try
             {
-                thisData.DelFile(new ObjectId(accountID), new ObjectId(fileID));
+                thisData.DelFile(uniacid, new ObjectId(accountID), new ObjectId(fileID));
                 return JsonResponseModel.SuccessJson;
             }
             catch (Exception)
@@ -192,12 +189,12 @@ namespace PhotoPrintWXSmall.Controllers
         /// </summary>
         /// <param name="accountID"></param>
         /// <returns></returns>
-        public string GetAllFile(string accountID)
+        public string GetAllFile(string uniacid, string accountID)
         {
             try
             {
-                List<FileModel<string[]>> list = thisData.GetAllFile(new ObjectId(accountID));
-                return new BaseResponseModel<List<FileModel<string[]>>>() { StatusCode = ActionParams.code_ok, JsonData = list }.ToJson();
+                List<FileModel<string[]>> list = thisData.GetAllFile(uniacid, new ObjectId(accountID));
+                return new BaseResponseModel<List<FileModel<string[]>>>() { StatusCode = list == null ? ActionParams.code_null : ActionParams.code_ok, JsonData = list }.ToJson();
             }
             catch (Exception)
             {

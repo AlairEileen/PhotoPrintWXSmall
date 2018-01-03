@@ -12,16 +12,17 @@ namespace PhotoPrintWXSmall.App_Data
 {
     public class OrderData : BaseData<AccountModel>
     {
-        internal void PushShoppingCart(ObjectId accountID, Shop shop)
+        internal void PushShoppingCart(string uniacid, ObjectId accountID, Shop shop)
         {
-            var account = collection.Find(x => x.AccountID.Equals(accountID)).FirstOrDefault();
+            var filterAccount = GetModelIDAndUniacIDFilter(accountID, uniacid);
+            var account = collection.Find(filterAccount).FirstOrDefault();
             if (account.Orders == null)
             {
-                collection.UpdateOne(x => x.AccountID.Equals(accountID),
+                collection.UpdateOne(filterAccount,
                     Builders<AccountModel>.Update.Set(x => x.Orders, new List<Order>()));
             }
             var goodsCollection = mongo.GetMongoCollection<GoodsModel>();
-            var goods = goodsCollection.Find(x => x.GoodsID.Equals(shop.Goods.GoodsID)).FirstOrDefault();
+            var goods = goodsCollection.Find(x => x.GoodsID.Equals(shop.Goods.GoodsID) && x.uniacid.Equals(uniacid)).FirstOrDefault();
             if (goods.PicsNum != shop.ShopImages.Count)
             {
                 throw new Exception("图片数量与套餐不符合");
@@ -38,36 +39,34 @@ namespace PhotoPrintWXSmall.App_Data
             shop.ShopID = ObjectId.GenerateNewId();
             if (account.ShoppingCart == null)
             {
-                collection.UpdateOne(x => x.AccountID.Equals(accountID),
+                collection.UpdateOne(filterAccount,
                    Builders<AccountModel>.Update.Set(x => x.ShoppingCart, new List<Shop>()));
             }
-            collection.UpdateOne(x => x.AccountID.Equals(accountID),
+            collection.UpdateOne(filterAccount,
                 Builders<AccountModel>.Update.Push(x => x.ShoppingCart, shop));
         }
 
-        internal void ChangeShoppingCartGoodsNum(ObjectId accountID, ObjectId shopID, int num)
+        internal void ChangeShoppingCartGoodsNum(string uniacid, ObjectId accountID, ObjectId shopID, int num)
         {
             var filter = Builders<AccountModel>.Filter;
-            var filterSum = filter.Eq(x => x.AccountID, accountID) & filter.Eq("ShoppingCart.ShopID", shopID);
+            var filterSum = GetModelIDAndUniacIDFilter(accountID, uniacid) & filter.Eq("ShoppingCart.ShopID", shopID);
             var update = Builders<AccountModel>.Update.Set("ShoppingCart.$.GoodsCount", num);
             collection.UpdateOne(filterSum, update);
         }
 
-        internal void DelShopInCart(ObjectId accountID, ObjectId shopID)
+        internal void DelShopInCart(string uniacid, ObjectId accountID, ObjectId shopID)
         {
-            var filter = Builders<AccountModel>.Filter;
-            var filterSum = filter.Eq(x => x.AccountID, accountID);
+            var filterSum = GetModelIDAndUniacIDFilter(accountID, uniacid);
             var update = Builders<AccountModel>.Update.Pull("ShoppingCart.$.ShopID", shopID);
             collection.UpdateOne(filterSum, update);
         }
 
-        internal List<Shop> GetShoppingCart(ObjectId accountID)
+        internal List<Shop> GetShoppingCart(string uniacid, ObjectId accountID)
         {
-            var list = collection.Find(x => x.AccountID.Equals(accountID)).FirstOrDefault().ShoppingCart;
+            var list = collection.Find(GetModelIDAndUniacIDFilter(accountID, uniacid)).FirstOrDefault().ShoppingCart;
             list.Sort((x, y) => -x.CreateTime.CompareTo(y.CreateTime));
             return list;
         }
-
 
         /// <summary>
         /// 创建订单
@@ -75,9 +74,10 @@ namespace PhotoPrintWXSmall.App_Data
         /// <param name="accountID"></param>
         /// <param name="orderLocationID"></param>
         /// <param name="shopList"></param>
-        internal Order PushOrder(ObjectId accountID, ObjectId orderLocationID, List<Shop> shopList, out AccountModel account)
+        internal Order PushOrder(string uniacid, ObjectId accountID, ObjectId orderLocationID, List<Shop> shopList, out AccountModel account)
         {
-            account = collection.Find(x => x.AccountID.Equals(accountID)).FirstOrDefault();
+            var accountFilter = GetModelIDAndUniacIDFilter(accountID, uniacid);
+            account = collection.Find(accountFilter).FirstOrDefault();
             var orderLocation = account.OrderLocations.Find(x => x.OrderLocationID.Equals(orderLocationID));
             if (orderLocation == null)
             {
@@ -85,7 +85,7 @@ namespace PhotoPrintWXSmall.App_Data
             }
             if (account.Orders == null)
             {
-                collection.UpdateOne(x => x.AccountID.Equals(accountID),
+                collection.UpdateOne(accountFilter,
                     Builders<AccountModel>.Update.Set(x => x.Orders, new List<Order>()));
             }
 
@@ -95,25 +95,42 @@ namespace PhotoPrintWXSmall.App_Data
                 shopList[i] = account.ShoppingCart.Find(x => x.ShopID.Equals(shopList[i].ShopID));
                 orderPrice = shopList[i].Goods.GoodsPrice * shopList[i].GoodsCount;
             }
-
+            var companyModel = mongo.GetMongoCollection<CompanyModel>().Find(x => x.uniacid.Equals(uniacid)).FirstOrDefault();
+            if (companyModel == null || companyModel.OrderProperty == null)
+            {
+                throw new Exception();
+            }
             var order = new Order()
             {
                 ShopList = shopList,
                 OrderID = ObjectId.GenerateNewId(),
                 CreateTime = DateTime.Now,
                 OrderNumber = new RandomNumber().GetRandom1(),
-                OrderPrice = orderPrice,
+                OrderPrice = orderPrice + companyModel.OrderProperty.DefaultCarriage,
                 OrderStatus = OrderStatus.waitingPay,
-                OrderLocation = orderLocation
+                OrderLocation = orderLocation,
+                Carriage = companyModel.OrderProperty.DefaultCarriage
+
             };
-            collection.UpdateOne(x => x.AccountID.Equals(accountID),
+            collection.UpdateOne(accountFilter,
                 Builders<AccountModel>.Update.Push(x => x.Orders, order));
+
+            for (int i = 0; i < shopList.Count; i++)
+            {
+                collection.UpdateOne(accountFilter, Builders<AccountModel>.Update.Pull(x => x.ShoppingCart, shopList[i]));
+            }
             return order;
         }
 
-        internal List<Order> GetOrderList(ObjectId accountID, int orderStatus)
+        internal void GetOrderAndAccount(string uniacid, ObjectId accountID, ObjectId orderID, out AccountModel account, out Order order)
         {
-            var account = GetModelByID(accountID);
+            account = GetModelByIDAndUniacID(accountID, uniacid);
+            order = account.Orders.Find(x => x.OrderID.Equals(orderID));
+        }
+
+        internal List<Order> GetOrderList(string uniacid, ObjectId accountID, int orderStatus)
+        {
+            var account = GetModelByIDAndUniacID(accountID, uniacid);
             List<Order> orders = null;
             if (account.Orders != null)
             {
@@ -130,9 +147,9 @@ namespace PhotoPrintWXSmall.App_Data
             return orders;
         }
 
-        internal List<Shop> GetShoppingCartList(ObjectId accountID, List<ObjectId> shopIDList)
+        internal List<Shop> GetShoppingCartList(string uniacid, ObjectId accountID, List<ObjectId> shopIDList)
         {
-            var account = GetModelByID(accountID);
+            var account = GetModelByIDAndUniacID(accountID, uniacid);
             if (account == null || account.ShoppingCart == null)
             {
                 return null;
@@ -145,16 +162,18 @@ namespace PhotoPrintWXSmall.App_Data
             return shops;
         }
 
-        internal void ChangeOrderStatus(ObjectId orderID, OrderStatus orderStatus)
+        internal void ChangeOrderStatus(string uniacid, ObjectId orderID, OrderStatus orderStatus)
         {
             if (orderStatus == OrderStatus.waitingGet)
             {
                 return;
             }
             var filter = Builders<AccountModel>.Filter;
-            var filterSum = filter.Eq("Orders.OrderID", orderID);
+            var filterSum = filter.Eq("Orders.OrderID", orderID) & filter.Eq(x => x.uniacid, uniacid);
             var update = Builders<AccountModel>.Update.Set("Orders.$.OrderStatus", orderStatus);
             collection.UpdateOne(filterSum, update);
         }
+
+
     }
 }
