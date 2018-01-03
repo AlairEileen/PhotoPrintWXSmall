@@ -40,6 +40,7 @@ namespace PhotoPrintWXSmall
 
             app.UseStaticFiles();
             app.UseSession();
+
           //  app.MapWhen(context =>
           //context.Request.Path.StartsWithSegments("/Merchant"), x =>
           //{
@@ -51,6 +52,7 @@ namespace PhotoPrintWXSmall
           //            template: "{controller}/{action=Index}/{id?}");
           //    });
           //});
+
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
