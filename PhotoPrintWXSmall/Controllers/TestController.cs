@@ -10,6 +10,7 @@ using Tools.ResponseModels;
 using We7Tools;
 using We7Tools.Models;
 using We7Tools.MysqlTool;
+using WXSmallAppCommon.WXInteractions;
 
 namespace PhotoPrintWXSmall.Controllers
 {
@@ -46,14 +47,20 @@ namespace PhotoPrintWXSmall.Controllers
         public string GetJson(string uniacid)
         {
             var config = We7ProcessMiniConfig.GetAllConfig(uniacid);
-            
-          
-            return  $"MCHID:{config.MCHID}\n\r" +
+
+
+            return $"MCHID:{config.MCHID}\n\r" +
                 $"KEY:{config.KEY}\n\r" +
                 $"cert:{config.cert}\n\r" +
                 $"APPID:{config.APPID}\n\r" +
                 $"APPSECRET:{config.APPSECRET}\n\r" +
                 $"SSLCERT_PASSWORD:{config.SSLCERT_PASSWORD}\n\r";
+        }
+
+        public string TestRefund()
+        {
+            var result = Refund.Run("4200000001201801047726477066", null, 2, 2);
+            return result;
         }
     }
 }

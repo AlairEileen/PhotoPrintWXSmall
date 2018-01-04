@@ -69,7 +69,7 @@ namespace PhotoPrintWXSmall.Controllers
         private ManageViewModel InitManageData()
         {
             var companyModel = thisData.GetCompanyModel(HttpContext.Session.GetUniacID());
-            return new ManageViewModel() { OrderProperty = companyModel.OrderProperty, ProcessMiniInfo = companyModel.ProcessMiniInfo };
+            return new ManageViewModel() { OrderProperty = companyModel.OrderProperty, ProcessMiniInfo = companyModel.ProcessMiniInfo ,QiNiuModel=companyModel.QiNiuModel==null?new QiNiuModel(): companyModel.QiNiuModel };
         }
 
         public string ReceiveWe7Data()
@@ -148,6 +148,22 @@ namespace PhotoPrintWXSmall.Controllers
             {
                 var files = Request.Form.Files;
                 return await thisData.SaveProcessMiniLogo(HttpContext.Session.GetUniacID(), files[0]);
+            }
+            catch (Exception)
+            {
+                return JsonResponseModel.ErrorJson;
+                throw;
+            }
+        }
+
+        public string SetQiNiu()
+        {
+            try
+            {
+                string json = new StreamReader(Request.Body).ReadToEnd();
+                QiNiuModel qiNiuModel = JsonConvert.DeserializeObject<QiNiuModel>(json);
+                thisData.SetQiNiu(HttpContext.Session.GetUniacID(), qiNiuModel);
+                return JsonResponseModel.SuccessJson;
             }
             catch (Exception)
             {

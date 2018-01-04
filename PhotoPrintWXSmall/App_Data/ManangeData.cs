@@ -91,5 +91,13 @@ namespace PhotoPrintWXSmall.App_Data
             var companyModel = mongo.GetMongoCollection<CompanyModel>().Find(x => x.uniacid.Equals(uniacid)).FirstOrDefault();
             return companyModel;
         }
+
+      
+
+        internal void SetQiNiu(string uniacid, QiNiuModel qiNiuModel)
+        {
+            var companyCollection = mongo.GetMongoCollection<CompanyModel>();
+            companyCollection.UpdateOne(x=>x.uniacid.Equals(uniacid),Builders<CompanyModel>.Update.Set(x=>x.QiNiuModel,qiNiuModel));
+        }
     }
 }

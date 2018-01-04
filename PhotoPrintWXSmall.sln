@@ -9,9 +9,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tools", "Tools\Tools.csproj
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WXSmallAppCommon", "WXSmallAppCommon\WXSmallAppCommon.csproj", "{E4352AA0-0DAA-4B14-A881-7A3CE9C69051}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "We7Tools", "We7Tools\We7Tools.csproj", "{17C1A3E3-A5D6-4D92-B944-3B7C31C4F88D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "We7Tools", "We7Tools\We7Tools.csproj", "{17C1A3E3-A5D6-4D92-B944-3B7C31C4F88D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConfigData", "ConfigData\ConfigData.csproj", "{D669E800-7B3E-4E76-98A5-B0BFCE2AA622}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConfigData", "ConfigData\ConfigData.csproj", "{D669E800-7B3E-4E76-98A5-B0BFCE2AA622}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QiNiuDAL", "QiNiuDAL\QiNiuDAL.csproj", "{A29BA2EB-478B-4AF2-BC91-28C928B7883C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{D669E800-7B3E-4E76-98A5-B0BFCE2AA622}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D669E800-7B3E-4E76-98A5-B0BFCE2AA622}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D669E800-7B3E-4E76-98A5-B0BFCE2AA622}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A29BA2EB-478B-4AF2-BC91-28C928B7883C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A29BA2EB-478B-4AF2-BC91-28C928B7883C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A29BA2EB-478B-4AF2-BC91-28C928B7883C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A29BA2EB-478B-4AF2-BC91-28C928B7883C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

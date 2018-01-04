@@ -9,5 +9,7 @@ namespace PhotoPrintWXSmall.Models
     {
         public OrderProperty OrderProperty { get; set; }
         public ProcessMiniInfo ProcessMiniInfo { get; set; }
+
+        public QiNiuModel QiNiuModel { get; set; }
     }
 }

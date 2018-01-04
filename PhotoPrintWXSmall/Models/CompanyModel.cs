@@ -19,6 +19,28 @@ namespace PhotoPrintWXSmall.Models
         public OrderProperty OrderProperty { get; set; }
         public string uniacid { get; set; }
         public ProcessMiniInfo ProcessMiniInfo { get; set; }
+        public QiNiuModel QiNiuModel { get; set; }
+    }
+
+    public class QiNiuModel
+    {
+        public QiNiuDAL.Exerciser exerciser = new QiNiuDAL.Exerciser();
+        public string AccessKey { get; set; }
+        public string SecretKey { get; set; }
+        public string Bucket { get; set; }
+        public string DoMain { get; set; }
+        public void UploadFile(string filePath)
+        {
+            exerciser.UploadFile(filePath, AccessKey, SecretKey, Bucket);
+        }
+        public async Task<string> GetFileUrl(string fileName)
+        {
+            return await exerciser.CreateDownloadUrl(DoMain, fileName);
+        }
+        public void DeleteFile(string fileName)
+        {
+            exerciser.DeleteFile(fileName, AccessKey, SecretKey, Bucket);
+        }
     }
 
     public class ProcessMiniInfo

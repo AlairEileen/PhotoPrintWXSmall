@@ -64,7 +64,6 @@ namespace PhotoPrintWXSmall.App_Data
             return mongo.GetMongoCollection<GoodsType>().Find(x => x.TypeClass == typeClass && x.uniacid.Equals(uniacid)).ToList();
         }
 
-
         /// <summary>
         /// 是否有该商品
         /// </summary>
@@ -81,8 +80,6 @@ namespace PhotoPrintWXSmall.App_Data
             return collection.Find(filterSum).FirstOrDefault() != null;
         }
 
-
-
         /// <summary>
         /// 添加套餐商品类型
         /// </summary>
@@ -91,8 +88,6 @@ namespace PhotoPrintWXSmall.App_Data
         {
             mongo.GetMongoCollection<GoodsType>().InsertOne(new GoodsType() { TypeName = planGoodsType, TypeClass = TypeClass.Plan, uniacid = uniacid });
         }
-
-
 
         /// <summary>
         /// 添加套餐商品
@@ -107,8 +102,6 @@ namespace PhotoPrintWXSmall.App_Data
             goodsModel.GoodsListPic = file;
             collection.InsertOne(goodsModel);
         }
-
-
 
         /// <summary>
         /// 保存商品图片
@@ -183,7 +176,6 @@ namespace PhotoPrintWXSmall.App_Data
                 new Thread(new ParameterizedThreadStart(ImageTool.Create3Img)).Start(params3Img);
             }
         }
-
 
 
         internal void DelGoodsFiles(string uniacid, GoodsClass goodsType, int picType)
