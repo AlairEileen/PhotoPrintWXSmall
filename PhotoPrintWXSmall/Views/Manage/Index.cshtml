@@ -61,7 +61,7 @@
             <a class="btn btn-default" onclick="$('input[id=pmLogo]').click();">选择 小程序logo</a>
             <span>未选择（必须选择）</span>
         </div>
-        <img style="max-width:180px;max-height:120px;" class="img-responsive pull-right" src="@Context.Request.PathBase/file/filedownload?fileurl=@Model.ProcessMiniInfo.Logo.FileUrlData[1]" />
+        <img style="max-width:180px;max-height:120px;" class="img-responsive pull-right" src="@Context.Request.PathBase/file/GetFileStream?fileName=@Model.ProcessMiniInfo.Logo.FileUrlData[1]" />
     </div>
 
     <div class="col-xs-6 col-sm-6">

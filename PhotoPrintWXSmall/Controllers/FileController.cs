@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
 using PhotoPrintWXSmall.App_Data;
+using PhotoPrintWXSmall.Managers;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -12,6 +13,7 @@ using Tools;
 using Tools.Models;
 using Tools.Response;
 using Tools.ResponseModels;
+using We7Tools.Extend;
 
 namespace PhotoPrintWXSmall.Controllers
 {
@@ -39,6 +41,17 @@ namespace PhotoPrintWXSmall.Controllers
             return File(stream, "application/vnd.android.package-archive", Path.GetFileName(fileUrl));
         }
 
+        public async Task<IActionResult> GetFileStream(string fileName)
+        {
+            if (string.IsNullOrEmpty(fileName))
+            {
+                return null;
+            }
+            string fileUrl = await FileManager.Exerciser(HttpContext.Session.GetUniacID(), null, fileName).GetFile();
+            var stream = System.IO.File.OpenRead(fileUrl);
+            return File(stream, "application/vnd.android.package-archive", Path.GetFileName(fileUrl));
+        }
+
 
         /// <summary>
         /// 上传单张图片
@@ -50,9 +63,9 @@ namespace PhotoPrintWXSmall.Controllers
             var files = Request.Form.Files;
             string resultFileId = null;
             BaseResponseModel<string> responseModel = new BaseResponseModel<string>();
-            try 
+            try
             {
-                resultFileId = await thisData.SaveOneFile(uniacid, new ObjectId(accountID),files[0]);
+                resultFileId = await thisData.SaveOneFile(uniacid, new ObjectId(accountID), files[0]);
                 if (string.IsNullOrEmpty(resultFileId))
                 {
                     return JsonResponseModel.ErrorJson;

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using MongoDB.Driver;
+using PhotoPrintWXSmall.Managers;
 using PhotoPrintWXSmall.Models;
 using System;
 using System.Collections.Generic;
@@ -78,8 +79,22 @@ namespace PhotoPrintWXSmall.App_Data
                 ParamsCreate3Img params3Img = new ParamsCreate3Img() { FileName = filename, FileDir = dbSaveDir };
                 params3Img.OnFinish += fileModel =>
                 {
+
+                    var names = new string[] {
+                        fileModel.FileUrlData[0].Substring(fileModel.FileUrlData[0].LastIndexOf('/')+1),
+                        fileModel.FileUrlData[1].Substring(fileModel.FileUrlData[1].LastIndexOf('/')+1),
+                        fileModel.FileUrlData[2].Substring(fileModel.FileUrlData[2].LastIndexOf('/')+1)
+                    };
+                    FileManager.Exerciser(uniacid, $"{ConstantProperty.BaseDir}{fileModel.FileUrlData[0]}",null).SaveFile();
+                    FileManager.Exerciser(uniacid, $"{ConstantProperty.BaseDir}{fileModel.FileUrlData[1]}",null).SaveFile();
+                    FileManager.Exerciser(uniacid, $"{ConstantProperty.BaseDir}{fileModel.FileUrlData[2]}",null).SaveFile();
+                    fileModel.FileUrlData[0] = names[0];
+                    fileModel.FileUrlData[1] = names[1];
+                    fileModel.FileUrlData[2] = names[2];
+
                     mongo.GetMongoCollection<FileModel<string[]>>("FileModel").InsertOne(fileModel);
                     resultFileId = fileModel.FileID.ToString();
+
                 };
                 ImageTool.Create3Img(params3Img);
                 return resultFileId;
