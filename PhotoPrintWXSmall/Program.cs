@@ -14,6 +14,7 @@ namespace PhotoPrintWXSmall
     {
         public static void Main(string[] args)
         {
+            Managers.FileManager.StartCleaner();
             BuildWebHost(args).Run();
         }
 

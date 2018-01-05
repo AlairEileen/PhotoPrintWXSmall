@@ -14,6 +14,7 @@ using System.Threading;
 using MongoDB.Bson;
 using Microsoft.AspNetCore.Hosting;
 using System.IO.Compression;
+using PhotoPrintWXSmall.Managers;
 
 namespace PhotoPrintWXSmall.App_Data
 {
@@ -98,6 +99,8 @@ namespace PhotoPrintWXSmall.App_Data
             var goodsType = mongo.GetMongoCollection<GoodsType>().Find(x => x.GoodsTypeID.Equals(goodsModel.PlanType.GoodsTypeID) && x.uniacid.Equals(goodsModel.uniacid)).FirstOrDefault();
             goodsModel.PlanType = goodsType;
             goodsModel.GoodsClass = GoodsClass.PlanGoods;
+            var goodsImages = mongo.GetMongoCollection<GoodsPic>().Find(x => x.GoodsClass == GoodsClass.PlanGoods && x.uniacid.Equals(goodsModel.uniacid)).FirstOrDefault();
+            goodsModel.Images = goodsImages;
             var file = mongo.GetMongoCollection<FileModel<string[]>>("FileModel").Find(x => x.FileID.Equals(goodsModel.GoodsListPic.FileID)).FirstOrDefault();
             goodsModel.GoodsListPic = file;
             collection.InsertOne(goodsModel);
@@ -112,6 +115,8 @@ namespace PhotoPrintWXSmall.App_Data
         /// <param name="hostingEnvironment"></param>
         internal void SaveGoodsFiles(string uniacid, GoodsClass goodsType, int picType, IFormFileCollection files, IHostingEnvironment hostingEnvironment)
         {
+            //return  await Task.Run(() =>
+            //  {
             long size = 0;
             foreach (var file in files)
             {
@@ -129,7 +134,6 @@ namespace PhotoPrintWXSmall.App_Data
                 string saveName = Guid.NewGuid().ToString("N");
                 filename = $@"{saveDir}{saveName}{exString}";
 
-                size += file.Length;
                 FileModel<string[]> fileCard = new FileModel<string[]>();
                 using (FileStream fs = System.IO.File.Create(filename))
                 {
@@ -159,6 +163,9 @@ namespace PhotoPrintWXSmall.App_Data
                 ParamsCreate3Img params3Img = new ParamsCreate3Img() { FileName = filename, FileDir = ConstantProperty.GoodsImagesDir + $"{uniacid}/" };
                 params3Img.OnFinish += fileModel =>
                 {
+                    size += file.Length;
+
+                    FileManager.Exerciser(uniacid, null, null).SaveFileModel(fileModel);
                     fileModel.FileID = ObjectId.GenerateNewId();
                     if (picType == 0)
                     {
@@ -170,13 +177,26 @@ namespace PhotoPrintWXSmall.App_Data
                         var update = Builders<GoodsPic>.Update.Push(x => x.BodyPics, fileModel);
                         goodsPicCollection.UpdateOne(x => x.GoodsPicID.Equals(goodsPic.GoodsPicID) && x.uniacid.Equals(uniacid), update);
                     }
-                    mongo.GetMongoCollection<FileModel<string[]>>("FileModel").InsertOne(fileModel);
-                };
+                    ResetGoodsPics(uniacid, goodsType);
+
+                        //mongo.GetMongoCollection<FileModel<string[]>>("FileModel").InsertOne(fileModel);
+
+                    };
                 //ThreadPool.QueueUserWorkItem(new WaitCallback(ImageTool.Create3Img), params3Img);
                 new Thread(new ParameterizedThreadStart(ImageTool.Create3Img)).Start(params3Img);
             }
+            //return size;
+            //});
         }
 
+        internal void ResetGoodsPics(string uniacid, GoodsClass goodsType)
+        {
+            var gp = mongo.GetMongoCollection<GoodsPic>().Find(x => x.uniacid.Equals(uniacid) && x.GoodsClass == goodsType).FirstOrDefault();
+            var filter = Builders<GoodsModel>.Filter;
+            var filterSum = filter.Eq(x => x.uniacid, uniacid) & filter.Eq(x => x.GoodsClass, goodsType);
+            var update = Builders<GoodsModel>.Update.Set(x => x.Images, gp);
+            mongo.GetMongoCollection<GoodsModel>().UpdateMany(filterSum, update);
+        }
 
         internal void DelGoodsFiles(string uniacid, GoodsClass goodsType, int picType)
         {
@@ -190,12 +210,12 @@ namespace PhotoPrintWXSmall.App_Data
             UpdateDefinition<GoodsPic> update = null;
             if (picType == 0)
             {
-                DelGoodsPics(goodsPic.HeaderPics);
+                DelGoodsPics(uniacid, goodsPic.HeaderPics);
                 update = Builders<GoodsPic>.Update.Set(x => x.HeaderPics, new List<FileModel<string[]>>());
             }
             else if (picType == 1)
             {
-                DelGoodsPics(goodsPic.BodyPics);
+                DelGoodsPics(uniacid, goodsPic.BodyPics);
                 update = Builders<GoodsPic>.Update.Set(x => x.BodyPics, new List<FileModel<string[]>>());
             }
             goodsPicCollection.UpdateOne(x => x.GoodsClass == goodsType && x.uniacid.Equals(uniacid), update);
@@ -217,7 +237,7 @@ namespace PhotoPrintWXSmall.App_Data
             collection.DeleteOne(x => x.GoodsID.Equals(goodsID));
         }
 
-        private void DelGoodsPics(List<FileModel<string[]>> picsList)
+        private void DelGoodsPics(string uniacid, List<FileModel<string[]>> picsList)
         {
             if (picsList == null)
             {
@@ -225,9 +245,12 @@ namespace PhotoPrintWXSmall.App_Data
             }
             foreach (var item in picsList)
             {
-                File.Delete(ConstantProperty.BaseDir + item.FileUrlData[0]);
-                File.Delete(ConstantProperty.BaseDir + item.FileUrlData[1]);
-                File.Delete(ConstantProperty.BaseDir + item.FileUrlData[2]);
+                FileManager.Exerciser(uniacid, null, item.FileUrlData[0]).DelFile();
+                FileManager.Exerciser(uniacid, null, item.FileUrlData[1]).DelFile();
+                FileManager.Exerciser(uniacid, null, item.FileUrlData[2]).DelFile();
+                //File.Delete(ConstantProperty.BaseDir + item.FileUrlData[0]);
+                //File.Delete(ConstantProperty.BaseDir + item.FileUrlData[1]);
+                //File.Delete(ConstantProperty.BaseDir + item.FileUrlData[2]);
             }
         }
 
@@ -270,6 +293,7 @@ namespace PhotoPrintWXSmall.App_Data
                 ParamsCreate3Img params3Img = new ParamsCreate3Img() { FileName = filename, FileDir = ConstantProperty.GoodsImagesDir + $"{uniacid}/" };
                 params3Img.OnFinish += fileModel =>
                 {
+                    FileManager.Exerciser(uniacid, null, null).SaveFileModel(fileModel);
                     mongo.GetMongoCollection<FileModel<string[]>>("FileModel").InsertOne(fileModel);
                     resultFileId = fileModel.FileID.ToString();
                 };

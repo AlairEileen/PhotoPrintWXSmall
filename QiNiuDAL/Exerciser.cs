@@ -55,18 +55,15 @@ namespace QiNiuDAL
             //return await Task.Run(() =>
             //{
                 // 要保存的文件名，如果已存在则默认覆盖
-                if (System.IO.Directory.Exists(Settings.TempDir))
+                if (!System.IO.Directory.Exists(Settings.TempDir))
                 {
                     System.IO.Directory.CreateDirectory(Settings.TempDir);
                 }
                 string saveFile = $@"{Settings.TempDir}{fileName}";
 
                 fileName = $"{doMain}/{fileName}";
-            //WebClient webClient = new WebClient();
-            //webClient.DownloadFile(fileName, Settings.TempDir);
-            //webClient.Dispose();
             // 可公开访问的url，直接下载
-            HttpResult result = await DownloadManager.DownloadAsync(fileName, Settings.TempDir);
+            HttpResult result = await DownloadManager.DownloadAsync(fileName, saveFile);
             return saveFile;
             //});
 

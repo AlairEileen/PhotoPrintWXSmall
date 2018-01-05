@@ -1,11 +1,14 @@
-﻿using MongoDB.Driver;
+﻿using ConfigData;
+using MongoDB.Driver;
 using PhotoPrintWXSmall.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Tools;
 using Tools.DB;
+using Tools.Models;
 
 namespace PhotoPrintWXSmall.Managers
 {
@@ -30,7 +33,42 @@ namespace PhotoPrintWXSmall.Managers
         {
             return new Exerciser(new FileManager(uniacid, filePath, fileName));
         }
+        public static FileCleaner StartCleaner()
+        {
+            return FileCleaner.Start();
+        }
+    }
+    public class FileCleaner
+    {
+        private static FileCleaner fileCleaner;
+        private static Timer cleanTimer;
+        private static int hour = 3, minie = 0;
 
+        private FileCleaner() {
+            cleanTimer = new Timer(CheckClean, null, 0, 1000);
+        }
+        private void CheckClean(object state)
+        {
+            DateTime dt = DateTime.Now;
+            if (dt.Hour== hour && dt.Minute== minie)
+            {
+                System.IO.File.Delete(MainConfig.TempDir);
+                System.IO.File.Delete(MainConfig.BaseDir+ MainConfig.GoodsImagesDir);
+                System.IO.File.Delete(MainConfig.BaseDir + MainConfig.AlbumDir);
+
+            }
+        }
+
+        internal static FileCleaner Start()
+        {
+            if (fileCleaner == null)
+            {
+                fileCleaner = new FileCleaner();
+            }
+            return fileCleaner;
+        }
+
+        
     }
     public class Exerciser
     {
@@ -39,6 +77,10 @@ namespace PhotoPrintWXSmall.Managers
         public void SaveFile()
         {
             ThreadPool.QueueUserWorkItem(new WaitCallback(DoSaveFile));
+        }
+        public void SaveFileModel(FileModel<string[]> fileModel)
+        {
+            DoSaveFileModel(fileModel);
         }
         public void DelFile()
         {
@@ -74,6 +116,29 @@ namespace PhotoPrintWXSmall.Managers
                 return;
             }
             company.QiNiuModel.UploadFile(fm.filePath);
+        }
+        private void DoSaveFileModel(FileModel<string[]> fileModel)
+        {
+            var urls = new string[] {
+                fileModel.FileUrlData[0],
+                fileModel.FileUrlData[1],
+                fileModel.FileUrlData[2]
+            };
+
+            var names = new string[] {
+                        urls[0].Substring(urls[0].LastIndexOf('/')+1),
+                        urls[1].Substring(urls[1].LastIndexOf('/')+1),
+                        urls[2].Substring(urls[2].LastIndexOf('/')+1)
+                    };
+
+            fileModel.FileUrlData[0] = names[0];
+            fileModel.FileUrlData[1] = names[1];
+            fileModel.FileUrlData[2] = names[2];
+
+            FileManager.Exerciser(fm.uniacid, $"{ConstantProperty.BaseDir}{urls[0]}", null).SaveFile();
+            FileManager.Exerciser(fm.uniacid, $"{ConstantProperty.BaseDir}{urls[1]}", null).SaveFile();
+            FileManager.Exerciser(fm.uniacid, $"{ConstantProperty.BaseDir}{urls[2]}", null).SaveFile();
+            
         }
         private CompanyModel GetCompany()
         {

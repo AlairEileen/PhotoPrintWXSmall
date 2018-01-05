@@ -30,24 +30,26 @@ namespace PhotoPrintWXSmall.Controllers
         /// </summary>
         /// <param name="fileId">文件id</param>
         [HttpGet]
-        public IActionResult FileDownload(string fileUrl)
+        public async Task<IActionResult> FileDownload(string uniacid, string fileUrl)
         {
             if (string.IsNullOrEmpty(fileUrl))
             {
                 return null;
             }
-            fileUrl = ConstantProperty.BaseDir + fileUrl;
-            var stream = System.IO.File.OpenRead(fileUrl);
-            return File(stream, "application/vnd.android.package-archive", Path.GetFileName(fileUrl));
+            //fileUrl = ConstantProperty.BaseDir + fileUrl;
+            //var stream = System.IO.File.OpenRead(fileUrl);
+            //return File(stream, "application/vnd.android.package-archive", Path.GetFileName(fileUrl));
+            return await GetFileStream(fileUrl, uniacid);
         }
 
-        public async Task<IActionResult> GetFileStream(string fileName)
+        public async Task<IActionResult> GetFileStream(string fileName, string uniacid)
         {
             if (string.IsNullOrEmpty(fileName))
             {
                 return null;
             }
-            string fileUrl = await FileManager.Exerciser(HttpContext.Session.GetUniacID(), null, fileName).GetFile();
+            uniacid = string.IsNullOrEmpty(uniacid) ? HttpContext.Session.GetUniacID() : uniacid;
+            string fileUrl = await FileManager.Exerciser(uniacid, null, fileName).GetFile();
             var stream = System.IO.File.OpenRead(fileUrl);
             return File(stream, "application/vnd.android.package-archive", Path.GetFileName(fileUrl));
         }

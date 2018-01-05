@@ -405,7 +405,8 @@
             processData: false,
             data: data,
             success: function (message) {
-                if (message.StatusCode == @((int)Tools.ActionParams.code_ok)) {
+                var jsonData = JSON.parse(message);
+                if (jsonData.StatusCode == @((int)Tools.ActionParams.code_ok)) {
                     alert("上传成功");
                 } else {
                     alert("上传失败");

@@ -172,7 +172,8 @@ namespace PhotoPrintWXSmall.Controllers
             try
             {
                 var files = Request.Form.Files;
-                thisData.SaveGoodsFiles(HttpContext.Session.GetUniacID(), goodsType, picType, files, hostingEnvironment);
+               thisData.SaveGoodsFiles(HttpContext.Session.GetUniacID(), goodsType, picType, files, hostingEnvironment);
+                //thisData.ResetGoodsPics(HttpContext.Session.GetUniacID(), goodsType);
             }
             catch (Exception)
             {

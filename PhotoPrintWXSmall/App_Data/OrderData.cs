@@ -57,7 +57,8 @@ namespace PhotoPrintWXSmall.App_Data
         internal void DelShopInCart(string uniacid, ObjectId accountID, ObjectId shopID)
         {
             var filterSum = GetModelIDAndUniacIDFilter(accountID, uniacid);
-            var update = Builders<AccountModel>.Update.Pull("ShoppingCart.$.ShopID", shopID);
+            var shop = GetModelByIDAndUniacID(accountID,uniacid).ShoppingCart.Find(x=>x.ShopID.Equals(shopID));
+            var update = Builders<AccountModel>.Update.Pull(x=>x.ShoppingCart,shop);
             collection.UpdateOne(filterSum, update);
         }
 

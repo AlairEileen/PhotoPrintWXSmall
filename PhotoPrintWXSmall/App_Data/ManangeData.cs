@@ -80,17 +80,7 @@ namespace PhotoPrintWXSmall.App_Data
                 params3Img.OnFinish += fileModel =>
                 {
 
-                    var names = new string[] {
-                        fileModel.FileUrlData[0].Substring(fileModel.FileUrlData[0].LastIndexOf('/')+1),
-                        fileModel.FileUrlData[1].Substring(fileModel.FileUrlData[1].LastIndexOf('/')+1),
-                        fileModel.FileUrlData[2].Substring(fileModel.FileUrlData[2].LastIndexOf('/')+1)
-                    };
-                    FileManager.Exerciser(uniacid, $"{ConstantProperty.BaseDir}{fileModel.FileUrlData[0]}",null).SaveFile();
-                    FileManager.Exerciser(uniacid, $"{ConstantProperty.BaseDir}{fileModel.FileUrlData[1]}",null).SaveFile();
-                    FileManager.Exerciser(uniacid, $"{ConstantProperty.BaseDir}{fileModel.FileUrlData[2]}",null).SaveFile();
-                    fileModel.FileUrlData[0] = names[0];
-                    fileModel.FileUrlData[1] = names[1];
-                    fileModel.FileUrlData[2] = names[2];
+                    FileManager.Exerciser(uniacid, null, null).SaveFileModel(fileModel);
 
                     mongo.GetMongoCollection<FileModel<string[]>>("FileModel").InsertOne(fileModel);
                     resultFileId = fileModel.FileID.ToString();

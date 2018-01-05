@@ -74,8 +74,9 @@ namespace PhotoPrintWXSmall.Controllers
                 thisData.DelShopInCart(uniacid, new ObjectId(accountID), new ObjectId(shopID));
                 return JsonResponseModel.SuccessJson;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
                 return JsonResponseModel.ErrorJson;
                 throw;
             }

@@ -11,6 +11,7 @@ using System.Threading;
 using MongoDB.Bson;
 using PhotoPrintWXSmall.Models;
 using MongoDB.Driver;
+using PhotoPrintWXSmall.Managers;
 
 namespace PhotoPrintWXSmall.App_Data
 {
@@ -64,6 +65,7 @@ namespace PhotoPrintWXSmall.App_Data
                ParamsCreate3Img params3Img = new ParamsCreate3Img() { FileName = filename, FileDir = ConstantProperty.AlbumDir+$"{uniacid}/" };
                params3Img.OnFinish += fileModel =>
                {
+                   FileManager.Exerciser(uniacid, null, null).SaveFileModel(fileModel);
                    fileModel.FileID = ObjectId.GenerateNewId();
                    accountCollection.UpdateOne(filter,
                        Builders<AccountModel>.Update.Push(x => x.UploadImages, fileModel));
