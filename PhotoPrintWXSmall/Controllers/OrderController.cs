@@ -192,7 +192,7 @@ namespace PhotoPrintWXSmall.Controllers
                     "OrderStatus",
                     "Carriage",
                     "Goods",
-                    "Images",
+                    "ShopImages",
                     "HeaderPics",
                     "FileUrlData",
                     "Title",
